@@ -1,0 +1,507 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		055E68492A27309C00842982 /* AUIRoomListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055E68412A27309C00842982 /* AUIRoomListCell.swift */; };
+		055E684A2A27309C00842982 /* AUIRoomListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055E68422A27309C00842982 /* AUIRoomListViewController.swift */; };
+		055E684B2A27309C00842982 /* VoiceChatUIKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055E68432A27309C00842982 /* VoiceChatUIKit.swift */; };
+		055E684C2A27309C00842982 /* RoomViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055E68442A27309C00842982 /* RoomViewController.swift */; };
+		055E684D2A27309C00842982 /* UserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055E68472A27309C00842982 /* UserInfo.swift */; };
+		055E684E2A27309C00842982 /* KeyCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055E68482A27309C00842982 /* KeyCenter.swift */; };
+		05FFD8BB2A26D89900CA2B5B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FFD8BA2A26D89900CA2B5B /* AppDelegate.swift */; };
+		05FFD8BD2A26D89900CA2B5B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FFD8BC2A26D89900CA2B5B /* SceneDelegate.swift */; };
+		05FFD8BF2A26D89900CA2B5B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FFD8BE2A26D89900CA2B5B /* ViewController.swift */; };
+		05FFD8C22A26D89900CA2B5B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 05FFD8C02A26D89900CA2B5B /* Main.storyboard */; };
+		05FFD8C42A26D89A00CA2B5B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 05FFD8C32A26D89A00CA2B5B /* Assets.xcassets */; };
+		05FFD8C72A26D89A00CA2B5B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 05FFD8C52A26D89A00CA2B5B /* LaunchScreen.storyboard */; };
+		AF50C58B3774FA618FC37B1D /* Pods_AUIKitVoiceRoom.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 286BEF39BC73C5FAEE39C9E1 /* Pods_AUIKitVoiceRoom.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		055E68412A27309C00842982 /* AUIRoomListCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AUIRoomListCell.swift; sourceTree = "<group>"; };
+		055E68422A27309C00842982 /* AUIRoomListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AUIRoomListViewController.swift; sourceTree = "<group>"; };
+		055E68432A27309C00842982 /* VoiceChatUIKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VoiceChatUIKit.swift; sourceTree = "<group>"; };
+		055E68442A27309C00842982 /* RoomViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomViewController.swift; sourceTree = "<group>"; };
+		055E68472A27309C00842982 /* UserInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserInfo.swift; sourceTree = "<group>"; };
+		055E68482A27309C00842982 /* KeyCenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyCenter.swift; sourceTree = "<group>"; };
+		05FFD8B72A26D89800CA2B5B /* AUIKitVoiceRoom.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AUIKitVoiceRoom.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		05FFD8BA2A26D89900CA2B5B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		05FFD8BC2A26D89900CA2B5B /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		05FFD8BE2A26D89900CA2B5B /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		05FFD8C12A26D89900CA2B5B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		05FFD8C32A26D89A00CA2B5B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		05FFD8C62A26D89A00CA2B5B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		05FFD8C82A26D89A00CA2B5B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		270D530755AC4F59D0D042DB /* Pods-AUIKitVoiceRoom.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AUIKitVoiceRoom.debug.xcconfig"; path = "Target Support Files/Pods-AUIKitVoiceRoom/Pods-AUIKitVoiceRoom.debug.xcconfig"; sourceTree = "<group>"; };
+		286BEF39BC73C5FAEE39C9E1 /* Pods_AUIKitVoiceRoom.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AUIKitVoiceRoom.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		BB39CE17AE02E4272FF3895B /* Pods-AUIKitVoiceRoom.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AUIKitVoiceRoom.release.xcconfig"; path = "Target Support Files/Pods-AUIKitVoiceRoom/Pods-AUIKitVoiceRoom.release.xcconfig"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		05FFD8B42A26D89800CA2B5B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AF50C58B3774FA618FC37B1D /* Pods_AUIKitVoiceRoom.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		055E68402A27309C00842982 /* List */ = {
+			isa = PBXGroup;
+			children = (
+				055E68412A27309C00842982 /* AUIRoomListCell.swift */,
+				055E68422A27309C00842982 /* AUIRoomListViewController.swift */,
+			);
+			path = List;
+			sourceTree = "<group>";
+		};
+		055E68452A27309C00842982 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				055E68462A27309C00842982 /* User */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		055E68462A27309C00842982 /* User */ = {
+			isa = PBXGroup;
+			children = (
+				055E68472A27309C00842982 /* UserInfo.swift */,
+			);
+			path = User;
+			sourceTree = "<group>";
+		};
+		05FFD8AE2A26D89800CA2B5B = {
+			isa = PBXGroup;
+			children = (
+				05FFD8B92A26D89900CA2B5B /* AUIKitVoiceRoom */,
+				05FFD8B82A26D89800CA2B5B /* Products */,
+				FC297A372AE766AAAD8AF810 /* Pods */,
+				865ECA6B2C1BD1FD4C1F6079 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		05FFD8B82A26D89800CA2B5B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				05FFD8B72A26D89800CA2B5B /* AUIKitVoiceRoom.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		05FFD8B92A26D89900CA2B5B /* AUIKitVoiceRoom */ = {
+			isa = PBXGroup;
+			children = (
+				055E68432A27309C00842982 /* VoiceChatUIKit.swift */,
+				055E68482A27309C00842982 /* KeyCenter.swift */,
+				055E68402A27309C00842982 /* List */,
+				055E68452A27309C00842982 /* Model */,
+				055E68442A27309C00842982 /* RoomViewController.swift */,
+				05FFD8BA2A26D89900CA2B5B /* AppDelegate.swift */,
+				05FFD8BC2A26D89900CA2B5B /* SceneDelegate.swift */,
+				05FFD8BE2A26D89900CA2B5B /* ViewController.swift */,
+				05FFD8C02A26D89900CA2B5B /* Main.storyboard */,
+				05FFD8C32A26D89A00CA2B5B /* Assets.xcassets */,
+				05FFD8C52A26D89A00CA2B5B /* LaunchScreen.storyboard */,
+				05FFD8C82A26D89A00CA2B5B /* Info.plist */,
+			);
+			path = AUIKitVoiceRoom;
+			sourceTree = "<group>";
+		};
+		865ECA6B2C1BD1FD4C1F6079 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				286BEF39BC73C5FAEE39C9E1 /* Pods_AUIKitVoiceRoom.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		FC297A372AE766AAAD8AF810 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				270D530755AC4F59D0D042DB /* Pods-AUIKitVoiceRoom.debug.xcconfig */,
+				BB39CE17AE02E4272FF3895B /* Pods-AUIKitVoiceRoom.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		05FFD8B62A26D89800CA2B5B /* AUIKitVoiceRoom */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 05FFD8CB2A26D89A00CA2B5B /* Build configuration list for PBXNativeTarget "AUIKitVoiceRoom" */;
+			buildPhases = (
+				C7DCBF815CE851EA1D0D9714 /* [CP] Check Pods Manifest.lock */,
+				05FFD8B32A26D89800CA2B5B /* Sources */,
+				05FFD8B42A26D89800CA2B5B /* Frameworks */,
+				05FFD8B52A26D89800CA2B5B /* Resources */,
+				866D50DEAEE7210ED6C0BEF9 /* [CP] Embed Pods Frameworks */,
+				1293E7245C81CEEB3EB52874 /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = AUIKitVoiceRoom;
+			productName = AUIKitVoiceRoom;
+			productReference = 05FFD8B72A26D89800CA2B5B /* AUIKitVoiceRoom.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		05FFD8AF2A26D89800CA2B5B /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1420;
+				LastUpgradeCheck = 1420;
+				TargetAttributes = {
+					05FFD8B62A26D89800CA2B5B = {
+						CreatedOnToolsVersion = 14.2;
+					};
+				};
+			};
+			buildConfigurationList = 05FFD8B22A26D89800CA2B5B /* Build configuration list for PBXProject "AUIKitVoiceRoom" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 05FFD8AE2A26D89800CA2B5B;
+			productRefGroup = 05FFD8B82A26D89800CA2B5B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				05FFD8B62A26D89800CA2B5B /* AUIKitVoiceRoom */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		05FFD8B52A26D89800CA2B5B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				05FFD8C72A26D89A00CA2B5B /* LaunchScreen.storyboard in Resources */,
+				05FFD8C42A26D89A00CA2B5B /* Assets.xcassets in Resources */,
+				05FFD8C22A26D89900CA2B5B /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		1293E7245C81CEEB3EB52874 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-AUIKitVoiceRoom/Pods-AUIKitVoiceRoom-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-AUIKitVoiceRoom/Pods-AUIKitVoiceRoom-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-AUIKitVoiceRoom/Pods-AUIKitVoiceRoom-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		866D50DEAEE7210ED6C0BEF9 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-AUIKitVoiceRoom/Pods-AUIKitVoiceRoom-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-AUIKitVoiceRoom/Pods-AUIKitVoiceRoom-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-AUIKitVoiceRoom/Pods-AUIKitVoiceRoom-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		C7DCBF815CE851EA1D0D9714 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-AUIKitVoiceRoom-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		05FFD8B32A26D89800CA2B5B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				055E68492A27309C00842982 /* AUIRoomListCell.swift in Sources */,
+				055E684B2A27309C00842982 /* VoiceChatUIKit.swift in Sources */,
+				055E684C2A27309C00842982 /* RoomViewController.swift in Sources */,
+				055E684A2A27309C00842982 /* AUIRoomListViewController.swift in Sources */,
+				055E684D2A27309C00842982 /* UserInfo.swift in Sources */,
+				05FFD8BF2A26D89900CA2B5B /* ViewController.swift in Sources */,
+				05FFD8BB2A26D89900CA2B5B /* AppDelegate.swift in Sources */,
+				055E684E2A27309C00842982 /* KeyCenter.swift in Sources */,
+				05FFD8BD2A26D89900CA2B5B /* SceneDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		05FFD8C02A26D89900CA2B5B /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				05FFD8C12A26D89900CA2B5B /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		05FFD8C52A26D89A00CA2B5B /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				05FFD8C62A26D89A00CA2B5B /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		05FFD8C92A26D89A00CA2B5B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		05FFD8CA2A26D89A00CA2B5B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		05FFD8CC2A26D89A00CA2B5B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 270D530755AC4F59D0D042DB /* Pods-AUIKitVoiceRoom.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 3Y5B6D2XFS;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = AUIKitVoiceRoom/Info.plist;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "-8811508760-139.com.AUIKitVoiceRoom";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		05FFD8CD2A26D89A00CA2B5B /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BB39CE17AE02E4272FF3895B /* Pods-AUIKitVoiceRoom.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 3Y5B6D2XFS;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = AUIKitVoiceRoom/Info.plist;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "-8811508760-139.com.AUIKitVoiceRoom";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		05FFD8B22A26D89800CA2B5B /* Build configuration list for PBXProject "AUIKitVoiceRoom" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				05FFD8C92A26D89A00CA2B5B /* Debug */,
+				05FFD8CA2A26D89A00CA2B5B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		05FFD8CB2A26D89A00CA2B5B /* Build configuration list for PBXNativeTarget "AUIKitVoiceRoom" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				05FFD8CC2A26D89A00CA2B5B /* Debug */,
+				05FFD8CD2A26D89A00CA2B5B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 05FFD8AF2A26D89800CA2B5B /* Project object */;
+}

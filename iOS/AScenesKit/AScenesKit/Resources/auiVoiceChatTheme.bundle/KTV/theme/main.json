@@ -1,0 +1,9 @@
+{
+  "Global": {
+    "backgroundImage": "aui_room_bg",
+    "maskBackgroundColor": "#0000009a"
+  },
+  "Dialog": {
+      "backgroundColor": "#c3c5fe5a",
+  }
+}
