@@ -8,6 +8,7 @@
 import UIKit
 import AUIKit
 import SVGAPlayer
+import Alamofire
 
 public class AUIRoomGiftBinder: NSObject {
     
@@ -29,10 +30,18 @@ public class AUIRoomGiftBinder: NSObject {
         self.giftDelegate?.giftsFromService(roomId: giftService.getChannelName(), completion: { [weak self] tabs, error in
             if error == nil {
                 self?.refreshGifts(tabs: tabs)
+                self?.downloadEffectResource(tabs: tabs)
             }
         })
     }
 
+}
+
+extension String {
+    static var documentsPath: String {
+        return NSHomeDirectory() + "/Documents/"
+    }
+    
 }
 
 
@@ -63,10 +72,13 @@ extension AUIRoomGiftBinder {
         player.tag(199)
         getWindow()?.addSubview(player)
         let parser = SVGAParser()
-//        let effectPath = gift.giftEffect
-        guard let folderPath = Bundle.main.path(forResource: "auiVoiceChatTheme", ofType: "bundle") else { return }
-        guard let path = Bundle(path: folderPath)?.path(forResource: "AUIKitGift11", ofType: "svga",inDirectory: "UIKit/resource") else { return }
-        parser.parse(with: URL(fileURLWithPath: path)) { entity in
+        let effectName = gift.giftEffect?.components(separatedBy: "/").last ?? ""
+        let path = String.documentsPath
+        let documentPath = path + "AUIKitGiftEffect/AUIKitGift11.svga"
+        if effectName.isEmpty,!FileManager.default.fileExists(atPath: documentPath) {
+            return
+        }
+        parser.parse(with: URL(fileURLWithPath: documentPath)) { entity in
             player.videoItem = entity
             player.startAnimation()
         } failureBlock: { error in
@@ -80,6 +92,42 @@ extension AUIRoomGiftBinder {
     
     func sendGift(gift: AUIGiftEntity, completion: @escaping (NSError?) -> Void) {
         self.giftDelegate?.sendGift(gift: gift, completion: completion)
+    }
+    
+    func downloadEffectResource(tabs: [AUIGiftTabEntity]) {
+        for tab in tabs {
+            if let gifts = tab.gifts {
+                for gift in gifts {
+                    if let url = gift.giftEffect ,!url.isEmpty{//"https://download.agora.io/null/AUIKitGift11.svga"  测试下载链接需要去除下面fileName判断
+                        AF.download(URL(string: url)!).responseData { response in
+                            if let data = response.value {
+                                let path = String.documentsPath
+                                let documentPath = path + "AUIKitGiftEffect"
+                                do {
+                                    if !FileManager.default.fileExists(atPath: documentPath) {
+                                        try FileManager.default.createDirectory(atPath: documentPath, withIntermediateDirectories: true)
+                                    }
+                                    let fileName = url.components(separatedBy: "/").last ?? ""
+                                    if fileName.isEmpty {
+                                        return
+                                    }
+                                    let filePath = documentPath + "/" + "AUIKitGift11.svga"
+//                                    if FileManager.default.fileExists(atPath: filePath) {
+//                                        try FileManager.default.removeItem(atPath: filePath)
+//                                    }
+                                    if !FileManager.default.fileExists(atPath: filePath) {
+                                        try data.write(to: URL(fileURLWithPath: filePath))
+                                    }
+                                } catch {
+                                    assert(false,"\(error.localizedDescription)")
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+        }
     }
     
 }

@@ -10,12 +10,18 @@ import UIKit
 import AgoraRtcKit
 import AUIKit
 
+@objc public protocol AUIMicSeatViewEventsDelegate: NSObjectProtocol {
+    func micSeatDidSelectedItem(index: Int)
+}
+
 let kMicSeatCount = 8
 public class AUIMicSeatViewBinder: NSObject {
     private var micSeatArray: [AUIMicSeatInfo] = []
     private var userMap: [String: AUIUserInfo] = [:]
     private var rtcEngine: AgoraRtcEngineKit!
     private weak var micSeatView: AUIMicSeatView?
+    
+    private weak var eventsDelegate: AUIMicSeatViewEventsDelegate?
     private weak var micSeatDelegate: AUIMicSeatServiceDelegate? {
         didSet {
             micSeatDelegate?.unbindRespDelegate(delegate: self)
@@ -64,10 +70,11 @@ public class AUIMicSeatViewBinder: NSObject {
         self.chorusDelegate = chorusService
     }
     
-    public func bindVoiceChat(micSeatView: AUIMicSeatView,
+    public func bindVoiceChat(micSeatView: AUIMicSeatView,eventsDelegate: AUIMicSeatViewEventsDelegate,
                      micSeatService: AUIMicSeatServiceDelegate,
                      userService: AUIUserServiceDelegate) {
         self.micSeatView = micSeatView
+        self.eventsDelegate = eventsDelegate
         micSeatView.uiDelegate = self
         self.micSeatDelegate = micSeatService
         self.userDelegate = userService
@@ -316,24 +323,7 @@ extension AUIMicSeatViewBinder: AUIMicSeatViewDelegate {
     }
     
     public func onItemDidClick(view: AUIMicSeatView, seatIndex: Int) {
-        let micSeat = micSeatArray[seatIndex]
-
-        let dialogItems = getDialogItems(seatInfo: micSeat) {
-            AUICommonDialog.hidden()
-        }
-        guard dialogItems.count > 0 else {return}
-        var headerInfo: AUIActionSheetHeaderInfo? = nil
-        if let user = micSeat.user, user.userId.count > 0 {
-            headerInfo = AUIActionSheetHeaderInfo()
-            headerInfo?.avatar = user.userAvatar
-            headerInfo?.title = user.userName
-            headerInfo?.subTitle = micSeat.seatIndexDesc()
-        }
-        let dialogView = AUIActionSheet(title: aui_localized("managerSeat"),
-                                        items: dialogItems,
-                                        headerInfo: headerInfo)
-        dialogView.setTheme(theme: AUIActionSheetTheme())
-        AUICommonDialog.show(contentView: dialogView, theme: AUICommonDialogTheme())
+        self.eventsDelegate?.micSeatDidSelectedItem(index: seatIndex)
     }
     
     public func onMuteVideo(view: AUIMicSeatView, seatIndex: Int, canvas: UIView, isMuteVideo: Bool) {
@@ -354,6 +344,27 @@ extension AUIMicSeatViewBinder: AUIMicSeatViewDelegate {
             self.rtcEngine.setupRemoteVideo(videoCanvas)
         }
         
+    }
+    
+    public func enterMic(seatIndex: Int) {
+        let micSeat = micSeatArray[seatIndex]
+
+        let dialogItems = getDialogItems(seatInfo: micSeat) {
+            AUICommonDialog.hidden()
+        }
+        guard dialogItems.count > 0 else {return}
+        var headerInfo: AUIActionSheetHeaderInfo? = nil
+        if let user = micSeat.user, user.userId.count > 0 {
+            headerInfo = AUIActionSheetHeaderInfo()
+            headerInfo?.avatar = user.userAvatar
+            headerInfo?.title = user.userName
+            headerInfo?.subTitle = micSeat.seatIndexDesc()
+        }
+        let dialogView = AUIActionSheet(title: aui_localized("managerSeat"),
+                                        items: dialogItems,
+                                        headerInfo: headerInfo)
+        dialogView.setTheme(theme: AUIActionSheetTheme())
+        AUICommonDialog.show(contentView: dialogView, theme: AUICommonDialogTheme())
     }
 }
 

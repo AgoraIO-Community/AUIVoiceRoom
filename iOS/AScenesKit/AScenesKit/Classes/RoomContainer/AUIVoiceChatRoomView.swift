@@ -17,7 +17,7 @@ import AUIKit
     }()
     
     /// 房间信息UI
-    private lazy var roomInfoView: AUIRoomInfoView = AUIRoomInfoView(frame: CGRect(x: 16, y: 35, width: 175, height: 56))
+    private lazy var roomInfoView: AUIRoomInfoView = AUIRoomInfoView(frame: CGRect(x: 16, y: 35, width: 185, height: 40))
     
     // 关闭按钮
     private lazy var closeButton: AUIButton = {
@@ -62,6 +62,8 @@ import AUIKit
     
     private lazy var userBinder: AUIUserViewBinder = AUIUserViewBinder()
     
+    private lazy var invitationView: AUIInvitationView = AUIInvitationView(frame: CGRect(x: 0, y: 0, width: AScreenWidth, height: 380))
+        
     public var onClickOffButton: (()->())?
 
     deinit {
@@ -122,7 +124,7 @@ import AUIKit
         }
         
         //绑定Service
-        micSeatBinder.bindVoiceChat(micSeatView: micSeatView,
+        micSeatBinder.bindVoiceChat(micSeatView: micSeatView, eventsDelegate: self,
                            micSeatService: service.micSeatImpl,
                            userService: service.userImpl)
 //        invitationView.invitationdelegate = service.invitationImpl
@@ -213,7 +215,40 @@ extension AUIVoiceChatRoomView: AUIMicSeatRespDelegate {
     
 }
 
-extension AUIVoiceChatRoomView {
+
+extension AUIVoiceChatRoomView: AUIMicSeatViewEventsDelegate {
+    
+    public func micSeatDidSelectedItem(index: Int) {
+        guard let channelName = self.service?.channelName else { return }
+        if AUIRoomContext.shared.isRoomOwner(channelName: channelName) {
+//            let listView = AUIRoomMemberListView()
+//            listView.aui_size =  CGSize(width: UIScreen.main.bounds.width, height: 562)
+//            listView.memberList = members
+//            listView.seatMap = seatMap
+            
+            AUICommonDialog.show(contentView: self.invitationView, theme: AUICommonDialogTheme())
+//            self.memberListView = listView
+        } else {
+            AUIAlertView()
+                .theme_background(color: "CommonColor.black")
+                .isShowCloseButton(isShow: true)
+                .title(title: "申请上麦")
+                .titleColor(color: .white)
+                .rightButton(title: "确定")
+                .theme_rightButtonBackground(color: "CommonColor.primary")
+                .rightButtonTapClosure(onTap: {[weak self] text in
+                    self?.invitationView.invitationdelegate?.sendApply(seatIndex: index, callback: { error in
+                        if error == nil {
+                            self?.micSeatBinder.enterMic(seatIndex: index)
+                        } else {
+                            AUIToast.show(text: "Apply failed!")
+                        }
+                    })
+                }).show()
+            
+        }
+    }
+    
     @objc private func didClickOffButton(){
         self.onClickOffButton?()
     }

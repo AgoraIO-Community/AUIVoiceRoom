@@ -14,11 +14,7 @@ public func auikaraoke_localized(_ string: String) -> String {
 }
 
 
-public protocol AUIUserCellUserDataProtocol: NSObjectProtocol {
-    var userAvatar: String {get}
-    var userId: String {get}
-    var userName: String {get}
-}
+
 
 
 /// 用户列表cell
