@@ -72,7 +72,7 @@ extension AUIRoomGiftBinder {
         player.tag(199)
         getWindow()?.addSubview(player)
         let parser = SVGAParser()
-        let effectName = gift.giftEffect?.components(separatedBy: "/").last ?? ""
+        let effectName = gift.giftEffect.components(separatedBy: "/").last ?? ""
         let path = String.documentsPath
         let documentPath = path + "AUIKitGiftEffect/AUIKitGift11.svga"
         if effectName.isEmpty,!FileManager.default.fileExists(atPath: documentPath) {
@@ -98,8 +98,8 @@ extension AUIRoomGiftBinder {
         for tab in tabs {
             if let gifts = tab.gifts {
                 for gift in gifts {
-                    if let url = gift.giftEffect ,!url.isEmpty{//"https://download.agora.io/null/AUIKitGift11.svga"  测试下载链接需要去除下面fileName判断
-                        AF.download(URL(string: url)!).responseData { response in
+                    if !gift.giftEffect.isEmpty{//"https://download.agora.io/null/AUIKitGift11.svga"  测试下载链接需要去除下面fileName判断
+                        AF.download(URL(string: gift.giftEffect)!).responseData { response in
                             if let data = response.value {
                                 let path = String.documentsPath
                                 let documentPath = path + "AUIKitGiftEffect"
@@ -107,7 +107,7 @@ extension AUIRoomGiftBinder {
                                     if !FileManager.default.fileExists(atPath: documentPath) {
                                         try FileManager.default.createDirectory(atPath: documentPath, withIntermediateDirectories: true)
                                     }
-                                    let fileName = url.components(separatedBy: "/").last ?? ""
+                                    let fileName = gift.giftEffect.components(separatedBy: "/").last ?? ""
                                     if fileName.isEmpty {
                                         return
                                     }

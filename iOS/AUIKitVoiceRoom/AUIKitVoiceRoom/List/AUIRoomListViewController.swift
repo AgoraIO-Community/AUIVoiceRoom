@@ -14,9 +14,13 @@ import SwiftTheme
 
 private let kButtonWidth: CGFloat = 327
 private let kListCountPerPage: Int = 10
-class AUIRoomListViewController: UIViewController {
+final class AUIRoomListViewController: UIViewController {
     private var roomList: [AUIRoomInfo] = []
     private var userInfo: UserInfo = UserInfo()
+    
+    private lazy var setting: UIButton = {
+        UIButton(type: .custom).frame(CGRect(x: AScreenWidth - 60, y: ANavigationHeight - 40, width: 50, height: 50)).tag(20).addTargetFor(self, action: #selector(changeSetting), for: .touchUpInside).image("setting", .normal)
+    }()
     
     private lazy var collectionView: UICollectionView = {
        let flowLayout = UICollectionViewFlowLayout()
@@ -79,6 +83,7 @@ class AUIRoomListViewController: UIViewController {
         view.addSubview(collectionView)
         view.addSubview(createButton)
         view.addSubview(themeButton)
+        view.addSubview(setting)
         collectionView.frame = view.bounds
         _layoutButton()
         initEngine()
@@ -195,6 +200,11 @@ class AUIRoomListViewController: UIViewController {
     
     @objc func onThemeChangeAction() {
         AUIRoomContext.shared.switchThemeToNext()
+    }
+    
+    @objc func changeSetting() {
+        let setting = AUICreateRoomSettingController()
+        self.navigationController?.pushViewController(setting, animated: true)
     }
 }
 

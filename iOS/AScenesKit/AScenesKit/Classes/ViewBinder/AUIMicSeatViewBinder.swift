@@ -14,8 +14,10 @@ import AUIKit
     func micSeatDidSelectedItem(index: Int)
 }
 
-let kMicSeatCount = 8
 public class AUIMicSeatViewBinder: NSObject {
+    
+    @AUserDefault("MicSeatCount",defaultValue: 8) var seatCount
+    
     private var micSeatArray: [AUIMicSeatInfo] = []
     private var userMap: [String: AUIUserInfo] = [:]
     private var rtcEngine: AgoraRtcEngineKit!
@@ -50,7 +52,7 @@ public class AUIMicSeatViewBinder: NSObject {
     public convenience init(rtcEngine: AgoraRtcEngineKit) {
         self.init()
         self.rtcEngine = rtcEngine
-        for i in 0...(kMicSeatCount - 1) {
+        for i in 0...(seatCount - 1) {
             let seatInfo = AUIMicSeatInfo()
             seatInfo.seatIndex = UInt(i)
             micSeatArray.append(seatInfo)

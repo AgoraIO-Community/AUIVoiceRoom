@@ -57,7 +57,7 @@ import AUIKit
     }()
     
     lazy var bottomBar: AUIRoomBottomFunctionBar = {
-        AUIRoomBottomFunctionBar(frame: CGRect(x: 0, y: self.messageView.frame.maxY+10, width: AScreenWidth, height: 50), datas: self.datas, hiddenChat: false)
+        AUIRoomBottomFunctionBar(frame: CGRect(x: 0, y: self.frame.height-CGFloat(ABottomBarHeight)-27, width: AScreenWidth, height: 54), datas: self.datas, hiddenChat: false)
     }()
     
     lazy var inputBar: AUIChatInputBar = {

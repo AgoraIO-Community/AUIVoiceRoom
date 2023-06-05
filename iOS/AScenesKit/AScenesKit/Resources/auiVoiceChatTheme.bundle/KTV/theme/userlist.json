@@ -8,7 +8,7 @@
       "avatarHeight": 56,
       "avatarCornerRadius": 28,
       "titleColor": "#ffffff",
-      "bigTitleFont": "PingFangSC-Regular,17",
+      "bigTitleFont": "PingFangSC-Medium,17",
       "smallTitleFont": "PingFangSC-Regular,14",
       "subTitleColor": "#ffffff80",
       "selectedButtonColor": "#00000000",

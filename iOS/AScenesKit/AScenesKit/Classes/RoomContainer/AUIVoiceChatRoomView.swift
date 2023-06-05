@@ -12,12 +12,14 @@ import AUIKit
     
     private var service: AUIVoiceChatRoomService?
     
+    @AUserDefault("MicSeatType",defaultValue: 2) var seatType
+    
     lazy var background: UIImageView = {
         UIImageView(frame: self.frame).image(UIImage.aui_Image(named: "voicechat_bg@3x"))
     }()
     
     /// 房间信息UI
-    private lazy var roomInfoView: AUIRoomInfoView = AUIRoomInfoView(frame: CGRect(x: 16, y: 35, width: 185, height: 40))
+    private lazy var roomInfoView: AUIRoomInfoView = AUIRoomInfoView(frame: CGRect(x: 16, y: AStatusBarHeight, width: 185, height: 40))
     
     // 关闭按钮
     private lazy var closeButton: AUIButton = {
@@ -37,12 +39,12 @@ import AUIKit
         return button
     }()
 
-    private lazy var micSeatView: AUIMicSeatView = AUIMicSeatView(frame: CGRect(x: 16, y: ANavigationHeight+60, width: self.bounds.size.width - 16 * 2, height: 220))
+    private lazy var micSeatView: AUIMicSeatView = AUIMicSeatView(frame: CGRect(x: 16, y: ANavigationHeight+60, width: self.bounds.size.width - 16 * 2, height: 324),style: AUIMicSeatViewLayoutType(rawValue: self.seatType) ?? .eight)
     
     private lazy var micSeatBinder: AUIMicSeatViewBinder = AUIMicSeatViewBinder(rtcEngine: self.service!.rtcEngine)
 
     private lazy var chatView: AUIRoomVoiceChatView = {
-        AUIRoomVoiceChatView(frame: CGRect(x: 0, y: self.micSeatView.frame.maxY+94, width: self.frame.width, height: self.frame.height-self.micSeatView.frame.maxY-94))
+        AUIRoomVoiceChatView(frame: CGRect(x: 0, y: self.micSeatView.frame.maxY+10, width: self.frame.width, height: self.frame.height-self.micSeatView.frame.maxY-CGFloat(ABottomBarHeight)))
     }()
 
     private lazy var receiveGift: AUIReceiveGiftsView = {
@@ -63,6 +65,8 @@ import AUIKit
     private lazy var userBinder: AUIUserViewBinder = AUIUserViewBinder()
     
     private lazy var invitationView: AUIInvitationView = AUIInvitationView(frame: CGRect(x: 0, y: 0, width: AScreenWidth, height: 380))
+    
+    private lazy var invitationBinder: AUIInvitationViewBinder = AUIInvitationViewBinder()
         
     public var onClickOffButton: (()->())?
 
@@ -143,6 +147,8 @@ import AUIKit
         if let roomInfo = AUIRoomContext.shared.roomInfoMap[service.channelName] {
             self.roomInfoView.updateRoomInfo(withRoomId: roomInfo.roomId, roomName: roomInfo.roomName, ownerHeadImg: roomInfo.owner?.userAvatar)
         }
+        
+        invitationBinder.bind(inviteView: self.invitationView, invitationDelegate: service.invitationImplement, roomDelegate: service.roomManagerImpl)
     }
 
 }
@@ -237,7 +243,7 @@ extension AUIVoiceChatRoomView: AUIMicSeatViewEventsDelegate {
                 .rightButton(title: "确定")
                 .theme_rightButtonBackground(color: "CommonColor.primary")
                 .rightButtonTapClosure(onTap: {[weak self] text in
-                    self?.invitationView.invitationdelegate?.sendApply(seatIndex: index, callback: { error in
+                    self?.service?.invitationImplement.sendApply(seatIndex: index, callback: { error in
                         if error == nil {
                             self?.micSeatBinder.enterMic(seatIndex: index)
                         } else {

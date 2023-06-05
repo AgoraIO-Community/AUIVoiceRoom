@@ -27,6 +27,8 @@ open class AUIVoiceChatRoomService: NSObject {
     
     lazy var giftImplement: AUIGiftServiceImplement = AUIGiftServiceImplement(channelName: channelName, rtmManager: rtmManager)
     
+    lazy var invitationImplement: AUIInvitationServiceImpl = AUIInvitationServiceImpl(channelName: channelName, rtmManager: rtmManager)
+    
     var roomManagerImpl: AUIRoomManagerImpl!
     public private(set) var channelName: String!
     private var roomConfig: AUIRoomConfig!

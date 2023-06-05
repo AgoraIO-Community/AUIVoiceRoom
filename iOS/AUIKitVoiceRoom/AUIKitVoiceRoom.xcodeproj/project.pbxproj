@@ -13,6 +13,7 @@
 		055E684C2A27309C00842982 /* RoomViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055E68442A27309C00842982 /* RoomViewController.swift */; };
 		055E684D2A27309C00842982 /* UserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055E68472A27309C00842982 /* UserInfo.swift */; };
 		055E684E2A27309C00842982 /* KeyCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055E68482A27309C00842982 /* KeyCenter.swift */; };
+		058974482A2D6AE6002E7D09 /* AUICreateRoomSettingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 058974472A2D6AE6002E7D09 /* AUICreateRoomSettingController.swift */; };
 		05FFD8BB2A26D89900CA2B5B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FFD8BA2A26D89900CA2B5B /* AppDelegate.swift */; };
 		05FFD8BD2A26D89900CA2B5B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FFD8BC2A26D89900CA2B5B /* SceneDelegate.swift */; };
 		05FFD8BF2A26D89900CA2B5B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FFD8BE2A26D89900CA2B5B /* ViewController.swift */; };
@@ -29,6 +30,7 @@
 		055E68442A27309C00842982 /* RoomViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomViewController.swift; sourceTree = "<group>"; };
 		055E68472A27309C00842982 /* UserInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserInfo.swift; sourceTree = "<group>"; };
 		055E68482A27309C00842982 /* KeyCenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyCenter.swift; sourceTree = "<group>"; };
+		058974472A2D6AE6002E7D09 /* AUICreateRoomSettingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AUICreateRoomSettingController.swift; sourceTree = "<group>"; };
 		05FFD8B72A26D89800CA2B5B /* AUIKitVoiceRoom.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AUIKitVoiceRoom.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		05FFD8BA2A26D89900CA2B5B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		05FFD8BC2A26D89900CA2B5B /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -79,6 +81,14 @@
 			path = User;
 			sourceTree = "<group>";
 		};
+		058974462A2D6A66002E7D09 /* CreateRoomSetting */ = {
+			isa = PBXGroup;
+			children = (
+				058974472A2D6AE6002E7D09 /* AUICreateRoomSettingController.swift */,
+			);
+			path = CreateRoomSetting;
+			sourceTree = "<group>";
+		};
 		05FFD8AE2A26D89800CA2B5B = {
 			isa = PBXGroup;
 			children = (
@@ -100,6 +110,7 @@
 		05FFD8B92A26D89900CA2B5B /* AUIKitVoiceRoom */ = {
 			isa = PBXGroup;
 			children = (
+				058974462A2D6A66002E7D09 /* CreateRoomSetting */,
 				055E68432A27309C00842982 /* VoiceChatUIKit.swift */,
 				055E68482A27309C00842982 /* KeyCenter.swift */,
 				055E68402A27309C00842982 /* List */,
@@ -273,6 +284,7 @@
 				055E684D2A27309C00842982 /* UserInfo.swift in Sources */,
 				05FFD8BF2A26D89900CA2B5B /* ViewController.swift in Sources */,
 				05FFD8BB2A26D89900CA2B5B /* AppDelegate.swift in Sources */,
+				058974482A2D6AE6002E7D09 /* AUICreateRoomSettingController.swift in Sources */,
 				055E684E2A27309C00842982 /* KeyCenter.swift in Sources */,
 				05FFD8BD2A26D89900CA2B5B /* SceneDelegate.swift in Sources */,
 			);
