@@ -36,11 +36,17 @@ open class AUIInvitationViewBinder: NSObject {
 
 extension AUIInvitationViewBinder: AUIInvitationRespDelegate {
     
-    public func onReceiveNewInvitation(userId: String, seatIndex: Int?) {
+    public func onInviteeListUpdate(inviteeList: [AUIUserCellUserDataProtocol]) {
+        self.inviteView?.userList.removeAll()
+        self.inviteView?.userList = inviteeList
+        self.inviteView?.tableView.reloadData()
+    }
+    
+    public func onReceiveNewInvitation(userId: String, seatIndex: Int) {
         AUIAlertView()
             .theme_background(color: "CommonColor.black")
             .isShowCloseButton(isShow: true)
-            .title(title: "邀请上麦").content(content: seatIndex != nil ? "房主邀请您上\(seatIndex!)号麦": "房主邀请您上麦")
+            .title(title: "邀请上麦").content(content: seatIndex != -1 ? "房主邀请您上\(seatIndex)号麦": "房主邀请您上麦")
             .titleColor(color: .white)
             .rightButton(title: "确定")
             .theme_rightButtonBackground(color: "CommonColor.primary")
@@ -64,11 +70,11 @@ extension AUIInvitationViewBinder: AUIInvitationRespDelegate {
         AUIToast.show(text: "用户\(userId)的邀请已取消！")
     }
     
-    public func onReceiveNewApply(userId: String, seatIndex: Int?) {
+    public func onReceiveNewApply(userId: String, seatIndex: Int) {
         AUIAlertView()
             .theme_background(color: "CommonColor.black")
             .isShowCloseButton(isShow: true)
-            .title(title: "申请上麦").content(content: seatIndex != nil ? "用户\(userId)申请上\(seatIndex!)号麦": "用户\(userId)申请上麦")
+            .title(title: "申请上麦").content(content: seatIndex != -1 ? "用户\(userId)申请上\(seatIndex)号麦": "用户\(userId)申请上麦")
             .titleColor(color: .white)
             .rightButton(title: "同意")
             .theme_rightButtonBackground(color: "CommonColor.primary")

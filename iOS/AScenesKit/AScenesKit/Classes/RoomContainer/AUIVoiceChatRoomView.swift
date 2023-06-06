@@ -131,8 +131,6 @@ import AUIKit
         micSeatBinder.bindVoiceChat(micSeatView: micSeatView, eventsDelegate: self,
                            micSeatService: service.micSeatImpl,
                            userService: service.userImpl)
-//        invitationView.invitationdelegate = service.invitationImpl
-//        invitationView.roomDelegate = service.roomManagerImpl
         
         
         userBinder.bind(userView: membersView,
@@ -149,8 +147,17 @@ import AUIKit
         }
         
         invitationBinder.bind(inviteView: self.invitationView, invitationDelegate: service.invitationImplement, roomDelegate: service.roomManagerImpl)
+        invitationView.addActionHandler(actionHandler: self)
     }
 
+}
+
+extension AUIVoiceChatRoomView: AUIInvitationViewEventsDelegate {
+    public func inviteUser(user: AUIUserCellUserDataProtocol) {
+        self.service?.invitationImplement.sendInvitation(userId: user.userId, seatIndex: nil, callback: { [weak self ] error in
+            AUIToast.show(text: error == nil ? "邀请成功":"邀请失败")
+        })
+    }
 }
 
 extension AUIVoiceChatRoomView: AUIRoomGiftDialogEventsDelegate {
