@@ -10,7 +10,11 @@ import AUIKit
 
 open class AUIInvitationViewBinder: NSObject {
     
+    private var newApplyClosure: (() -> ())?
+    
     private weak var inviteView: AUIInvitationView?
+    
+    private weak var applyView: AUIApplyView?
     
     public weak var invitationDelegate: AUIInvitationServiceDelegate? {
         didSet {
@@ -27,14 +31,21 @@ open class AUIInvitationViewBinder: NSObject {
         }
     }
 
-    public func bind(inviteView: AUIInvitationView, invitationDelegate: AUIInvitationServiceDelegate, roomDelegate: AUIRoomManagerDelegate) {
+    public func bind(inviteView: AUIInvitationView,applyView: AUIApplyView, invitationDelegate: AUIInvitationServiceDelegate, roomDelegate: AUIRoomManagerDelegate,receiveApply: @escaping () -> Void) {
+        self.newApplyClosure = receiveApply
         self.inviteView = inviteView
+        self.applyView = applyView
         self.invitationDelegate = invitationDelegate
         self.roomDelegate = roomDelegate
     }
 }
 
 extension AUIInvitationViewBinder: AUIInvitationRespDelegate {
+    
+    public func onReceiveApplyUsersUpdate(users: [AUIUserCellUserDataProtocol]) {
+        //TODO: - 全量更新申请列表
+        self.newApplyClosure?()
+    }
     
     public func onInviteeListUpdate(inviteeList: [AUIUserCellUserDataProtocol]) {
         self.inviteView?.userList.removeAll()
@@ -71,18 +82,19 @@ extension AUIInvitationViewBinder: AUIInvitationRespDelegate {
     }
     
     public func onReceiveNewApply(userId: String, seatIndex: Int) {
-        AUIAlertView()
-            .theme_background(color: "CommonColor.black")
-            .isShowCloseButton(isShow: true)
-            .title(title: "申请上麦").content(content: seatIndex != -1 ? "用户\(userId)申请上\(seatIndex)号麦": "用户\(userId)申请上麦")
-            .titleColor(color: .white)
-            .rightButton(title: "同意")
-            .theme_rightButtonBackground(color: "CommonColor.primary")
-            .rightButtonTapClosure(onTap: {[weak self] text in
-                self?.invitationDelegate?.acceptApply(userId: AUIRoomContext.shared.currentUserInfo.userId, seatIndex: seatIndex, callback: { error in
-                    AUIToast.show(text: error == nil ? "同意申请成功":"同意申请失败")
-                })
-            }).show()
+        //TODO: - 替换为更新更多功能小红点 提示用户有新申请
+//        AUIAlertView()
+//            .theme_background(color: "CommonColor.black")
+//            .isShowCloseButton(isShow: true)
+//            .title(title: "申请上麦").content(content: seatIndex != -1 ? "用户\(userId)申请上\(seatIndex)号麦": "用户\(userId)申请上麦")
+//            .titleColor(color: .white)
+//            .rightButton(title: "同意")
+//            .theme_rightButtonBackground(color: "CommonColor.primary")
+//            .rightButtonTapClosure(onTap: {[weak self] text in
+//                self?.invitationDelegate?.acceptApply(userId: AUIRoomContext.shared.currentUserInfo.userId, seatIndex: seatIndex, callback: { error in
+//                    AUIToast.show(text: error == nil ? "同意申请成功":"同意申请失败")
+//                })
+//            }).show()
     }
     
     public func onApplyAccepted(userId: String) {

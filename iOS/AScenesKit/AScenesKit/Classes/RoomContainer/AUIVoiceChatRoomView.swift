@@ -66,7 +66,11 @@ import AUIKit
     
     private lazy var invitationView: AUIInvitationView = AUIInvitationView(frame: CGRect(x: 0, y: 0, width: AScreenWidth, height: 380))
     
+    private lazy var applyView: AUIApplyView = AUIApplyView(frame: CGRect(x: 0, y: 0, width: AScreenWidth, height: 380))
+    
     private lazy var invitationBinder: AUIInvitationViewBinder = AUIInvitationViewBinder()
+    
+    private lazy var moreActions: AUIMoreOperationView = AUIMoreOperationView(frame: CGRect(x: 0, y: 0, width: AScreenWidth, height: 360), datas: [AUIMoreOperationCellEntity()])
         
     public var onClickOffButton: (()->())?
 
@@ -146,17 +150,29 @@ import AUIKit
             self.roomInfoView.updateRoomInfo(withRoomId: roomInfo.roomId, roomName: roomInfo.roomName, ownerHeadImg: roomInfo.owner?.userAvatar)
         }
         
-        invitationBinder.bind(inviteView: self.invitationView, invitationDelegate: service.invitationImplement, roomDelegate: service.roomManagerImpl)
+        invitationBinder.bind(inviteView: self.invitationView, applyView: self.applyView, invitationDelegate: service.invitationImplement, roomDelegate: service.roomManagerImpl) { [weak self] in
+            self?.chatView.updateBottomBarRedDot(index: 0,show: true)
+        }
         invitationView.addActionHandler(actionHandler: self)
+        applyView.addActionHandler(actionHandler: self)
     }
 
 }
 
-extension AUIVoiceChatRoomView: AUIInvitationViewEventsDelegate {
-    public func inviteUser(user: AUIUserCellUserDataProtocol) {
-        self.service?.invitationImplement.sendInvitation(userId: user.userId, seatIndex: nil, callback: { [weak self ] error in
-            AUIToast.show(text: error == nil ? "邀请成功":"邀请失败")
-        })
+extension AUIVoiceChatRoomView: AUIUserOperationEventsDelegate {
+    public func operationUser(user: AUIUserCellUserDataProtocol,source: AUIUserOperationEventsSource) {
+        switch source {
+        case .invite:
+            self.service?.invitationImplement.sendInvitation(userId: user.userId, seatIndex: self.invitationView.index, callback: { error in
+                AUIToast.show(text: error == nil ? "邀请成功":"邀请失败")
+            })
+        case .apply:
+            self.service?.invitationImplement.sendApply(seatIndex: self.applyView.index, callback: { error in
+                AUIToast.show(text: error == nil ? "申请成功":"申请失败")
+            })
+        default:
+            break
+        }
     }
 }
 
@@ -186,6 +202,7 @@ extension AUIVoiceChatRoomView: AUIRoomVoiceChatViewEventsDelegate {
     public func bottomBarEvents(entity: AUIChatFunctionBottomEntity) {
         guard let index = entity.index else { return }
         switch index {
+        case 0: self.showMoreTabs()
         case 2: self.showGiftTabs()
         default:
             break
@@ -196,6 +213,12 @@ extension AUIVoiceChatRoomView: AUIRoomVoiceChatViewEventsDelegate {
         let theme = AUICommonDialogTheme()
         theme.contentControlColor = .pickerWithUIColors([UIColor.white])
         AUICommonDialog.show(contentView: self.giftsView,theme: theme)
+    }
+    
+    func showMoreTabs() {
+        let theme = AUICommonDialogTheme()
+        theme.contentControlColor = .pickerWithUIColors([UIColor.white])
+        AUICommonDialog.show(contentView: self.moreActions,theme: theme)
     }
     
 }
@@ -234,31 +257,11 @@ extension AUIVoiceChatRoomView: AUIMicSeatViewEventsDelegate {
     public func micSeatDidSelectedItem(index: Int) {
         guard let channelName = self.service?.channelName else { return }
         if AUIRoomContext.shared.isRoomOwner(channelName: channelName) {
-//            let listView = AUIRoomMemberListView()
-//            listView.aui_size =  CGSize(width: UIScreen.main.bounds.width, height: 562)
-//            listView.memberList = members
-//            listView.seatMap = seatMap
-            
+            self.invitationView.index = index
             AUICommonDialog.show(contentView: self.invitationView, theme: AUICommonDialogTheme())
-//            self.memberListView = listView
         } else {
-            AUIAlertView()
-                .theme_background(color: "CommonColor.black")
-                .isShowCloseButton(isShow: true)
-                .title(title: "申请上麦")
-                .titleColor(color: .white)
-                .rightButton(title: "确定")
-                .theme_rightButtonBackground(color: "CommonColor.primary")
-                .rightButtonTapClosure(onTap: {[weak self] text in
-                    self?.service?.invitationImplement.sendApply(seatIndex: index, callback: { error in
-                        if error == nil {
-                            self?.micSeatBinder.enterMic(seatIndex: index)
-                        } else {
-                            AUIToast.show(text: "Apply failed!")
-                        }
-                    })
-                }).show()
-            
+            self.applyView.index = index
+            AUICommonDialog.show(contentView: self.applyView, theme: AUICommonDialogTheme())
         }
     }
     
