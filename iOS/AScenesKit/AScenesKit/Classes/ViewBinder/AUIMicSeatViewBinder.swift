@@ -20,7 +20,27 @@ public class AUIMicSeatViewBinder: NSObject {
     
     var speakers: [AgoraRtcAudioVolumeInfo] = [] {
         didSet {
-            //TODO(zhujichao): update speakers to micSeatView
+            for (idx,micSeat) in micSeatArray.enumerated() {
+                if let userId = micSeat.user?.userId {
+                    for speaker in speakers {
+                        var index: Int?
+                        if speaker.uid == 0 {
+                            if AUIRoomContext.shared.currentUserInfo.userId == userId {
+                                index = idx
+                            }
+                        } else {
+                            if "\(speaker.uid)" == userId {
+                                index = idx
+                            }
+                        }
+                        if index != nil {
+                            DispatchQueue.main.async {
+                                self.micSeatView?.updateMicVolume(index: index!, volume: Int(speaker.volume))
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
     private var micSeatArray: [AUIMicSeatInfo] = []

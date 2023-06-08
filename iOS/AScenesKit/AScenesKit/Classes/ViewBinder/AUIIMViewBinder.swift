@@ -43,7 +43,7 @@ import AUIKit
             AUIToast.show(text: "ChatroomId can't be empty,when you send message.")
             return
         }
-        self.chatDelegate?.sendMessage(roomId: channelName, text: text, userInfo: AUIRoomContext.shared.currentUserInfo, completion: { message, error in
+        self.chatDelegate?.sendMessage(roomId: channelName, text: text, completion: { message, error in
             if error == nil,message != nil {
                 self.chatView?.showNewMessage(entity: self.convertTextMessageToRenderEntity(message: message!))
             } else {

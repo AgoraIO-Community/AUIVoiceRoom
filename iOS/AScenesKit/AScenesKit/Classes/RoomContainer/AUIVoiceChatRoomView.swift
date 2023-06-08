@@ -70,7 +70,7 @@ import AUIKit
     
     private lazy var invitationBinder: AUIInvitationViewBinder = AUIInvitationViewBinder()
     
-    private lazy var moreActions: AUIMoreOperationView = AUIMoreOperationView(frame: CGRect(x: 0, y: 0, width: AScreenWidth, height: 360), datas: [AUIMoreOperationCellEntity()])
+    private lazy var moreActions: AUIMoreOperationView = AUIMoreOperationView(frame: CGRect(x: 0, y: 50, width: AScreenWidth, height: 360), datas: [AUIMoreOperationCellEntity()])
         
     public var onClickOffButton: (()->())?
 
@@ -157,8 +157,19 @@ import AUIKit
         }
         invitationView.addActionHandler(actionHandler: self)
         applyView.addActionHandler(actionHandler: self)
+        
+        moreActions.addActionHandler(actionHandler: self)
     }
 
+}
+
+extension AUIVoiceChatRoomView: AUIMoreOperationViewEventsDelegate {
+    public func onItemSelected(entity: AUIMoreOperationCellDataProtocol) {
+        AUICommonDialog.hidden()
+        let theme = AUICommonDialogTheme()
+        theme.contentControlColor = .pickerWithUIColors([UIColor.white])
+        AUICommonDialog.show(contentView: self.applyView,theme: theme)
+    }
 }
 
 extension AUIVoiceChatRoomView: AUIUserOperationEventsDelegate {
@@ -212,12 +223,14 @@ extension AUIVoiceChatRoomView: AUIRoomVoiceChatViewEventsDelegate {
     }
     
     func showGiftTabs() {
+        AUICommonDialog.hidden()
         let theme = AUICommonDialogTheme()
         theme.contentControlColor = .pickerWithUIColors([UIColor.white])
         AUICommonDialog.show(contentView: self.giftsView,theme: theme)
     }
     
     func showMoreTabs() {
+        AUICommonDialog.hidden()
         let theme = AUICommonDialogTheme()
         theme.contentControlColor = .pickerWithUIColors([UIColor.white])
         AUICommonDialog.show(contentView: self.moreActions,theme: theme)
