@@ -58,6 +58,7 @@ open class AUIVoiceChatRoomService: NSObject {
             self.rtcEngine = self._createRtcEngine(commonConfig: roomManager.commonConfig)
             rtcEngineCreateBySercice = true
         }
+        rtcEngine?.enableAudioVolumeIndication(200, smooth: 3, reportVad: false)
         self.roomManagerImpl = roomManager
         self.rtmManager = roomManager.rtmManager
         self.userImpl.bindRespDelegate(delegate: self)
