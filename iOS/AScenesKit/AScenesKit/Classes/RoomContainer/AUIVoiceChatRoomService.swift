@@ -38,6 +38,8 @@ open class AUIVoiceChatRoomService: NSObject {
     
     private var rtcJoinClousure: ((Error?)->())?
     
+    public var reportAudioVolumeIndicationOfSpeakers:(([AgoraRtcAudioVolumeInfo], Int)->())?
+    
     deinit {
         aui_info("deinit AUIVoiceChatRoomService", tag: "AUIVoiceChatRoomService")
     }
@@ -214,6 +216,7 @@ extension AUIVoiceChatRoomService: AgoraRtcEngineDelegate {
     }
     
     public func rtcEngine(_ engine: AgoraRtcEngineKit, reportAudioVolumeIndicationOfSpeakers speakers: [AgoraRtcAudioVolumeInfo], totalVolume: Int) {
+        reportAudioVolumeIndicationOfSpeakers?(speakers, totalVolume)
     }
 }
 

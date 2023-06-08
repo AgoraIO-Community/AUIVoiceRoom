@@ -131,7 +131,9 @@ import AUIKit
         micSeatBinder.bindVoiceChat(micSeatView: micSeatView, eventsDelegate: self,
                            micSeatService: service.micSeatImpl,
                            userService: service.userImpl)
-        
+        service.reportAudioVolumeIndicationOfSpeakers = { [weak self] speckers, totalVolumes in
+            self?.micSeatBinder.speakers = speckers
+        }
         
         userBinder.bind(userView: membersView,
                         userService: service.userImpl,

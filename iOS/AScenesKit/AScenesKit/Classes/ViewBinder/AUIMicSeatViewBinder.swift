@@ -18,6 +18,11 @@ public class AUIMicSeatViewBinder: NSObject {
     
     @AUserDefault("MicSeatCount",defaultValue: 8) var seatCount
     
+    var speakers: [AgoraRtcAudioVolumeInfo] = [] {
+        didSet {
+            //TODO(zhujichao): update speakers to micSeatView
+        }
+    }
     private var micSeatArray: [AUIMicSeatInfo] = []
     private var userMap: [String: AUIUserInfo] = [:]
     private var rtcEngine: AgoraRtcEngineKit!

@@ -7,7 +7,7 @@ target 'AUIKitVoiceRoom' do
 
   # Pods for AUIKitVoiceRoom
   pod 'AScenesKit', :path => '../AScenesKit'
-  pod 'AUIKit', :path => '../../../AUIKit2/iOS'
+  pod 'AUIKit', :path => '../../../AUIKit/iOS'
   pod 'AgoraRtcEngine_iOS', :path => './libs'
   pod 'AgoraLyricsScore', '1.1.1-beta-3'
 
