@@ -125,4 +125,8 @@ import AUIKit
         return entity
     }
     
+    public func updateBottomBarRedDot(index: Int,show: Bool) {
+        self.datas[safe: index]?.selected = show
+        self.bottomBar.toolBar.reloadData()
+    }
 }
