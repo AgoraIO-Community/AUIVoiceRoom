@@ -44,11 +44,11 @@ import AUIKit
     private lazy var micSeatBinder: AUIMicSeatViewBinder = AUIMicSeatViewBinder(rtcEngine: self.service!.rtcEngine)
 
     private lazy var chatView: AUIRoomVoiceChatView = {
-        AUIRoomVoiceChatView(frame: CGRect(x: 0, y: self.micSeatView.frame.maxY+10, width: self.frame.width, height: self.frame.height-self.micSeatView.frame.maxY-CGFloat(ABottomBarHeight)))
+        AUIRoomVoiceChatView(frame: CGRect(x: 0, y: self.micSeatView.frame.maxY+10, width: self.frame.width, height: self.frame.height-self.micSeatView.frame.maxY-CGFloat(ABottomBarHeight)),channelName: self.service?.channelName ?? "")
     }()
 
     private lazy var receiveGift: AUIReceiveGiftsView = {
-        AUIReceiveGiftsView(frame: CGRect(x: 10, y: self.chatView.frame.minY - (AScreenWidth / 9.0 * 2), width: AScreenWidth / 3.0 * 2 + 20, height: AScreenWidth / 9.0 * 1.8)).backgroundColor(.clear).tag(1111)
+        AUIReceiveGiftsView(frame: CGRect(x: 10, y: self.chatView.frame.minY - (AScreenWidth / 9.0 * 2), width: AScreenWidth / 3.0 * 2 + 20, height: AScreenWidth / 9.0 * 2),source: nil).backgroundColor(.clear).tag(1111)
     }()
 
     private lazy var giftsView: AUIRoomGiftDialog = {
@@ -213,9 +213,9 @@ extension AUIVoiceChatRoomView: AUIRoomVoiceChatViewEventsDelegate {
     }
     
     public func bottomBarEvents(entity: AUIChatFunctionBottomEntity) {
-        guard let index = entity.index else { return }
-        switch index {
+        switch entity.index {
         case 0: self.showMoreTabs()
+        case 1: self.muteLocal()
         case 2: self.showGiftTabs()
         default:
             break
@@ -234,6 +234,20 @@ extension AUIVoiceChatRoomView: AUIRoomVoiceChatViewEventsDelegate {
         let theme = AUICommonDialogTheme()
         theme.contentControlColor = .pickerWithUIColors([UIColor.white])
         AUICommonDialog.show(contentView: self.moreActions,theme: theme)
+    }
+    
+    func muteLocal() {
+        guard let entity = self.chatView.datas[safe: 1] else {
+            return
+        }
+        entity.showRedDot = false
+        entity.selected = !entity.selected
+        self.service?.userImpl.muteUserAudio(isMute: entity.selected, callback: { [weak self] error in
+            if error == nil {
+                self?.chatView.updateBottomBarRedDot(index: 1, show: false)
+            }
+        })
+        
     }
     
 }

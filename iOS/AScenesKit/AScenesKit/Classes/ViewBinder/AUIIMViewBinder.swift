@@ -59,15 +59,16 @@ import AUIKit
         self.chatView?.showNewMessage(entity: self.convertTextMessageToRenderEntity(message: message))
     }
     
-    public func onUserDidJoinRoom(roomId: String, user: AUIUserThumbnailInfo) {
-        self.chatView?.showNewMessage(entity: self.convertJoinMessageToRenderEntity(user: user))
+    public func onUserDidJoinRoom(roomId: String, message: AgoraChatTextMessage) {
+        self.chatView?.showNewMessage(entity: self.convertJoinMessageToRenderEntity(message: message))
     }
     
     private func convertTextMessageToRenderEntity(message: AgoraChatTextMessage) -> AUIChatEntity {
         let entity = AUIChatEntity()
-        entity.userName = message.user?.userName
+        entity.messageId = message.messageId
+        entity.user = message.user ?? AUIUserThumbnailInfo()
         entity.content = message.content
-        entity.chatId = message.user?.userId
+        entity.messageId = message.messageId
         entity.joined = false
         entity.attributeContent = entity.attributeContent
         entity.width = entity.width
@@ -75,11 +76,11 @@ import AUIKit
         return entity
     }
     
-    private func convertJoinMessageToRenderEntity(user: AUIUserThumbnailInfo) -> AUIChatEntity {
+    private func convertJoinMessageToRenderEntity(message: AgoraChatTextMessage) -> AUIChatEntity {
         let entity = AUIChatEntity()
-        entity.userName = user.userName
+        entity.messageId = message.messageId
+        entity.user = message.user ?? AUIUserThumbnailInfo()
         entity.content = "Joined"
-        entity.chatId = user.userId
         entity.joined = true
         entity.attributeContent = entity.attributeContent
         entity.width = entity.width

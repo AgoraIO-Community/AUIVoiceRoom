@@ -43,7 +43,7 @@ public class AUIMicSeatViewBinder: NSObject {
             }
         }
     }
-    private var micSeatArray: [AUIMicSeatInfo] = []
+    public private(set) var micSeatArray: [AUIMicSeatInfo] = []
     private var userMap: [String: AUIUserInfo] = [:]
     private var rtcEngine: AgoraRtcEngineKit!
     private weak var micSeatView: AUIMicSeatView?

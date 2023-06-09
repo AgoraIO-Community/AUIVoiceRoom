@@ -26,6 +26,8 @@ import AUIKit
         
     private var eventHandlers: NSHashTable<AnyObject> = NSHashTable<AnyObject>.weakObjects()
     
+    private var channelName = ""
+    
     public func addActionHandler(actionHandler: AUIRoomVoiceChatViewEventsDelegate) {
         if self.eventHandlers.contains(actionHandler) {
             return
@@ -40,11 +42,12 @@ import AUIKit
     
     var datas: [AUIChatFunctionBottomEntity] {
         var entities = [AUIChatFunctionBottomEntity]()
-        let names = ["ellipsis_vertical","mic_slash","gift_color","thumb_up_color"]
+        let names = ["ellipsis_vertical","mic","gift_color","thumb_up_color"]
+        let selectedNames = ["ellipsis_vertical","unmic","gift_color","thumb_up_color"]
         for i in 0...3 {
             let entity = AUIChatFunctionBottomEntity()
             entity.selected = false
-            entity.selectedImage = nil
+            entity.selectedImage = UIImage.aui_Image(named: selectedNames[i])
             entity.normalImage = UIImage.aui_Image(named: names[i])
             entity.index = i
             entities.append(entity)
@@ -64,8 +67,13 @@ import AUIKit
         AUIChatInputBar(frame: CGRect(x: 0, y: AScreenHeight, width: AScreenWidth, height: 60),config: AUIChatInputBarConfig()).backgroundColor(.white)
     }()
 
-    public override init(frame: CGRect) {
+    override init(frame: CGRect) {
         super.init(frame: frame)
+    }
+    
+    @objc public convenience init(frame: CGRect,channelName: String) {
+        self.init(frame: frame)
+        self.channelName = channelName
         self.addSubview(self.messageView)
         self.addSubview(self.bottomBar)
         getWindow()?.addSubview(self.inputBar)
@@ -83,8 +91,8 @@ import AUIKit
             self?.eventHandlers.allObjects.forEach({ handler in
                 handler.bottomBarEvents(entity: entity)
             })
-            guard let `self` = self,let idx = entity.index else { return }
-            switch idx {
+            guard let `self` = self else { return }
+            switch entity.index {
             case 3:
                 self.messageView.showLikeAnimation()
             default:
@@ -115,10 +123,10 @@ import AUIKit
     
     func startMessage(_ text: String?) -> AUIChatEntity {
         let entity = AUIChatEntity()
-        entity.userName = "owner"
+        let user = AUIRoomContext.shared.roomInfoMap[self.channelName]?.owner ?? AUIUserThumbnailInfo()
+        entity.user = user
         entity.content = text == nil ? "Welcome to the voice chat room! Pornography, gambling or violence is strictly prohibited in the room.":text
         entity.attributeContent = entity.attributeContent
-        entity.chatId = "123"
         entity.width = entity.width
         entity.height = entity.height
         entity.joined = false
@@ -126,7 +134,7 @@ import AUIKit
     }
     
     public func updateBottomBarRedDot(index: Int,show: Bool) {
-        self.datas[safe: index]?.selected = show
-        self.bottomBar.toolBar.reloadData()
+        self.datas[safe: index]?.showRedDot = show
+        self.bottomBar.toolBar.reloadItems(at: [IndexPath(item: index, section: 0)])
     }
 }
