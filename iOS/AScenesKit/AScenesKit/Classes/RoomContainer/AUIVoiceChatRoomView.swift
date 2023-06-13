@@ -162,7 +162,6 @@ import AUIKit
         }
         
         invitationBinder.bind(inviteView: self.invitationView, applyView: self.applyView, invitationDelegate: service.invitationImplement, roomDelegate: service.roomManagerImpl) { [weak self] in
-            self?.chatView.updateBottomBarRedDot(index: 0,show: true)
             self?.requestUsers(users: $0)
         }
         invitationView.addActionHandler(actionHandler: self)
@@ -199,6 +198,7 @@ extension AUIVoiceChatRoomView: AUIRoomMemberListViewEventsDelegate {
 extension AUIVoiceChatRoomView: AUIMoreOperationViewEventsDelegate {
     public func onItemSelected(entity: AUIMoreOperationCellDataProtocol) {
         AUICommonDialog.hidden()
+        
         AUICommonDialog.show(contentView: self.applyView,theme: AUICommonDialogTheme())
     }
 }
@@ -208,27 +208,15 @@ extension AUIVoiceChatRoomView: AUIUserOperationEventsDelegate {
     private func requestUsers(users: [String:Int]) {
         guard let channelName = self.service?.channelName else { return }
         if !AUIRoomContext.shared.isRoomOwner(channelName: channelName) { return }
+        self.chatView.updateBottomBarRedDot(index: 0,show: true)
         let userIds = users.keys.map {
             $0
         }
         if userIds.isEmpty { return }
         self.service?.userImpl.getUserInfoList(roomId: channelName, userIdList: userIds, callback: { [weak self] error, userInfos in
             if error == nil,userInfos != nil {
-                var applicationList = [AUIUserThumbnailInfo]()
-                for info in userInfos! {
-                    let user = AUIUserThumbnailInfo()
-                    user.userId = info.userId
-                    user.userName = info.userName
-                    user.userAvatar = info .userAvatar
-                    user.seatIndex = users[user.userId] ?? -1
-                    if let micUser = self?.micSeatBinder.userMap[user.userId],micUser.userId != user.userId {
-                        applicationList.append(user)
-                    }
-                }
-                self?.applyView.userList.removeAll()
-                self?.applyView.userList = applicationList.filter({
-                    $0.userId != AUIRoomContext.shared.currentUserInfo.userId
-                })
+                self?.membersView.members = userInfos!
+                self?.applyView.refreshUsers(users: self?.filterMicUsers() ?? [])
             } else {
                 AUIToast.show(text: "Request application list failed!")
             }
@@ -349,16 +337,7 @@ extension AUIVoiceChatRoomView: AUIMicSeatViewEventsDelegate {
         guard let channelName = self.service?.channelName else { return }
         if AUIRoomContext.shared.isRoomOwner(channelName: channelName) {
             self.invitationView.index = index
-            self.invitationView.userList = self.membersView.members.filter({
-                $0.userId != AUIRoomContext.shared.currentUserInfo.userId
-            })
-            for mic in self.micSeatBinder.micSeatArray {
-                if let userId = mic.user?.userId {
-                    self.invitationView.userList = self.invitationView.userList.filter({
-                        $0.userId != userId
-                    })
-                }
-            }
+            self.invitationView.refreshUsers(users: self.filterMicUsers())
             AUICommonDialog.show(contentView: self.invitationView, theme: AUICommonDialogTheme())
         } else {
             AUIAlertView.theme_defaultAlert()
@@ -376,6 +355,26 @@ extension AUIVoiceChatRoomView: AUIMicSeatViewEventsDelegate {
                 }).show()
         }
     }
+    
+    private func filterMicUsers() -> [AUIUserCellUserDataProtocol] {
+        let members = self.membersView.members.filter({
+            $0.userId != AUIRoomContext.shared.currentUserInfo.userId
+        })
+        var users = [AUIUserCellUserDataProtocol]()
+        var onMicUserIds = [String]()
+        for mic in self.micSeatBinder.micSeatArray {
+            if let userId = mic.user?.userId {
+                onMicUserIds.append(userId)
+            }
+        }
+        for user in members {
+            if !onMicUserIds.contains(user.userId) {
+                users.append(user)
+            }
+        }
+        return users
+    }
+    
     
     @objc private func didClickOffButton(){
         self.onClickOffButton?()
