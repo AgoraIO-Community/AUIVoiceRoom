@@ -44,7 +44,7 @@ public class AUIMicSeatViewBinder: NSObject {
         }
     }
     public private(set) var micSeatArray: [AUIMicSeatInfo] = []
-    private var userMap: [String: AUIUserInfo] = [:]
+    public private(set) var userMap: [String: AUIUserInfo] = [:]
     private var rtcEngine: AgoraRtcEngineKit!
     private weak var micSeatView: AUIMicSeatView?
     
@@ -203,6 +203,38 @@ public class AUIMicSeatViewBinder: NSObject {
         return item
     }
     
+    private func inviteDialogItem(seatInfo: AUIMicSeatInfo, callback: @escaping ()->()) -> AUIActionSheetItem {
+        let item = AUIActionSheetThemeItem()
+        item.title = aui_localized("Invite to mic")
+        item.titleColor = "CommonColor.danger"
+        item.callback = {
+            self.eventsDelegate?.micSeatDidSelectedItem(index: Int(seatInfo.seatIndex))
+            callback()
+        }
+        return item
+    }
+    
+    private func applyDialogItem(seatInfo: AUIMicSeatInfo, callback: @escaping ()->()) -> AUIActionSheetItem {
+        let item = AUIActionSheetThemeItem()
+        item.title = aui_localized("Apply to mic")
+        item.titleColor = "CommonColor.danger"
+        item.callback = {
+            self.eventsDelegate?.micSeatDidSelectedItem(index: Int(seatInfo.seatIndex))
+            callback()
+        }
+        return item
+    }
+    
+    private func lookupUserInfoDialogItem(seatInfo: AUIMicSeatInfo, callback: @escaping ()->()) -> AUIActionSheetItem {
+        let item = AUIActionSheetThemeItem()
+        item.title = "UserInfo"
+        item.titleColor = "CommonColor.danger"
+        item.callback = {
+            callback()
+        }
+        return item
+    }
+    
     public func getDialogItems(seatInfo: AUIMicSeatInfo, callback: @escaping ()->()) ->[AUIActionSheetItem] {
         var items = [AUIActionSheetItem]()
         
@@ -220,9 +252,9 @@ public class AUIMicSeatViewBinder: NSObject {
             if isEmptySeat {
                 items.append(muteAudioDialogItem(seatInfo: seatInfo, callback:callback))
                 items.append(lockDialogItem(seatInfo: seatInfo, callback:callback))
+                items.append(inviteDialogItem(seatInfo: seatInfo, callback: callback))
             } else {
                 if isCurrentUser {
-                    items.append(muteAudioDialogItem(seatInfo: seatInfo, callback:callback))
                 } else {  //other user
                     items.append(kickDialogItem(seatInfo: seatInfo, callback:callback))
                     items.append(muteAudioDialogItem(seatInfo: seatInfo, callback:callback))
@@ -232,14 +264,16 @@ public class AUIMicSeatViewBinder: NSObject {
         } else {
             if isEmptySeat {
                 if currentUserAlreadyEnterSeat {
+                    items.append(muteAudioDialogItem(seatInfo: seatInfo, callback:callback))
                 } else {
-                    items.append(enterDialogItem(seatInfo: seatInfo, callback:callback))
+                    items.append(applyDialogItem(seatInfo: seatInfo, callback: callback))
                 }
             } else {
                 if isCurrentUser {
                     items.append(leaveDialogItem(seatInfo: seatInfo, callback:callback))
                     items.append(muteAudioDialogItem(seatInfo: seatInfo, callback:callback))
                 } else {  //other user
+                    items.append(lookupUserInfoDialogItem(seatInfo: seatInfo, callback: callback))
                 }
             }
         }
@@ -350,7 +384,24 @@ extension AUIMicSeatViewBinder: AUIMicSeatViewDelegate {
     }
     
     public func onItemDidClick(view: AUIMicSeatView, seatIndex: Int) {
-        self.eventsDelegate?.micSeatDidSelectedItem(index: seatIndex)
+        let micSeat = micSeatArray[seatIndex]
+
+        let dialogItems = getDialogItems(seatInfo: micSeat) {
+            AUICommonDialog.hidden()
+        }
+        guard dialogItems.count > 0 else {return}
+        var headerInfo: AUIActionSheetHeaderInfo? = nil
+        if let user = micSeat.user, user.userId.count > 0 {
+            headerInfo = AUIActionSheetHeaderInfo()
+            headerInfo?.avatar = user.userAvatar
+            headerInfo?.title = user.userName
+            headerInfo?.subTitle = micSeat.seatIndexDesc()
+        }
+        let dialogView = AUIActionSheet(title: aui_localized("managerSeat"),
+                                        items: dialogItems,
+                                        headerInfo: headerInfo)
+        dialogView.setTheme(theme: AUIActionSheetTheme())
+        AUICommonDialog.show(contentView: dialogView, theme: AUICommonDialogTheme())
     }
     
     public func onMuteVideo(view: AUIMicSeatView, seatIndex: Int, canvas: UIView, isMuteVideo: Bool) {

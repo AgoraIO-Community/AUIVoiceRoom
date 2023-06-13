@@ -20,6 +20,10 @@ public func auikaraoke_localized(_ string: String) -> String {
 /// 用户列表cell
 public class AUIRoomMemberUserCell: UITableViewCell {
     
+    public var actionClosure: ((AUIUserCellUserDataProtocol?) -> ())?
+    
+    private var user: AUIUserCellUserDataProtocol?
+    
     public lazy var avatarImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.theme_width = "MemberUserCell.avatarWidth"
@@ -43,6 +47,11 @@ public class AUIRoomMemberUserCell: UITableViewCell {
         return label
     }()
     
+    lazy var action: UIButton = {
+        UIButton(type: .custom).frame(CGRect(x: self.contentView.frame.width - 80, y: (self.contentView.frame.height-28)/2.0, width: 80, height: 28)).setGradient([UIColor(red: 0, green: 0.62, blue: 1, alpha: 1),UIColor(red: 0.487, green: 0.358, blue: 1, alpha: 1)], [ CGPoint(x: 0, y: 0.25),  CGPoint(x: 1, y: 0.75)]).title("Kick", .normal).textColor(.white, .normal).font(.systemFont(ofSize: 14, weight: .medium)).addTargetFor(self, action: #selector(sendAction), for: .touchUpInside).cornerRadius(14)
+    }()
+    
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         _loadSubViews()
@@ -61,6 +70,7 @@ public class AUIRoomMemberUserCell: UITableViewCell {
         contentView.addSubview(avatarImageView)
         contentView.addSubview(userNameLabel)
         contentView.addSubview(seatNoLabel)
+        contentView.addSubview(action)
     }
     
     public override func layoutSubviews() {
@@ -75,22 +85,51 @@ public class AUIRoomMemberUserCell: UITableViewCell {
         
         seatNoLabel.aui_left = userNameLabel.aui_left
         seatNoLabel.aui_bottom = bounds.height - 18
+        self.action.frame = CGRect(x: self.contentView.frame.width - 90, y: (self.contentView.frame.height-28)/2.0, width: 80, height: 28)
+        self.action.aui_centerY = self.contentView.aui_centerY
     }
     
-    public func setUserInfo(withAvatar avatar: String?, title: String?, subTitle: String) {
-        avatarImageView.kf.setImage(with: URL(string: avatar ?? ""), placeholder: UIImage.aui_Image(named: "aui_micseat_dialog_avatar_idle"))
-        userNameLabel.text = title
-        seatNoLabel.text = subTitle
+    public func setUserInfo(user: AUIUserCellUserDataProtocol?) {
+        self.user = user
+        avatarImageView.kf.setImage(with: URL(string: user?.userAvatar ?? ""), placeholder: UIImage.aui_Image(named: "aui_micseat_dialog_avatar_idle"))
+        userNameLabel.text = user?.userName
+        if let index = user?.seatIndex ,index >= 0 {
+            seatNoLabel.text = "\(index)号麦"
+        } else {
+            seatNoLabel.text = ""
+        }
+        //TODO: - owner hidden action
+//        self.action.isHidden = user.isOwner
         userNameLabel.sizeToFit()
         seatNoLabel.sizeToFit()
     }
     
-    
+    @objc private func sendAction() {
+        self.actionClosure?(self.user)
+    }
 }
 
+@objc public protocol AUIRoomMemberListViewEventsDelegate:NSObjectProtocol {
+    func kickUser(user: AUIUserCellUserDataProtocol)
+}
 
 /// 用户列表
 public class AUIRoomMemberListView: UIView {
+    
+    private var eventHandlers: NSHashTable<AnyObject> = NSHashTable<AnyObject>.weakObjects()
+    
+    private var channelName = ""
+    
+    public func addActionHandler(actionHandler: AUIRoomMemberListViewEventsDelegate) {
+        if self.eventHandlers.contains(actionHandler) {
+            return
+        }
+        self.eventHandlers.add(actionHandler)
+    }
+
+    public func removeEventHandler(actionHandler: AUIRoomMemberListViewEventsDelegate) {
+        self.eventHandlers.remove(actionHandler)
+    }
     
     public var memberList: [AUIUserCellUserDataProtocol] = [] {
         didSet {
@@ -144,6 +183,10 @@ public class AUIRoomMemberListView: UIView {
         tableView.dataSource = self
     }
     
+    public func refreshView() {
+        self.tableView.reloadData()
+    }
+    
     public override func layoutSubviews() {
         super.layoutSubviews()
         tableView.frame = CGRect(x: 0, y: 60, width: bounds.width, height: bounds.height)
@@ -166,10 +209,16 @@ extension AUIRoomMemberListView: UITableViewDelegate, UITableViewDataSource {
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell: AUIRoomMemberUserCell = tableView.dequeueReusableCell(withIdentifier: kMemberListCellID, for: indexPath) as! AUIRoomMemberUserCell
-        let user = memberList[indexPath.row]
-        let seatIdx = seatMap[user.userId] ?? -1
+        let user = memberList[safe: indexPath.row]
+        let seatIdx = seatMap[user?.userId ?? ""] ?? -1
         let subTitle = seatIdx >= 0 ? String(format: auikaraoke_localized("micSeatDesc1Format"), seatIdx + 1) : ""
-        cell.setUserInfo(withAvatar: user.userAvatar, title: user.userName, subTitle: subTitle)
+        cell.actionClosure = { [weak self] user in
+            guard let `self` = self,let kickUser = user else { return }
+            self.eventHandlers.allObjects.forEach({
+                $0.kickUser(user: kickUser)
+            })
+        }
+        cell.setUserInfo(user: user)
         return cell
     }
 }

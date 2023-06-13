@@ -10,7 +10,7 @@ import AUIKit
 
 open class AUIInvitationViewBinder: NSObject {
     
-    private var newApplyClosure: (() -> ())?
+    private var newApplyClosure: (([String:Int]) -> ())?
     
     private weak var inviteView: AUIInvitationView?
     
@@ -23,7 +23,6 @@ open class AUIInvitationViewBinder: NSObject {
         }
     }
     
-    
     public weak var roomDelegate: AUIRoomManagerDelegate? {
         didSet {
             oldValue?.unbindRespDelegate(delegate: self)
@@ -31,31 +30,33 @@ open class AUIInvitationViewBinder: NSObject {
         }
     }
 
-    public func bind(inviteView: AUIInvitationView,applyView: AUIApplyView, invitationDelegate: AUIInvitationServiceDelegate, roomDelegate: AUIRoomManagerDelegate,receiveApply: @escaping () -> Void) {
+    public func bind(inviteView: AUIInvitationView,applyView: AUIApplyView, invitationDelegate: AUIInvitationServiceDelegate, roomDelegate: AUIRoomManagerDelegate,receiveApply: @escaping ([String:Int]) -> Void) {
         self.newApplyClosure = receiveApply
         self.inviteView = inviteView
         self.applyView = applyView
         self.invitationDelegate = invitationDelegate
         self.roomDelegate = roomDelegate
+        self.invitationDelegate?.bindRespDelegate(delegate: self)
     }
 }
 
 extension AUIInvitationViewBinder: AUIInvitationRespDelegate {
     
-    public func onReceiveApplyUsersUpdate(users: [AUIUserCellUserDataProtocol]) {
+    public func onReceiveApplyUsersUpdate(users: [String:Int]) {
         //TODO: - 全量更新申请列表
-        self.newApplyClosure?()
+        self.newApplyClosure?(users)
     }
     
-    public func onInviteeListUpdate(inviteeList: [AUIUserCellUserDataProtocol]) {
+    public func onInviteeListUpdate(inviteeList: [String:Int]) {
         self.inviteView?.userList.removeAll()
-        self.inviteView?.userList = inviteeList
+//        self.inviteView?.userList = inviteeList
         self.inviteView?.tableView.reloadData()
     }
     
     public func onReceiveNewInvitation(userId: String, seatIndex: Int) {
-        AUIAlertView()
-            .theme_background(color: "CommonColor.black")
+        AUIAlertView
+            .theme_defaultAlert()
+            .contentTextAligment(textAlignment: .center)
             .isShowCloseButton(isShow: true)
             .title(title: "邀请上麦").content(content: seatIndex != -1 ? "房主邀请您上\(seatIndex)号麦": "房主邀请您上麦")
             .titleColor(color: .white)
@@ -71,6 +72,12 @@ extension AUIInvitationViewBinder: AUIInvitationRespDelegate {
     
     public func onInviteeAccepted(userId: String) {
         AUIToast.show(text: "用户\(userId)已同意邀请！")
+        self.applyView?.userList = self.applyView?.userList.filter({
+            $0.userId != userId
+        }) ?? []
+        self.inviteView?.userList = self.inviteView?.userList.filter({
+            $0.userId != userId
+        }) ?? []
     }
     
     public func onInviteeRejected(userId: String) {
@@ -99,6 +106,12 @@ extension AUIInvitationViewBinder: AUIInvitationRespDelegate {
     
     public func onApplyAccepted(userId: String) {
         AUIToast.show(text: "房主已接受您的申请！")
+        self.inviteView?.userList = self.inviteView?.userList.filter({
+            $0.userId != AUIRoomContext.shared.currentUserInfo.userId
+        }) ?? []
+        self.applyView?.userList = self.applyView?.userList.filter({
+            $0.userId != AUIRoomContext.shared.currentUserInfo.userId
+        }) ?? []
     }
     
     public func onApplyRejected(userId: String) {

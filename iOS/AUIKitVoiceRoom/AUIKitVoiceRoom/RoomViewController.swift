@@ -37,10 +37,11 @@ class RoomViewController: UIViewController {
                 .rightButton(title: "确定")
                 .rightButtonTapClosure {
                     guard let self = self else {return}
+                    AUIToast.hidden(delay:0)
+                    AUICommonDialog.hidden()
                     self.karaokeView?.onBackAction()
                     self.navigationController?.popViewController(animated: true)
                     aui_info("rightButtonTapClosure", tag: "RoomViewController")
-                    AUIToast.hidden(delay:0)
                 }.leftButtonTapClosure {
                     aui_info("leftButtonTapClosure", tag: "RoomViewController")
                 }
@@ -76,6 +77,7 @@ class RoomViewController: UIViewController {
         VoiceChatUIKit.shared.unsubscribeError(roomId: roomInfo?.roomId ?? "", delegate: self)
         VoiceChatUIKit.shared.unbindRespDelegate(delegate: self)
         AUIToast.hidden(delay:0)
+        AUICommonDialog.hidden()
     }
     
     override func willMove(toParent parent: UIViewController?) {
@@ -165,6 +167,7 @@ extension RoomViewController: AUIRoomManagerRespDelegate {
             .rightButton(title: "确认")
             .rightButtonTapClosure(onTap: {[weak self] text in
                 guard let self = self else { return }
+                AUICommonDialog.hidden()
                 self.karaokeView?.onBackAction()
                 self.navigationController?.popViewController(animated: true)
             })

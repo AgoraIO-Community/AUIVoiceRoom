@@ -134,7 +134,7 @@ import AUIKit
     }
     
     public func updateBottomBarRedDot(index: Int,show: Bool) {
-        self.datas[safe: index]?.showRedDot = show
+        self.bottomBar.datas[safe: index]?.showRedDot = show
         self.bottomBar.toolBar.reloadItems(at: [IndexPath(item: index, section: 0)])
     }
 }

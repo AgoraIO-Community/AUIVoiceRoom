@@ -70,7 +70,13 @@ import AUIKit
     
     private lazy var invitationBinder: AUIInvitationViewBinder = AUIInvitationViewBinder()
     
-    private lazy var moreActions: AUIMoreOperationView = AUIMoreOperationView(frame: CGRect(x: 0, y: 50, width: AScreenWidth, height: 360), datas: [AUIMoreOperationCellEntity()])
+    private lazy var moreActions: AUIMoreOperationView = AUIMoreOperationView(frame: CGRect(x: 0, y: 50, width: AScreenWidth, height: 360), datas: AUIRoomContext.shared.isRoomOwner(channelName: self.service?.channelName ?? "") ? [AUIMoreOperationCellEntity()]:[])
+    
+    private lazy var membersList: AUIRoomMemberListView = {
+        let listView = AUIRoomMemberListView()
+        listView.aui_size =  CGSize(width: UIScreen.main.bounds.width, height: 562)
+        return listView
+    }()
         
     public var onClickOffButton: (()->())?
 
@@ -130,7 +136,10 @@ import AUIKit
             aui_error("service is empty", tag: "AUiKaraokeRoomView")
             return
         }
-        
+        service.beKickedClosure = { [weak self] in
+            AUIToast.show(text: "You were kicked!")
+            self?.onBackAction()
+        }
         //绑定Service
         micSeatBinder.bindVoiceChat(micSeatView: micSeatView, eventsDelegate: self,
                            micSeatService: service.micSeatImpl,
@@ -154,25 +163,78 @@ import AUIKit
         
         invitationBinder.bind(inviteView: self.invitationView, applyView: self.applyView, invitationDelegate: service.invitationImplement, roomDelegate: service.roomManagerImpl) { [weak self] in
             self?.chatView.updateBottomBarRedDot(index: 0,show: true)
+            self?.requestUsers(users: $0)
         }
         invitationView.addActionHandler(actionHandler: self)
         applyView.addActionHandler(actionHandler: self)
         
         moreActions.addActionHandler(actionHandler: self)
+        
+        membersView.onClickMoreButtonAction = { [weak self] in
+            guard let `self` = self else { return }
+            self.membersList.memberList = $0
+            AUICommonDialog.show(contentView: self.membersList, theme: AUICommonDialogTheme())
+        }
+        self.membersList.addActionHandler(actionHandler: self)
     }
 
+}
+
+extension AUIVoiceChatRoomView: AUIRoomMemberListViewEventsDelegate {
+    public func kickUser(user: AUIUserCellUserDataProtocol) {
+        guard let channelName = self.service?.channelName else { return }
+        self.service?.userImpl.kickUser(roomId: channelName, userId: user.userId, callback: { [weak self] error in
+            guard let `self` = self else { return }
+            if error == nil {
+                self.membersList.memberList = self.membersList.memberList.filter({
+                    $0.userId != user.userId
+                })
+                self.membersList.refreshView()
+            }
+            AUIToast.show(text: error == nil ? "踢出成功" : "踢出失败")
+        })
+    }
 }
 
 extension AUIVoiceChatRoomView: AUIMoreOperationViewEventsDelegate {
     public func onItemSelected(entity: AUIMoreOperationCellDataProtocol) {
         AUICommonDialog.hidden()
-        let theme = AUICommonDialogTheme()
-        theme.contentControlColor = .pickerWithUIColors([UIColor.white])
-        AUICommonDialog.show(contentView: self.applyView,theme: theme)
+        AUICommonDialog.show(contentView: self.applyView,theme: AUICommonDialogTheme())
     }
 }
 
 extension AUIVoiceChatRoomView: AUIUserOperationEventsDelegate {
+    
+    private func requestUsers(users: [String:Int]) {
+        guard let channelName = self.service?.channelName else { return }
+        if !AUIRoomContext.shared.isRoomOwner(channelName: channelName) { return }
+        let userIds = users.keys.map {
+            $0
+        }
+        if userIds.isEmpty { return }
+        self.service?.userImpl.getUserInfoList(roomId: channelName, userIdList: userIds, callback: { [weak self] error, userInfos in
+            if error == nil,userInfos != nil {
+                var applicationList = [AUIUserThumbnailInfo]()
+                for info in userInfos! {
+                    let user = AUIUserThumbnailInfo()
+                    user.userId = info.userId
+                    user.userName = info.userName
+                    user.userAvatar = info .userAvatar
+                    user.seatIndex = users[user.userId] ?? -1
+                    if let micUser = self?.micSeatBinder.userMap[user.userId],micUser.userId != user.userId {
+                        applicationList.append(user)
+                    }
+                }
+                self?.applyView.userList.removeAll()
+                self?.applyView.userList = applicationList.filter({
+                    $0.userId != AUIRoomContext.shared.currentUserInfo.userId
+                })
+            } else {
+                AUIToast.show(text: "Request application list failed!")
+            }
+        })
+    }
+    
     public func operationUser(user: AUIUserCellUserDataProtocol,source: AUIUserOperationEventsSource) {
         switch source {
         case .invite:
@@ -180,8 +242,8 @@ extension AUIVoiceChatRoomView: AUIUserOperationEventsDelegate {
                 AUIToast.show(text: error == nil ? "邀请成功":"邀请失败")
             })
         case .apply:
-            self.service?.invitationImplement.sendApply(seatIndex: self.applyView.index, callback: { error in
-                AUIToast.show(text: error == nil ? "申请成功":"申请失败")
+            self.service?.invitationImplement.acceptApply(userId: user.userId, seatIndex: user.seatIndex, callback: { error in
+                AUIToast.show(text: error == nil ? "同意上麦申请成功":"同意上麦申请失败")
             })
         default:
             break
@@ -287,10 +349,31 @@ extension AUIVoiceChatRoomView: AUIMicSeatViewEventsDelegate {
         guard let channelName = self.service?.channelName else { return }
         if AUIRoomContext.shared.isRoomOwner(channelName: channelName) {
             self.invitationView.index = index
+            self.invitationView.userList = self.membersView.members.filter({
+                $0.userId != AUIRoomContext.shared.currentUserInfo.userId
+            })
+            for mic in self.micSeatBinder.micSeatArray {
+                if let userId = mic.user?.userId {
+                    self.invitationView.userList = self.invitationView.userList.filter({
+                        $0.userId != userId
+                    })
+                }
+            }
             AUICommonDialog.show(contentView: self.invitationView, theme: AUICommonDialogTheme())
         } else {
-            self.applyView.index = index
-            AUICommonDialog.show(contentView: self.applyView, theme: AUICommonDialogTheme())
+            AUIAlertView.theme_defaultAlert()
+                .contentTextAligment(textAlignment: .center)
+                .isShowCloseButton(isShow: true)
+                .title(title: "申请上麦")
+                .titleColor(color: .white)
+                .rightButton(title: "确定").content(content: "申请上\(index)号麦")
+                .theme_rightButtonBackground(color: "CommonColor.primary")
+                .rightButtonTapClosure(onTap: {[weak self] text in
+                    guard let self = self else { return }
+                    self.service?.invitationImplement.sendApply(seatIndex: index, callback: { error in
+                        AUIToast.show(text: error == nil ? "申请成功":"申请失败")
+                    })
+                }).show()
         }
     }
     
@@ -300,6 +383,11 @@ extension AUIVoiceChatRoomView: AUIMicSeatViewEventsDelegate {
     
     @objc public func onBackAction() {
         guard let service = service else {return}
+        if AUIRoomContext.shared.isRoomOwner(channelName: service.channelName) {
+            service.chatImplement.userDestroyedChatroom()
+        } else {
+            service.chatImplement.userQuitRoom(completion: nil)
+        }
         if AUIRoomContext.shared.isRoomOwner(channelName: service.channelName) {
             service.roomManagerImpl.destroyRoom(roomId: service.channelName) { err in
             }

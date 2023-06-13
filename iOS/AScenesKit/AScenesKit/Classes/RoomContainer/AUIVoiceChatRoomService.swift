@@ -38,6 +38,8 @@ open class AUIVoiceChatRoomService: NSObject {
     
     private var rtcJoinClousure: ((Error?)->())?
     
+    public var beKickedClosure: (() -> ())?
+    
     public var reportAudioVolumeIndicationOfSpeakers:(([AgoraRtcAudioVolumeInfo], Int)->())?
     
     deinit {
@@ -227,7 +229,7 @@ extension AUIVoiceChatRoomService: AgoraRtmClientDelegate {
 
 extension AUIVoiceChatRoomService: AUIUserRespDelegate {
     public func onUserBeKicked(roomId: String, userId: String) {
-        
+        self.beKickedClosure?()
     }
     
     
