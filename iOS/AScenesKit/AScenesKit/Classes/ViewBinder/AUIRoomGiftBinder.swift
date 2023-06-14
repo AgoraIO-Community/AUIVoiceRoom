@@ -64,14 +64,14 @@ extension AUIRoomGiftBinder: AUIGiftsManagerRespDelegate,SVGAPlayerDelegate {
 
 extension AUIRoomGiftBinder {
     func effectAnimation(gift: AUIGiftEntity) {
-//        let effectName = gift.giftEffect.components(separatedBy: "/").last ?? ""
-//        let path = String.documentsPath
-//        let documentPath = path + "AUIKitGiftEffect/\(effectName).svga"
-//        if effectName.isEmpty,!FileManager.default.fileExists(atPath: documentPath) {
-//            return
-//        }
-        guard let folderPath = Bundle.main.path(forResource: "auiVoiceChatTheme", ofType: "bundle") else { return }
-        guard let path = Bundle(path: folderPath)?.path(forResource: "AUIKitGift11", ofType: "svga",inDirectory: "UIKit/resource") else { return }
+        let effectName = gift.giftEffect.components(separatedBy: "/").last ?? ""
+        let path = String.documentsPath
+        let documentPath = path + "AUIKitGiftEffect/\(effectName)"
+        if effectName.isEmpty,!FileManager.default.fileExists(atPath: documentPath) {
+            return
+        }
+//        guard let folderPath = Bundle.main.path(forResource: "auiVoiceChatTheme", ofType: "bundle") else { return }
+//        guard let path = Bundle(path: folderPath)?.path(forResource: "AUIKitGift11", ofType: "svga",inDirectory: "UIKit/resource") else { return }
         let player = SVGAPlayer(frame: CGRect(x: 0, y: 0, width: AScreenWidth, height: AScreenHeight))
         player.loops = 1
         player.clearsAfterStop = true
@@ -80,7 +80,7 @@ extension AUIRoomGiftBinder {
         player.tag(199)
         getWindow()?.addSubview(player)
         let parser = SVGAParser()
-        parser.parse(with: URL(fileURLWithPath: path)) { entity in
+        parser.parse(with: URL(fileURLWithPath: documentPath)) { entity in
             player.videoItem = entity
             player.startAnimation()
         } failureBlock: { error in
@@ -114,7 +114,7 @@ extension AUIRoomGiftBinder {
                                         return
                                     }
                                     let effectName = gift.giftEffect.components(separatedBy: "/").last ?? ""
-                                    let filePath = documentPath + "/" + "\(effectName).svga"
+                                    let filePath = documentPath + "/" + "\(effectName)"
 //                                    if FileManager.default.fileExists(atPath: filePath) {
 //                                        try FileManager.default.removeItem(atPath: filePath)
 //                                    }
