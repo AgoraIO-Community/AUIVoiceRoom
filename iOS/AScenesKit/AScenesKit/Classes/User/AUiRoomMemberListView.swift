@@ -98,8 +98,7 @@ public class AUIRoomMemberUserCell: UITableViewCell {
         } else {
             seatNoLabel.text = ""
         }
-        //TODO: - owner hidden action
-//        self.action.isHidden = user.isOwner
+        self.action.isHidden = user?.isOwner ?? false
         userNameLabel.sizeToFit()
         seatNoLabel.sizeToFit()
     }

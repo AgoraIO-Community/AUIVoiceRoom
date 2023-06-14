@@ -20,12 +20,12 @@ class RoomViewController: UIViewController {
         super.viewDidLoad()
         
         self.view.backgroundColor = .white
-        
+        guard let info = roomInfo else { return }
         self.navigationItem.title = roomInfo?.roomName
         
         let uid = VoiceChatUIKit.shared.roomConfig?.userId ?? ""
         //创建房间容器
-        let karaokeView = AUIVoiceChatRoomView(frame: self.view.bounds)
+        let karaokeView = AUIVoiceChatRoomView(frame: self.view.bounds,roomInfo: info)
         let isOwner = roomInfo?.owner?.userId == uid ? true : false
         karaokeView.onClickOffButton = { [weak self] in
             aui_info("onClickOffButton", tag: "RoomViewController")

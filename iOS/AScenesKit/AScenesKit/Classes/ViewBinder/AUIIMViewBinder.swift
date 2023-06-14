@@ -22,17 +22,6 @@ import AUIKit
     public func bind(chat: AUIRoomVoiceChatView, chatService: AUIMManagerServiceDelegate) {
         self.chatView = chat
         self.chatDelegate = chatService
-        self.chatDelegate?.configIM(appKey: "", user: AUIRoomContext.shared.currentUserInfo, completion: { error in
-            AUIToast.show(text: error != nil ? "IM initialize failed!":"IM initialize successful!")
-            if error == nil {
-                let channelName = chatService.getChannelName()
-                if AUIRoomContext.shared.isRoomOwner(channelName: channelName) {
-                    self.chatDelegate?.createChatRoom(roomId: channelName) { id, error in
-                        AUIToast.show(text: error == nil ? "Create chatroom successful!":"Create chatroom failed!")
-                    }
-                }
-            }
-        })
     }
 
 }

@@ -12,7 +12,9 @@ import AUIKit
     
     private var service: AUIVoiceChatRoomService?
     
-    @AUserDefault("MicSeatType",defaultValue: 2) var seatType
+    private var roomInfo: AUIRoomInfo = AUIRoomInfo()
+    
+    @AUserDefault("MicSeatType",defaultValue: 3) var seatType
     
     lazy var background: UIImageView = {
         UIImageView(frame: self.frame).image(UIImage.aui_Image(named: "voicechat_bg@3x"))
@@ -38,10 +40,10 @@ import AUIKit
         
         return button
     }()
-
-    private lazy var micSeatView: AUIMicSeatView = AUIMicSeatView(frame: CGRect(x: 16, y: ANavigationHeight+60, width: self.bounds.size.width - 16 * 2, height: 324),style: AUIMicSeatViewLayoutType(rawValue: self.seatType) ?? .eight)
     
-    private lazy var micSeatBinder: AUIMicSeatViewBinder = AUIMicSeatViewBinder(rtcEngine: self.service!.rtcEngine)
+    private lazy var micSeatView: AUIMicSeatView = AUIMicSeatView(frame: CGRect(x: 16, y: ANavigationHeight+60, width: self.bounds.size.width - 16 * 2, height: 324),layout: self.layout(type: AUIMicSeatViewLayoutType(rawValue: self.roomInfo.seatStyle) ?? .eight))
+    
+    private lazy var micSeatBinder: AUIMicSeatViewBinder = AUIMicSeatViewBinder(rtcEngine: self.service!.rtcEngine,roomInfo: self.roomInfo)
 
     private lazy var chatView: AUIRoomVoiceChatView = {
         AUIRoomVoiceChatView(frame: CGRect(x: 0, y: self.micSeatView.frame.maxY+10, width: self.frame.width, height: self.frame.height-self.micSeatView.frame.maxY-CGFloat(ABottomBarHeight)),channelName: self.service?.channelName ?? "")
@@ -86,14 +88,19 @@ import AUIKit
     }
     
     public override init(frame: CGRect) {
-        aui_info("init AUiKaraokeRoomView", tag: "AUiKaraokeRoomView")
         super.init(frame: frame)
+        
+    }
+    
+    @objc public convenience init(frame: CGRect, roomInfo: AUIRoomInfo) {
+        self.init(frame: frame)
+        self.roomInfo = roomInfo
+        aui_info("init AUiKaraokeRoomView", tag: "AUiKaraokeRoomView")
         
         //设置皮肤路径
         if let folderPath = Bundle.main.path(forResource: "auiVoiceChatTheme", ofType: "bundle") {
             AUIRoomContext.shared.addThemeFolderPath(path: URL(fileURLWithPath: folderPath) )
         }
-        
     }
     
     required public init?(coder: NSCoder) {
@@ -102,6 +109,7 @@ import AUIKit
     
     public func bindService(service: AUIVoiceChatRoomService) {
         self.service = service
+        self.roomInfo = AUIRoomContext.shared.roomInfoMap[service.channelName] ?? AUIRoomInfo()
         self.loadSubviews()
         self.viewBinderConnected()
         
@@ -176,7 +184,58 @@ import AUIKit
         }
         self.membersList.addActionHandler(actionHandler: self)
     }
+    
+    
+    private func layout(type: AUIMicSeatViewLayoutType) -> UICollectionViewLayout {
+        var flow = UICollectionViewLayout()
+        switch type {
+        case .one,.six:
+            let layout = AUIMicSeatCircleLayout()
+            layout.dataSource = self
+            let width: CGFloat = 80//min(bounds.size.width / 4.0, bounds.size.height / 2)
+            let height: CGFloat = 92
+            layout.itemSize = CGSize(width: width, height: height)
+            layout.minimumLineSpacing = 0
+            layout.minimumInteritemSpacing = 0
+            flow = layout
+        case .eight:
+            let flowLayout = UICollectionViewFlowLayout()
+            let width: CGFloat = 80//min(bounds.size.width / 4.0, bounds.size.height / 2)
+            let height: CGFloat = 92
+            let hPadding = Int((self.frame.size.width - 16 * 2 - width * 4) / 3)
+            flowLayout.itemSize = CGSize(width: width, height: height)
+            flowLayout.minimumLineSpacing = 0
+            flowLayout.minimumInteritemSpacing = CGFloat(hPadding)
+            flow = flowLayout
+        case .nine:
+            let layout = AUIMicSeatHostAudienceLayout()
+            layout.dataSource = self
+            flow = layout
+        default:
+            break
+        }
+        return flow
+    }
 
+
+}
+
+extension AUIVoiceChatRoomView: AUIMicSeatCircleLayoutDataSource,AUIMicSeatHostAudienceLayoutDataSource {
+    public var radius: CGFloat {
+        return min(self.frame.width, self.frame.height)/2.8
+    }
+    
+    public func rowSpace() -> CGFloat {
+        10
+    }
+    
+    public func hostSize() -> CGSize {
+        CGSize(width: 102, height: 120)
+    }
+    
+    public func otherSize() -> CGSize {
+        CGSize(width: 80, height: 92)
+    }
 }
 
 extension AUIVoiceChatRoomView: AUIRoomMemberListViewEventsDelegate {
@@ -186,7 +245,7 @@ extension AUIVoiceChatRoomView: AUIRoomMemberListViewEventsDelegate {
             guard let `self` = self else { return }
             if error == nil {
                 self.membersList.memberList = self.membersList.memberList.filter({
-                    $0.userId != user.userId
+                    return $0.userId != user.userId
                 })
                 self.membersList.refreshView()
             }
@@ -198,16 +257,17 @@ extension AUIVoiceChatRoomView: AUIRoomMemberListViewEventsDelegate {
 extension AUIVoiceChatRoomView: AUIMoreOperationViewEventsDelegate {
     public func onItemSelected(entity: AUIMoreOperationCellDataProtocol) {
         AUICommonDialog.hidden()
-        
+        self.applyView.refreshUsers(users: self.filterMicUsers())
         AUICommonDialog.show(contentView: self.applyView,theme: AUICommonDialogTheme())
     }
 }
 
 extension AUIVoiceChatRoomView: AUIUserOperationEventsDelegate {
     
-    private func requestUsers(users: [String:Int]) {
+    private func requestUsers(users: [String:AUIInvitationCallbackModel]) {
         guard let channelName = self.service?.channelName else { return }
         if !AUIRoomContext.shared.isRoomOwner(channelName: channelName) { return }
+        if users.keys.count <= 0 { return }
         self.chatView.updateBottomBarRedDot(index: 0,show: true)
         let userIds = users.keys.map {
             $0
@@ -216,7 +276,14 @@ extension AUIVoiceChatRoomView: AUIUserOperationEventsDelegate {
         self.service?.userImpl.getUserInfoList(roomId: channelName, userIdList: userIds, callback: { [weak self] error, userInfos in
             if error == nil,userInfos != nil {
                 self?.membersView.members = userInfos!
-                self?.applyView.refreshUsers(users: self?.filterMicUsers() ?? [])
+                if let applyUsers = self?.filterMicUsers().map({
+                    if $0.userId == users[$0.userId]?.userId ?? "" {
+                        $0.seatIndex = users[$0.userId]?.payload?.seatNo ?? 0
+                    }
+                    return $0
+                }) {
+                    self?.applyView.refreshUsers(users:applyUsers)
+                }
             } else {
                 AUIToast.show(text: "Request application list failed!")
             }
@@ -227,10 +294,22 @@ extension AUIVoiceChatRoomView: AUIUserOperationEventsDelegate {
         switch source {
         case .invite:
             self.service?.invitationImplement.sendInvitation(userId: user.userId, seatIndex: self.invitationView.index, callback: { error in
+                if error == nil {
+                    self.invitationView.userList.removeAll {
+                        $0.userId == user.userId
+                    }
+                    self.invitationView.tableView.reloadData()
+                }
                 AUIToast.show(text: error == nil ? "邀请成功":"邀请失败")
             })
         case .apply:
             self.service?.invitationImplement.acceptApply(userId: user.userId, seatIndex: user.seatIndex, callback: { error in
+                if error == nil {
+                    self.applyView.userList.removeAll {
+                        $0.userId == user.userId
+                    }
+                    self.applyView.tableView.reloadData()
+                }
                 AUIToast.show(text: error == nil ? "同意上麦申请成功":"同意上麦申请失败")
             })
         default:

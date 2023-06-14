@@ -10,7 +10,7 @@ import AUIKit
 
 open class AUIInvitationViewBinder: NSObject {
     
-    private var newApplyClosure: (([String:Int]) -> ())?
+    private var newApplyClosure: (([String:AUIInvitationCallbackModel]) -> ())?
     
     private weak var inviteView: AUIInvitationView?
     
@@ -30,7 +30,7 @@ open class AUIInvitationViewBinder: NSObject {
         }
     }
 
-    public func bind(inviteView: AUIInvitationView,applyView: AUIApplyView, invitationDelegate: AUIInvitationServiceDelegate, roomDelegate: AUIRoomManagerDelegate,receiveApply: @escaping ([String:Int]) -> Void) {
+    public func bind(inviteView: AUIInvitationView,applyView: AUIApplyView, invitationDelegate: AUIInvitationServiceDelegate, roomDelegate: AUIRoomManagerDelegate,receiveApply: @escaping ([String:AUIInvitationCallbackModel]) -> Void) {
         self.newApplyClosure = receiveApply
         self.inviteView = inviteView
         self.applyView = applyView
@@ -42,12 +42,12 @@ open class AUIInvitationViewBinder: NSObject {
 
 extension AUIInvitationViewBinder: AUIInvitationRespDelegate {
     
-    public func onReceiveApplyUsersUpdate(users: [String:Int]) {
+    public func onReceiveApplyUsersUpdate(users: [String:AUIInvitationCallbackModel]) {
         //TODO: - 全量更新申请列表
         self.newApplyClosure?(users)
     }
     
-    public func onInviteeListUpdate(inviteeList: [String:Int]) {
+    public func onInviteeListUpdate(inviteeList: [String:AUIInvitationCallbackModel]) {
         self.inviteView?.userList.removeAll()
 //        self.inviteView?.userList = inviteeList
         self.inviteView?.tableView.reloadData()

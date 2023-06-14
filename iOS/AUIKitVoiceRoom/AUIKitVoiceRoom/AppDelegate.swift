@@ -11,7 +11,7 @@ import AUIKit
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
-    @AUserDefault("MicSeatType",defaultValue: 2) var seatType
+    @AUserDefault("MicSeatType",defaultValue: 3) var seatType
     
     @AUserDefault("MicSeatCount",defaultValue: 8) var seatCount
 

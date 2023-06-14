@@ -74,10 +74,10 @@ public class AUIMicSeatViewBinder: NSObject {
         }
     }
     
-    public convenience init(rtcEngine: AgoraRtcEngineKit) {
+    public convenience init(rtcEngine: AgoraRtcEngineKit,roomInfo: AUIRoomInfo) {
         self.init()
         self.rtcEngine = rtcEngine
-        for i in 0...(seatCount - 1) {
+        for i in 0...(roomInfo.seatCount - 1) {
             let seatInfo = AUIMicSeatInfo()
             seatInfo.seatIndex = UInt(i)
             micSeatArray.append(seatInfo)
@@ -206,7 +206,7 @@ public class AUIMicSeatViewBinder: NSObject {
     private func inviteDialogItem(seatInfo: AUIMicSeatInfo, callback: @escaping ()->()) -> AUIActionSheetItem {
         let item = AUIActionSheetThemeItem()
         item.title = aui_localized("Invite to mic")
-        item.titleColor = "CommonColor.danger"
+        item.titleColor = "ActionSheet.normalColor"
         item.callback = {
             self.eventsDelegate?.micSeatDidSelectedItem(index: Int(seatInfo.seatIndex))
             callback()
@@ -217,7 +217,7 @@ public class AUIMicSeatViewBinder: NSObject {
     private func applyDialogItem(seatInfo: AUIMicSeatInfo, callback: @escaping ()->()) -> AUIActionSheetItem {
         let item = AUIActionSheetThemeItem()
         item.title = aui_localized("Apply to mic")
-        item.titleColor = "CommonColor.danger"
+        item.titleColor = "ActionSheet.normalColor"
         item.callback = {
             self.eventsDelegate?.micSeatDidSelectedItem(index: Int(seatInfo.seatIndex))
             callback()

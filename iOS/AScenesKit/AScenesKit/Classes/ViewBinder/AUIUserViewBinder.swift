@@ -45,16 +45,31 @@ extension AUIUserViewBinder: AUIUserRespDelegate {
     public func onRoomUserSnapshot(roomId: String, userList: [AUIUserInfo]) {
         aui_info("onRoomUserSnapshot", tag: "AUIUserViewBinder")
         userView?.members = userList
+        userView?.members.forEach {
+            if $0.userId == AUIRoomContext.shared.roomInfoMap[self.micSeatDelegate?.getChannelName() ?? ""]?.owner?.userId ?? "" {
+                $0.isOwner = true
+            }
+        }
     }
     
     public func onRoomUserEnter(roomId: String, userInfo: AUIUserInfo) {
         aui_info("onRoomUserEnter \(userInfo.userId) \(userInfo.userName)", tag: "AUIUserViewBinder")
         userView?.members.append(userInfo)
+        userView?.members.forEach {
+            if $0.userId == AUIRoomContext.shared.roomInfoMap[self.micSeatDelegate?.getChannelName() ?? ""]?.owner?.userId ?? "" {
+                $0.isOwner = true
+            }
+        }
     }
     
     public func onRoomUserLeave(roomId: String, userInfo: AUIUserInfo) {
         aui_info("onRoomUserLeave \(userInfo.userId) \(userInfo.userName)", tag: "AUIUserViewBinder")
         userView?.members.removeAll(where: {$0.userId == userInfo.userId})
+        userView?.members.forEach {
+            if $0.userId == AUIRoomContext.shared.roomInfoMap[self.micSeatDelegate?.getChannelName() ?? ""]?.owner?.userId ?? "" {
+                $0.isOwner = true
+            }
+        }
     }
     
     public func onRoomUserUpdate(roomId: String, userInfo: AUIUserInfo) {

@@ -10,16 +10,12 @@ import AUIKit
  
 final class AUICreateRoomSettingController: UIViewController,UITextFieldDelegate {
     
-    @AUserDefault("MicSeatType",defaultValue: 2) var seatType
-    
-    @AUserDefault("MicSeatCount",defaultValue: 8) var seatCount
-    
     private lazy var seatTypeSegment: UISegmentedControl = {
         let segment = UISegmentedControl(items: ["One","Six","Eight","Nine"])
         segment.frame = CGRect(x: 50, y: ANavigationHeight+100, width: AScreenWidth - 100, height: 30)
         segment.tintColor = UIColor(0x0066ff)
         segment.backgroundColor = .white
-        segment.selectedSegmentIndex = self.seatType
+        segment.selectedSegmentIndex = Int(AUIRoomContext.shared.seatType.rawValue - 1)
         segment.selectedSegmentTintColor = UIColor(0x0066ff)
         segment.setTitleTextAttributes([.foregroundColor : UIColor.white,.font:UIFont.systemFont(ofSize: 18, weight: .medium)], for: .selected)
         segment.setTitleTextAttributes([.foregroundColor : UIColor.lightGray,.font:UIFont.systemFont(ofSize: 16, weight: .regular)], for: .normal)
@@ -28,7 +24,7 @@ final class AUICreateRoomSettingController: UIViewController,UITextFieldDelegate
     }()
     
     private lazy var seatCountField: UITextField = {
-        UITextField(frame: CGRect(x: 20, y: self.seatTypeSegment.frame.maxY+30, width: AScreenWidth-40, height: 40)).clearButtonMode(.whileEditing).tag(123).textColor(.black).font(.systemFont(ofSize: 16, weight: .semibold)).placeholder("Input mic seat count,you wish.").textAlignment(.center).delegate(self).layerProperties(UIColor(0x009FFF), 2).cornerRadius(3).text("\(self.seatCount)")
+        UITextField(frame: CGRect(x: 20, y: self.seatTypeSegment.frame.maxY+30, width: AScreenWidth-40, height: 40)).clearButtonMode(.whileEditing).tag(123).textColor(.black).font(.systemFont(ofSize: 16, weight: .semibold)).placeholder("Input mic seat count,you wish.").textAlignment(.center).delegate(self).layerProperties(UIColor(0x009FFF), 2).cornerRadius(3).text("\(AUIRoomContext.shared.seatCount)")
     }()
     
     override func viewWillAppear(_ animated: Bool) {
@@ -54,7 +50,7 @@ final class AUICreateRoomSettingController: UIViewController,UITextFieldDelegate
     }
 
     @objc private func onChanged(sender: UISegmentedControl) {
-        self.seatType = sender.selectedSegmentIndex
+        AUIRoomContext.shared.seatType = AUIMicSeatViewLayoutType(rawValue: UInt(sender.selectedSegmentIndex+1)) ?? .eight
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -62,22 +58,22 @@ final class AUICreateRoomSettingController: UIViewController,UITextFieldDelegate
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        if let text = textField.text,let count = Int(text),count > 0 {
-            self.seatCount = count
+        if let text = textField.text,let count = UInt(text),count > 0 {
+            AUIRoomContext.shared.seatCount = count
         }
         return true
     }
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        if let text = textField.text,let count = Int(text),count > 0 {
-            self.seatCount = count
+        if let text = textField.text,let count = UInt(text),count > 0 {
+            AUIRoomContext.shared.seatCount = count
         }
         return true
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {
-        if let text = textField.text,let count = Int(text),count > 0 {
-            self.seatCount = count
+        if let text = textField.text,let count = UInt(text),count > 0 {
+            AUIRoomContext.shared.seatCount = count
         }
     }
 }
