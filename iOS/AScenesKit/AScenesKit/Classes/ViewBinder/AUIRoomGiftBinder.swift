@@ -70,8 +70,6 @@ extension AUIRoomGiftBinder {
         if effectName.isEmpty,!FileManager.default.fileExists(atPath: documentPath) {
             return
         }
-//        guard let folderPath = Bundle.main.path(forResource: "auiVoiceChatTheme", ofType: "bundle") else { return }
-//        guard let path = Bundle(path: folderPath)?.path(forResource: "AUIKitGift11", ofType: "svga",inDirectory: "UIKit/resource") else { return }
         let player = SVGAPlayer(frame: CGRect(x: 0, y: 0, width: AScreenWidth, height: AScreenHeight))
         player.loops = 1
         player.clearsAfterStop = true

@@ -71,6 +71,11 @@ import AUIKit
         super.init(frame: frame)
     }
     
+    deinit {
+        inputBar.removeFromSuperview()
+        aui_info("AUIRoomVoiceChatView deinit")
+    }
+    
     @objc public convenience init(frame: CGRect,channelName: String) {
         self.init(frame: frame)
         self.channelName = channelName
