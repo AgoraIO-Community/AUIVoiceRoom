@@ -77,7 +77,7 @@ public class AUIMicSeatViewBinder: NSObject {
     public convenience init(rtcEngine: AgoraRtcEngineKit,roomInfo: AUIRoomInfo) {
         self.init()
         self.rtcEngine = rtcEngine
-        for i in 0...(roomInfo.seatCount - 1) {
+        for i in 0...(roomInfo.micSeatCount - 1) {
             let seatInfo = AUIMicSeatInfo()
             seatInfo.seatIndex = UInt(i)
             micSeatArray.append(seatInfo)

@@ -41,7 +41,7 @@ import AUIKit
         return button
     }()
     
-    private lazy var micSeatView: AUIMicSeatView = AUIMicSeatView(frame: CGRect(x: 16, y: ANavigationHeight+60, width: self.bounds.size.width - 16 * 2, height: 324),layout: self.layout(type: AUIMicSeatViewLayoutType(rawValue: self.roomInfo.seatStyle) ?? .eight))
+    private lazy var micSeatView: AUIMicSeatView = AUIMicSeatView(frame: CGRect(x: 16, y: ANavigationHeight+60, width: self.bounds.size.width - 16 * 2, height: 324),layout: self.layout(type: AUIMicSeatViewLayoutType(rawValue: self.roomInfo.micSeatStyle) ?? .eight))
     
     private lazy var micSeatBinder: AUIMicSeatViewBinder = AUIMicSeatViewBinder(rtcEngine: self.service!.rtcEngine,roomInfo: self.roomInfo)
 
@@ -366,11 +366,10 @@ extension AUIVoiceChatRoomView: AUIRoomVoiceChatViewEventsDelegate {
     }
     
     func muteLocal() {
-        guard let entity = self.chatView.datas[safe: 1] else {
+        guard let entity = self.chatView.bottomBar.datas[safe: 1] else {
             return
         }
         entity.showRedDot = false
-        entity.selected = !entity.selected
         self.service?.userImpl.muteUserAudio(isMute: entity.selected, callback: { [weak self] error in
             if error == nil {
                 self?.chatView.updateBottomBarRedDot(index: 1, show: false)

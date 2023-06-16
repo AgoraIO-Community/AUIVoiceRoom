@@ -179,12 +179,12 @@ final class AUIRoomListViewController: UIViewController {
                 let room = AUICreateRoomInfo()
                 room.roomName = text
                 room.thumbnail = self.userInfo.userAvatar
-                room.seatCount = UInt(AUIRoomContext.shared.seatCount)
-                room.seatStyle = UInt(AUIRoomContext.shared.seatType.rawValue)
+                room.micSeatCount = UInt(AUIRoomContext.shared.seatCount)
+                room.micSeatStyle = UInt(AUIRoomContext.shared.seatType.rawValue)
                 VoiceChatUIKit.shared.createRoom(roomInfo: room) { roomInfo in
                     let vc = RoomViewController()
-                    roomInfo?.seatCount = UInt(AUIRoomContext.shared.seatCount)
-                    roomInfo?.seatStyle = UInt(AUIRoomContext.shared.seatType.rawValue)
+                    roomInfo?.micSeatCount = UInt(AUIRoomContext.shared.seatCount)
+                    roomInfo?.micSeatStyle = UInt(AUIRoomContext.shared.seatType.rawValue)
                     vc.roomInfo = roomInfo
                     self.navigationController?.pushViewController(vc, animated: true)
                 } failure: { error in

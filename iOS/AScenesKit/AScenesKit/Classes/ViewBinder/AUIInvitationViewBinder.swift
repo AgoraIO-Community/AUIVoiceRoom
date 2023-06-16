@@ -42,6 +42,14 @@ open class AUIInvitationViewBinder: NSObject {
 
 extension AUIInvitationViewBinder: AUIInvitationRespDelegate {
     
+    public func onApplyAcceptedButFailed(userId: String) {
+        AUIToast.show(text: "\(userId) apply to mic failed!")
+    }
+    
+    public func onInviteeAcceptedButFailed(userId: String) {
+        AUIToast.show(text: "\(userId) agree invitation to mic failed!")
+    }
+    
     public func onReceiveApplyUsersUpdate(users: [String:AUIInvitationCallbackModel]) {
         //TODO: - 全量更新申请列表
         self.newApplyClosure?(users)
@@ -60,11 +68,16 @@ extension AUIInvitationViewBinder: AUIInvitationRespDelegate {
             .isShowCloseButton(isShow: true)
             .title(title: "邀请上麦").content(content: seatIndex != -1 ? "房主邀请您上\(seatIndex)号麦": "房主邀请您上麦")
             .titleColor(color: .white)
-            .rightButton(title: "确定")
+            .rightButton(title: "确定").leftButton(title: "拒绝")
+            .theme_leftButtonBackground(color: "CommonColor.danger")
             .theme_rightButtonBackground(color: "CommonColor.primary")
             .rightButtonTapClosure(onTap: {[weak self] text in
                 self?.invitationDelegate?.acceptInvitation(userId: AUIRoomContext.shared.currentUserInfo.userId, seatIndex: seatIndex, callback: { error in
                     AUIToast.show(text: error == nil ? "同意邀请成功":"同意邀请失败")
+                })
+            }).leftButtonTapClosure(onTap: { [weak self] in
+                self?.invitationDelegate?.rejectInvitation(userId: AUIRoomContext.shared.currentUserInfo.userId, callback: { error in
+                    AUIToast.show(text: error == nil ? "拒绝邀请成功":"拒绝邀请失败")
                 })
             }).show()
     
