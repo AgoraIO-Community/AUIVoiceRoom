@@ -154,6 +154,12 @@ class RoomViewController: UIViewController {
 }
 
 extension RoomViewController: AUIRoomManagerRespDelegate {
+    
+    func onRoomUserBeKicked(roomId: String, userId: String) {
+        AUIToast.show(text: "You were kicked out!")
+        self.navigationController?.popViewController(animated: true)
+    }
+    
     func onRoomAnnouncementChange(roomId: String, announcement: String) {
         
     }

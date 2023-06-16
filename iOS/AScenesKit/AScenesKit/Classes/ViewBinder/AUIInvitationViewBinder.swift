@@ -139,6 +139,10 @@ extension AUIInvitationViewBinder: AUIInvitationRespDelegate {
 }
 
 extension AUIInvitationViewBinder: AUIRoomManagerRespDelegate {
+    public func onRoomUserBeKicked(roomId: String, userId: String) {
+        
+    }
+    
     public func onRoomAnnouncementChange(roomId: String, announcement: String) {
         //TODO: - update room announcement
     }

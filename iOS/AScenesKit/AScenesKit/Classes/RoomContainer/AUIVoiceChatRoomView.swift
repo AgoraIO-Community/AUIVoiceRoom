@@ -177,6 +177,7 @@ import AUIKit
         
         moreActions.addActionHandler(actionHandler: self)
         
+        self.membersList.ownerPreview = AUIRoomContext.shared.isRoomOwner(channelName: service.channelName)
         membersView.onClickMoreButtonAction = { [weak self] in
             guard let `self` = self else { return }
             self.membersList.memberList = $0
@@ -474,6 +475,7 @@ extension AUIVoiceChatRoomView: AUIMicSeatViewEventsDelegate {
         }
         service.destory()
         AUIRoomContext.shared.clean(channelName: service.channelName)
+        self.didClickOffButton()
     }
     
     @objc func onSelectedMusic() {

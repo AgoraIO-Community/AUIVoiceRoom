@@ -89,7 +89,7 @@ public class AUIRoomMemberUserCell: UITableViewCell {
         self.action.aui_centerY = self.contentView.aui_centerY
     }
     
-    public func setUserInfo(user: AUIUserCellUserDataProtocol?) {
+    public func setUserInfo(user: AUIUserCellUserDataProtocol?,ownerPreview: Bool) {
         self.user = user
         avatarImageView.kf.setImage(with: URL(string: user?.userAvatar ?? ""), placeholder: UIImage.aui_Image(named: "aui_micseat_dialog_avatar_idle"))
         userNameLabel.text = user?.userName
@@ -98,7 +98,14 @@ public class AUIRoomMemberUserCell: UITableViewCell {
         } else {
             seatNoLabel.text = ""
         }
-        self.action.isHidden = user?.isOwner ?? false
+        if let isOwner = user?.isOwner {
+            if isOwner {
+                self.action.isHidden = true
+            } else {
+                self.action.isHidden = !ownerPreview
+            }
+        }
+        
         userNameLabel.sizeToFit()
         seatNoLabel.sizeToFit()
     }
@@ -117,7 +124,7 @@ public class AUIRoomMemberListView: UIView {
     
     private var eventHandlers: NSHashTable<AnyObject> = NSHashTable<AnyObject>.weakObjects()
     
-    private var channelName = ""
+    public var ownerPreview = false
     
     public func addActionHandler(actionHandler: AUIRoomMemberListViewEventsDelegate) {
         if self.eventHandlers.contains(actionHandler) {
@@ -217,7 +224,8 @@ extension AUIRoomMemberListView: UITableViewDelegate, UITableViewDataSource {
                 $0.kickUser(user: kickUser)
             })
         }
-        cell.setUserInfo(user: user)
+        cell.setUserInfo(user: user,ownerPreview: self.ownerPreview)
+        
         return cell
     }
 }
