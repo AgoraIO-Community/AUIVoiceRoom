@@ -14,7 +14,7 @@ import AUIKit
 class RoomViewController: UIViewController {
     var roomInfo: AUIRoomInfo?
     var themeIdx = 0
-    private var karaokeView: AUIVoiceChatRoomView?
+    private var voiceRoomView: AUIVoiceChatRoomView?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,9 +25,9 @@ class RoomViewController: UIViewController {
         
         let uid = VoiceChatUIKit.shared.roomConfig?.userId ?? ""
         //创建房间容器
-        let karaokeView = AUIVoiceChatRoomView(frame: self.view.bounds,roomInfo: info)
+        let voiceRoomView = AUIVoiceChatRoomView(frame: self.view.bounds,roomInfo: info)
         let isOwner = roomInfo?.owner?.userId == uid ? true : false
-        karaokeView.onClickOffButton = { [weak self] in
+        voiceRoomView.onClickOffButton = { [weak self] in
             aui_info("onClickOffButton", tag: "RoomViewController")
             AUIAlertView.theme_defaultAlert()
                 .contentTextAligment(textAlignment: .center)
@@ -39,7 +39,7 @@ class RoomViewController: UIViewController {
                     guard let self = self else {return}
                     AUIToast.hidden(delay:0)
                     AUICommonDialog.hidden()
-                    self.karaokeView?.onBackAction()
+                    self.voiceRoomView?.onBackAction()
                     self.navigationController?.popViewController(animated: true)
                     aui_info("rightButtonTapClosure", tag: "RoomViewController")
                 }.leftButtonTapClosure {
@@ -47,8 +47,8 @@ class RoomViewController: UIViewController {
                 }
                 .show()
         }
-        self.view.addSubview(karaokeView)
-        self.karaokeView = karaokeView
+        self.view.addSubview(voiceRoomView)
+        self.voiceRoomView = voiceRoomView
         
         //通过generateToken方法获取到必须的token和appid
         generateToken {[weak self] roomConfig, appId in
@@ -56,7 +56,7 @@ class RoomViewController: UIViewController {
             VoiceChatUIKit.shared.launchRoom(roomInfo: self.roomInfo!,
                                            appId: appId,
                                            config: roomConfig,
-                                           roomView: karaokeView) {_ in
+                                           roomView: voiceRoomView) {_ in
             }
             //订阅Token过期回调
             VoiceChatUIKit.shared.subscribeError(roomId: self.roomInfo?.roomId ?? "", delegate: self)
@@ -174,7 +174,7 @@ extension RoomViewController: AUIRoomManagerRespDelegate {
             .rightButtonTapClosure(onTap: {[weak self] text in
                 guard let self = self else { return }
                 AUICommonDialog.hidden()
-                self.karaokeView?.onBackAction()
+                self.voiceRoomView?.onBackAction()
                 self.navigationController?.popViewController(animated: true)
             })
             .show(fromVC: self)
