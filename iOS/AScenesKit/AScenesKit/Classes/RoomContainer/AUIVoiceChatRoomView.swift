@@ -14,7 +14,6 @@ import AUIKit
     
     private var roomInfo: AUIRoomInfo = AUIRoomInfo()
     
-    @AUserDefault("MicSeatType",defaultValue: 3) var seatType
     
     lazy var background: UIImageView = {
         UIImageView(frame: self.frame).image(UIImage.aui_Image(named: "voicechat_bg@3x"))

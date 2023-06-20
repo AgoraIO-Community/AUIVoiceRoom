@@ -6,14 +6,10 @@
 //
 
 import UIKit
-import AUIKit
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
-    @AUserDefault("MicSeatType",defaultValue: 3) var seatType
-    
-    @AUserDefault("MicSeatCount",defaultValue: 8) var seatCount
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.

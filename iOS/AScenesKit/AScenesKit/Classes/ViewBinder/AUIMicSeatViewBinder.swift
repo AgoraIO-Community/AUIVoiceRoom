@@ -16,7 +16,6 @@ import AUIKit
 
 public class AUIMicSeatViewBinder: NSObject {
     
-    @AUserDefault("MicSeatCount",defaultValue: 8) var seatCount
     
     var speakers: [AgoraRtcAudioVolumeInfo] = [] {
         didSet {
