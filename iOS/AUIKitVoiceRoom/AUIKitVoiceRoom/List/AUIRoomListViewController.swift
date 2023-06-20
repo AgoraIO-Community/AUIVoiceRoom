@@ -71,6 +71,7 @@ final class AUIRoomListViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        AUIRoomContext.shared.themeNames = ["Light", "UIKit"]
         AUIRoomContext.shared.resetTheme()
         UIScrollView.appearance().contentInsetAdjustmentBehavior = .never
         view.layer.addSublayer(gradientLayer)
@@ -162,13 +163,10 @@ final class AUIRoomListViewController: UIViewController {
     
     
     @objc func onCreateAction() {
-        AUIAlertView()
-            .theme_background(color: "CommonColor.black")
+        AUIAlertView.theme_defaultAlert()
             .isShowCloseButton(isShow: true)
             .title(title: "房间主题")
-            .titleColor(color: .white)
             .rightButton(title: "一起嗨歌")
-            .theme_rightButtonBackground(color: "CommonColor.primary")
             .rightButtonTapClosure(onTap: {[weak self] text in
                 guard let self = self else { return }
                 guard let text = text, text.count > 0 else {
