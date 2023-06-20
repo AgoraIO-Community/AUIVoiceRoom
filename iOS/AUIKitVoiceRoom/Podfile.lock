@@ -2,7 +2,7 @@ PODS:
   - Agora_Chat_iOS (1.1.0)
   - AgoraLyricsScore (1.1.1-beta-3)
   - AgoraRtcEngine_iOS (1.0)
-  - Alamofire (5.6.4)
+  - Alamofire (5.7.1)
   - AScenesKit (0.1.0):
     - AUIKit
     - SVGAPlayer
@@ -33,7 +33,7 @@ PODS:
     - Zip
   - Kingfisher (7.6.2)
   - MJRefresh (3.7.5)
-  - Protobuf (3.23.2)
+  - Protobuf (3.23.3)
   - ScoreEffectUI (1.0.1)
   - SSZipArchive (2.4.3)
   - SVGAPlayer (2.5.7):
@@ -53,7 +53,7 @@ DEPENDENCIES:
   - AgoraLyricsScore (= 1.1.1-beta-3)
   - AgoraRtcEngine_iOS (from `./libs`)
   - AScenesKit (from `../AScenesKit`)
-  - AUIKit (from `../../../AUIKit2/iOS`)
+  - AUIKit (from `../../../AUIKit/iOS`)
 
 SPEC REPOS:
   trunk:
@@ -77,18 +77,18 @@ EXTERNAL SOURCES:
   AScenesKit:
     :path: "../AScenesKit"
   AUIKit:
-    :path: "../../../AUIKit2/iOS"
+    :path: "../../../AUIKit/iOS"
 
 SPEC CHECKSUMS:
   Agora_Chat_iOS: 78b181ded388278e88d40e256a4fc659e62c3115
   AgoraLyricsScore: 7e25860ccecd3c6ed73f2b503f1d73d8849079e1
   AgoraRtcEngine_iOS: 7af3b344c55059556eeb05dc748ff124c593d4fb
-  Alamofire: 4e95d97098eacb88856099c4fc79b526a299e48c
+  Alamofire: 0123a34370cb170936ae79a8df46cc62b2edeb88
   AScenesKit: 1e9abaa710a76a1e079b18630dd39badd5dd9749
-  AUIKit: e1b7d24dd907407a96ea6401667783f2c50483ff
+  AUIKit: 9aa2a2ae9ac11a4fea7e44528d93fc1a1fd936f5
   Kingfisher: 6c5449c6450c5239166510ba04afe374a98afc4f
   MJRefresh: fdf5e979eb406a0341468932d1dfc8b7f9fce961
-  Protobuf: 5df4e9d2abd535fb675c68d171f6bc87983d27a6
+  Protobuf: d9c3d7e5a3574aa6a5d521f2d9f733c76d294be8
   ScoreEffectUI: 1a3bbd83b17cfef1c16a3a4eede2854f89c9eb10
   SSZipArchive: fe6a26b2a54d5a0890f2567b5cc6de5caa600aef
   SVGAPlayer: 318b85a78b61292d6ae9dfcd651f3f0d1cdadd86
@@ -97,6 +97,6 @@ SPEC CHECKSUMS:
   YYModel: 2a7fdd96aaa4b86a824e26d0c517de8928c04b30
   Zip: b3fef584b147b6e582b2256a9815c897d60ddc67
 
-PODFILE CHECKSUM: 4da4026fa8d723a21c5460ea0e314414a77d35ea
+PODFILE CHECKSUM: 57a26687213cf743b2b75988aaa1b1992beeb25f
 
-COCOAPODS: 1.11.3
+COCOAPODS: 1.12.0

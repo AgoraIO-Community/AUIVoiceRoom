@@ -165,11 +165,9 @@ extension RoomViewController: AUIRoomManagerRespDelegate {
     }
     
     func onRoomDestroy(roomId: String) {
-        AUIAlertView()
-            .background(color: UIColor(red: 0.1055, green: 0.0062, blue: 0.4032, alpha: 1))
+        AUIAlertView.theme_defaultAlert()
             .isShowCloseButton(isShow: true)
             .title(title: "房间已销毁")
-            .titleColor(color: .white)
             .rightButton(title: "确认")
             .rightButtonTapClosure(onTap: {[weak self] text in
                 guard let self = self else { return }
