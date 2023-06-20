@@ -31,7 +31,7 @@ open class AUIUserViewBinder: NSObject {
 
 extension AUIUserViewBinder: AUIUserRespDelegate {
     public func onUserBeKicked(roomId: String, userId: String) {
-        
+        AUIToast.show(text: "")
     }
     
     public func onUserAudioMute(userId: String, mute: Bool) {
@@ -85,10 +85,17 @@ extension AUIUserViewBinder: AUIUserRespDelegate {
 extension AUIUserViewBinder: AUIMicSeatRespDelegate {
     public func onAnchorEnterSeat(seatIndex: Int, user: AUIUserThumbnailInfo) {
         userView?.seatMap[user.userId] = seatIndex
+        userView?.members.first(where: {
+            $0.userId == user.userId
+        })?.seatIndex = seatIndex
     }
     
     public func onAnchorLeaveSeat(seatIndex: Int, user: AUIUserThumbnailInfo) {
         userView?.seatMap[user.userId] = nil
+        userView?.seatMap[user.userId] = seatIndex
+        userView?.members.first(where: {
+            $0.userId == user.userId
+        })?.seatIndex = -1
     }
     
     public func onSeatAudioMute(seatIndex: Int, isMute: Bool) {

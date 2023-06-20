@@ -101,6 +101,12 @@ import AUIKit
         if let folderPath = Bundle.main.path(forResource: "auiVoiceChatTheme", ofType: "bundle") {
             AUIRoomContext.shared.addThemeFolderPath(path: URL(fileURLWithPath: folderPath) )
         }
+        if let folderPath = Bundle.main.path(forResource: "Gift", ofType: "bundle") {
+            AUIRoomContext.shared.addThemeFolderPath(path: URL(fileURLWithPath: folderPath) )
+        }
+        if let folderPath = Bundle.main.path(forResource: "ChatResource", ofType: "bundle") {
+            AUIRoomContext.shared.addThemeFolderPath(path: URL(fileURLWithPath: folderPath) )
+        }
     }
     
     required public init?(coder: NSCoder) {
@@ -362,7 +368,6 @@ extension AUIVoiceChatRoomView: AUIRoomVoiceChatViewEventsDelegate {
     func showMoreTabs() {
         AUICommonDialog.hidden()
         let theme = AUICommonDialogTheme()
-        theme.contentControlColor = .pickerWithUIColors([UIColor.white])
         AUICommonDialog.show(contentView: self.moreActions,theme: theme)
     }
     

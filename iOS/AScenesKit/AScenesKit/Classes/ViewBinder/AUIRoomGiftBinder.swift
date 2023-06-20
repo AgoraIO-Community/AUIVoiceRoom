@@ -98,7 +98,7 @@ extension AUIRoomGiftBinder {
         for tab in tabs {
             if let gifts = tab.gifts {
                 for gift in gifts {
-                    if !gift.giftEffect.isEmpty{//"https://download.agora.io/null/AUIKitGift11.svga"  测试下载链接需要去除下面fileName判断
+                    if !gift.giftEffect.isEmpty{
                         AF.download(URL(string: gift.giftEffect)!).responseData { response in
                             if let data = response.value {
                                 let path = String.documentsPath
