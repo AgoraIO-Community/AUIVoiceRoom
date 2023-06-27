@@ -44,12 +44,12 @@ import AUIKit
     
     private lazy var micSeatBinder: AUIMicSeatViewBinder = AUIMicSeatViewBinder(rtcEngine: self.service!.rtcEngine,roomInfo: self.roomInfo)
 
-    private lazy var chatView: AUIRoomVoiceChatView = {
-        AUIRoomVoiceChatView(frame: CGRect(x: 0, y: self.micSeatView.frame.maxY+10, width: self.frame.width, height: self.frame.height-self.micSeatView.frame.maxY-CGFloat(ABottomBarHeight)),channelName: self.service?.channelName ?? "")
+    private lazy var chatView: AUIChatBottomBarView = {
+        AUIChatBottomBarView(frame: CGRect(x: 0, y: self.micSeatView.frame.maxY+10, width: self.frame.width, height: self.frame.height-self.micSeatView.frame.maxY-CGFloat(ABottomBarHeight)),channelName: self.service?.channelName ?? "")
     }()
 
-    private lazy var receiveGift: AUIReceiveGiftsView = {
-        AUIReceiveGiftsView(frame: CGRect(x: 10, y: self.chatView.frame.minY - (AScreenWidth / 9.0 * 2), width: AScreenWidth / 3.0 * 2 + 20, height: AScreenWidth / 9.0 * 2),source: nil).backgroundColor(.clear).tag(1111)
+    private lazy var receiveGift: AUIGiftBarrageView = {
+        AUIGiftBarrageView(frame: CGRect(x: 10, y: self.chatView.frame.minY - (AScreenWidth / 9.0 * 2.5), width: AScreenWidth / 3.0 * 2 + 20, height: AScreenWidth / 9.0 * 2.5),source: nil).backgroundColor(.clear).tag(1111)
     }()
 
     private lazy var giftsView: AUIRoomGiftDialog = {
@@ -71,13 +71,18 @@ import AUIKit
     
     private lazy var invitationBinder: AUIInvitationViewBinder = AUIInvitationViewBinder()
     
-    private lazy var moreActions: AUIMoreOperationView = AUIMoreOperationView(frame: CGRect(x: 0, y: 50, width: AScreenWidth, height: 360), datas: AUIRoomContext.shared.isRoomOwner(channelName: self.service?.channelName ?? "") ? [AUIMoreOperationCellEntity()]:[])
+    private lazy var moreActions: AUIMoreOperationView = AUIMoreOperationView(frame: CGRect(x: 0, y: 50, width: AScreenWidth, height: 360), datas: self.moreDatas)
     
     private lazy var membersList: AUIRoomMemberListView = {
         let listView = AUIRoomMemberListView()
         listView.aui_size =  CGSize(width: UIScreen.main.bounds.width, height: 562)
         return listView
     }()
+    
+    
+    private var moreDatas: [AUIMoreOperationCellEntity] {
+        AUIRoomContext.shared.isRoomOwner(channelName: self.service?.channelName ?? "") ? [AUIMoreOperationCellEntity()]:[]
+    }
         
     public var onClickOffButton: (()->())?
 
@@ -115,6 +120,7 @@ import AUIKit
     public func bindService(service: AUIVoiceChatRoomService) {
         self.service = service
         self.roomInfo = AUIRoomContext.shared.roomInfoMap[service.channelName] ?? AUIRoomInfo()
+        self.moreActions.datas = self.moreDatas
         self.loadSubviews()
         self.viewBinderConnected()
         
@@ -154,9 +160,11 @@ import AUIKit
             self?.onBackAction()
         }
         //绑定Service
+
         micSeatBinder.bindVoiceChat(micSeatView: micSeatView, eventsDelegate: self,
                            micSeatService: service.micSeatImpl,
                            userService: service.userImpl)
+        micSeatView.uiDelegate = self
         service.reportAudioVolumeIndicationOfSpeakers = { [weak self] speckers, totalVolumes in
             self?.micSeatBinder.speakers = speckers
         }
@@ -260,6 +268,22 @@ extension AUIVoiceChatRoomView: AUIRoomMemberListViewEventsDelegate {
     }
 }
 
+extension AUIVoiceChatRoomView: AUIMicSeatViewDelegate {
+    public func seatItems(view: AUIKit.AUIMicSeatView) -> [AUIKit.AUIMicSeatCellDataProtocol] {
+        self.micSeatBinder.micSeatArray
+    }
+    
+    public func onItemDidClick(view: AUIKit.AUIMicSeatView, seatIndex: Int) {
+        self.micSeatBinder.binderClickItem(seatIndex: seatIndex)
+    }
+    
+    public func onMuteVideo(view: AUIKit.AUIMicSeatView, seatIndex: Int, canvas: UIView, isMuteVideo: Bool) {
+        self.micSeatBinder.binderMuteVideo(seatIndex: seatIndex, canvas: canvas, isMuteVideo: isMuteVideo)
+    }
+    
+    
+}
+
 extension AUIVoiceChatRoomView: AUIMoreOperationViewEventsDelegate {
     public func onItemSelected(entity: AUIMoreOperationCellDataProtocol) {
         AUICommonDialog.hidden()
@@ -338,7 +362,7 @@ extension AUIVoiceChatRoomView: AUIRoomGiftDialogEventsDelegate {
     
 }
 
-extension AUIVoiceChatRoomView: AUIRoomVoiceChatViewEventsDelegate {
+extension AUIVoiceChatRoomView: AUIChatBottomBarViewEventsDelegate {
     public func raiseKeyboard() {
         aui_info("chat keyboard raise")
     }
@@ -428,7 +452,7 @@ extension AUIVoiceChatRoomView: AUIMicSeatViewEventsDelegate {
                 .isShowCloseButton(isShow: true)
                 .title(title: "申请上麦")
                 .titleColor(color: .white)
-                .rightButton(title: "确定").content(content: "申请上\(index)号麦")
+                .rightButton(title: "确定").content(content: "申请上\(index+1)号麦")
                 .theme_rightButtonBackground(color: "CommonColor.primary")
                 .rightButtonTapClosure(onTap: {[weak self] text in
                     guard let self = self else { return }

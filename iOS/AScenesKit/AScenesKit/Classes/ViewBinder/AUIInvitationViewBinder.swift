@@ -12,9 +12,9 @@ open class AUIInvitationViewBinder: NSObject {
     
     private var newApplyClosure: (([String:AUIInvitationCallbackModel]) -> ())?
     
-    private weak var inviteView: AUIInvitationView?
+    private weak var inviteView: IAUIListViewBinderRefresh?
     
-    private weak var applyView: AUIApplyView?
+    private weak var applyView: IAUIListViewBinderRefresh?
     
     public weak var invitationDelegate: AUIInvitationServiceDelegate? {
         didSet {
@@ -30,7 +30,7 @@ open class AUIInvitationViewBinder: NSObject {
         }
     }
 
-    public func bind(inviteView: AUIInvitationView,applyView: AUIApplyView, invitationDelegate: AUIInvitationServiceDelegate, roomDelegate: AUIRoomManagerDelegate,receiveApply: @escaping ([String:AUIInvitationCallbackModel]) -> Void) {
+    public func bind(inviteView: IAUIListViewBinderRefresh,applyView: IAUIListViewBinderRefresh, invitationDelegate: AUIInvitationServiceDelegate, roomDelegate: AUIRoomManagerDelegate,receiveApply: @escaping ([String:AUIInvitationCallbackModel]) -> Void) {
         self.newApplyClosure = receiveApply
         self.inviteView = inviteView
         self.applyView = applyView
@@ -56,9 +56,7 @@ extension AUIInvitationViewBinder: AUIInvitationRespDelegate {
     }
     
     public func onInviteeListUpdate(inviteeList: [String:AUIInvitationCallbackModel]) {
-        self.inviteView?.userList.removeAll()
-//        self.inviteView?.userList = inviteeList
-        self.inviteView?.tableView.reloadData()
+        self.inviteView?.refreshUsers(users: [])
     }
     
     public func onReceiveNewInvitation(userId: String, seatIndex: Int) {
@@ -66,7 +64,7 @@ extension AUIInvitationViewBinder: AUIInvitationRespDelegate {
             .theme_defaultAlert()
             .contentTextAligment(textAlignment: .center)
             .isShowCloseButton(isShow: true)
-            .title(title: "邀请上麦").content(content: seatIndex != -1 ? "房主邀请您上\(seatIndex)号麦": "房主邀请您上麦")
+            .title(title: "邀请上麦").content(content: seatIndex != -1 ? "房主邀请您上\(seatIndex+1)号麦": "房主邀请您上麦")
             .titleColor(color: .white)
             .rightButton(title: "确定").leftButton(title: "拒绝")
             .theme_leftButtonBackground(color: "CommonColor.danger")
@@ -85,12 +83,8 @@ extension AUIInvitationViewBinder: AUIInvitationRespDelegate {
     
     public func onInviteeAccepted(userId: String) {
         AUIToast.show(text: "用户\(userId)已同意邀请！")
-        self.applyView?.userList = self.applyView?.userList.filter({
-            $0.userId != userId
-        }) ?? []
-        self.inviteView?.userList = self.inviteView?.userList.filter({
-            $0.userId != userId
-        }) ?? []
+        self.applyView?.filter(userId: userId)
+        self.inviteView?.filter(userId: userId)
     }
     
     public func onInviteeRejected(userId: String) {
@@ -119,12 +113,8 @@ extension AUIInvitationViewBinder: AUIInvitationRespDelegate {
     
     public func onApplyAccepted(userId: String) {
         AUIToast.show(text: "房主已接受您的申请！")
-        self.inviteView?.userList = self.inviteView?.userList.filter({
-            $0.userId != AUIRoomContext.shared.currentUserInfo.userId
-        }) ?? []
-        self.applyView?.userList = self.applyView?.userList.filter({
-            $0.userId != AUIRoomContext.shared.currentUserInfo.userId
-        }) ?? []
+        self.inviteView?.filter(userId: AUIRoomContext.shared.currentUserInfo.userId)
+        self.applyView?.filter(userId: AUIRoomContext.shared.currentUserInfo.userId)
     }
     
     public func onApplyRejected(userId: String) {
@@ -148,8 +138,7 @@ extension AUIInvitationViewBinder: AUIRoomManagerRespDelegate {
     }
     
     public func onRoomUserSnapshot(roomId: String, userList: [AUIUserInfo]) {
-        self.inviteView?.userList = userList
-        self.inviteView?.tableView.reloadData()
+        self.inviteView?.refreshUsers(users: userList)
     }
     
     public func onRoomDestroy(roomId: String) {
@@ -161,20 +150,15 @@ extension AUIInvitationViewBinder: AUIRoomManagerRespDelegate {
     }
     
     public func onRoomUserEnter(roomId: String, userInfo: AUIUserInfo) {
-        self.inviteView?.userList = self.inviteView?.userList.filter({$0.userId != userInfo.userId}) ?? []
-        self.inviteView?.userList.append(userInfo)
-        self.inviteView?.tableView.reloadData()
+        self.inviteView?.filter(userId: userInfo.userId)
     }
     
     public func onRoomUserLeave(roomId: String, userInfo: AUIUserInfo) {
-        self.inviteView?.userList = self.inviteView?.userList.filter({$0.userId != userInfo.userId}) ?? []
-        self.inviteView?.tableView.reloadData()
+        self.inviteView?.filter(userId: userInfo.userId)
     }
     
     public func onRoomUserUpdate(roomId: String, userInfo: AUIUserInfo) {
-        self.inviteView?.userList = self.inviteView?.userList.filter({$0.userId != userInfo.userId}) ?? []
-        self.inviteView?.userList.append(userInfo)
-        self.inviteView?.tableView.reloadData()
+        self.inviteView?.filter(userId: userInfo.userId)
     }
     
 }

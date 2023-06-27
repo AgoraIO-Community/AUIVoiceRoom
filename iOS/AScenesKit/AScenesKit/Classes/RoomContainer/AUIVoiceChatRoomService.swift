@@ -16,8 +16,6 @@ open class AUIVoiceChatRoomService: NSObject {
     lazy var micSeatImpl: AUIMicSeatServiceDelegate = AUIMicSeatServiceImpl(channelName: channelName,
                                                                             rtmManager: rtmManager,
                                                                             roomManager: roomManagerImpl)
-//    lazy var invitationImpl: AUIInvitationServiceDelegate = AUIInvitationServiceImpl(channelName: self.channelName,
-//                                                                                     rtmManager: self.rtmManager)
     
     lazy var userImpl: AUIUserServiceDelegate = AUIUserServiceImpl(channelName: channelName,
                                                                    rtmManager: rtmManager,

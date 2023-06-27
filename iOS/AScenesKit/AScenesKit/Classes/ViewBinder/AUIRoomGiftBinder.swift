@@ -7,14 +7,14 @@
 
 import UIKit
 import AUIKit
-import SVGAPlayer
+import libpag
 import Alamofire
 
 public class AUIRoomGiftBinder: NSObject {
     
-    private weak var send: AUIRoomGiftDialog?
+    private weak var send: IAUIRoomGiftDialog?
     
-    private weak var receive: AUIReceiveGiftsView?
+    private weak var receive: IAUIGiftBarrageView?
     
     private weak var giftDelegate: AUIGiftsManagerServiceDelegate? {
         didSet {
@@ -23,7 +23,7 @@ public class AUIRoomGiftBinder: NSObject {
         }
     }
     
-    public func bind(send: AUIRoomGiftDialog, receive: AUIReceiveGiftsView, giftService: AUIGiftsManagerServiceDelegate) {
+    public func bind(send: IAUIRoomGiftDialog, receive: IAUIGiftBarrageView, giftService: AUIGiftsManagerServiceDelegate) {
         self.send = send
         self.receive = receive
         self.giftDelegate = giftService
@@ -45,49 +45,44 @@ extension String {
 }
 
 
-extension AUIRoomGiftBinder: AUIGiftsManagerRespDelegate,SVGAPlayerDelegate {
+extension AUIRoomGiftBinder: AUIGiftsManagerRespDelegate,PAGViewListener {
     
     public func receiveGift(gift: AUIGiftEntity) {
-        self.receive?.gifts.append(gift)
-        if gift.giftName == "Rocket" {
+        self.receive?.receiveGift(gift: gift)
+        if !gift.giftEffect.isEmpty {
             self.effectAnimation(gift: gift)
 //            self.notifyHorizontalTextCarousel(gift: gift)
         }
         
     }
     
-    public func svgaPlayerDidFinishedAnimation(_ player: SVGAPlayer!) {
-        getWindow()?.viewWithTag(199)?.removeFromSuperview()
+    public func onAnimationEnd(_ pagView: PAGView!) {
+        aui_info("gift effect animation end.")
+        pagView.removeFromSuperview()
     }
     
 }
 
 extension AUIRoomGiftBinder {
     func effectAnimation(gift: AUIGiftEntity) {
-        let effectName = gift.giftEffect.components(separatedBy: "/").last ?? ""
+        let effectName = gift.effectMD5
         let path = String.documentsPath
         let documentPath = path + "AUIKitGiftEffect/\(effectName)"
         if effectName.isEmpty,!FileManager.default.fileExists(atPath: documentPath) {
             return
         }
-        let player = SVGAPlayer(frame: CGRect(x: 0, y: 0, width: AScreenWidth, height: AScreenHeight))
-        player.loops = 1
-        player.clearsAfterStop = true
-        player.contentMode = .scaleAspectFill
-        player.delegate = self
-        player.tag(199)
-        getWindow()?.addSubview(player)
-        let parser = SVGAParser()
-        parser.parse(with: URL(fileURLWithPath: documentPath)) { entity in
-            player.videoItem = entity
-            player.startAnimation()
-        } failureBlock: { error in
-            player.removeFromSuperview()
-        }
+        let file = PAGFile.load(documentPath)
+        let pagView = PAGView(frame:CGRect(x: 0, y: 0, width: AScreenWidth, height: AScreenHeight))
+        getWindow()?.addSubview(pagView)
+        pagView.setComposition(file)
+        pagView.setRepeatCount(1)
+        pagView.add(self)
+        pagView.play()
+        
     }
     
     func refreshGifts(tabs: [AUIGiftTabEntity]) {
-        self.send?.tabs = tabs
+        self.send?.fillTabs(tabs: tabs)
     }
     
     func sendGift(gift: AUIGiftEntity, completion: @escaping (NSError?) -> Void) {
@@ -98,29 +93,16 @@ extension AUIRoomGiftBinder {
         for tab in tabs {
             if let gifts = tab.gifts {
                 for gift in gifts {
-                    if !gift.giftEffect.isEmpty{
-                        AF.download(URL(string: gift.giftEffect)!).responseData { response in
-                            if let data = response.value {
-                                let path = String.documentsPath
-                                let documentPath = path + "AUIKitGiftEffect"
-                                do {
-                                    if !FileManager.default.fileExists(atPath: documentPath) {
-                                        try FileManager.default.createDirectory(atPath: documentPath, withIntermediateDirectories: true)
-                                    }
-                                    let fileName = gift.giftEffect.components(separatedBy: "/").last ?? ""
-                                    if fileName.isEmpty {
-                                        return
-                                    }
-                                    let effectName = gift.giftEffect.components(separatedBy: "/").last ?? ""
-                                    let filePath = documentPath + "/" + "\(effectName)"
-//                                    if FileManager.default.fileExists(atPath: filePath) {
-//                                        try FileManager.default.removeItem(atPath: filePath)
-//                                    }
-                                    if !FileManager.default.fileExists(atPath: filePath) {
+                    if !gift.giftEffect.isEmpty,!gift.effectMD5.isEmpty{
+                        let filePath = self.getFilePath(gift: gift)
+                        if !FileManager.default.fileExists(atPath: filePath) {
+                            AF.download(URL(string: gift.giftEffect)!).responseData { response in
+                                if let data = response.value {
+                                    do {
                                         try data.write(to: URL(fileURLWithPath: filePath))
+                                    } catch {
+                                        assert(false,"write file error:\(error.localizedDescription)")
                                     }
-                                } catch {
-                                    assert(false,"\(error.localizedDescription)")
                                 }
                             }
                         }
@@ -131,5 +113,21 @@ extension AUIRoomGiftBinder {
         }
     }
     
+    func getFilePath(gift: AUIGiftEntity) -> String {
+        let path = String.documentsPath
+        let documentPath = path + "AUIKitGiftEffect"
+        if !FileManager.default.fileExists(atPath: documentPath) {
+            do {
+                try FileManager.default.createDirectory(atPath: documentPath, withIntermediateDirectories: true)
+            } catch {
+                assert(false,"createDirectory error:\(error.localizedDescription)")
+            }
+        }
+        let effectName = gift.effectMD5
+        let filePath = documentPath + "/" + "\(effectName)"
+        return filePath
+    }
+    
 }
+
 

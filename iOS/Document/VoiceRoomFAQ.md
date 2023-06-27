@@ -9,7 +9,7 @@
 
 ## 2 When the scene page is opened, an error is reported that the IM initialization failed or the creation and joining of the chat room failed.
 
-- Need to contact technical support to view related issues [yuanchaojie@agora.io](mailto:yuanchaojie@agora.io)
+- Need to contact technical support to view related issues [support@agora.io](mailto:support@agora.io)
 
 
 ## 3 Which IM product does the VoiceRoom room use to provide chat services? Can I choose my own supplier?

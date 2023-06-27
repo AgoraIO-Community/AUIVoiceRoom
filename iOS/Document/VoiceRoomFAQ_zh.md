@@ -9,7 +9,7 @@
 
 ## 2 打开场景页面报错IM初始化失败或者创建加入聊天室失败。
 
-- 需要联系技术支持查看相关问题[yuanchaojie@agora.io](mailto:yuanchaojie@agora.io)
+- 需要联系技术支持查看相关问题[sales@agora.io](mailto:sales@agora.io)
 
 
 ## 3 VoiceRoom聊天室使用哪个IM产品提供聊天服务？ 我可以选择自己的供应商吗？

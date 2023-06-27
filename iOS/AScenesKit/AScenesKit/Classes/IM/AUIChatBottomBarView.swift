@@ -8,7 +8,15 @@
 import UIKit
 import AUIKit
 
-@objc public protocol AUIRoomVoiceChatViewEventsDelegate: NSObjectProtocol {
+/// Description 聊天整体区域与对应的Binder类数据交互刷新协议，提供给binder调用view里的刷新数据
+@objc public protocol IAUIChatBottomBarView: NSObjectProtocol {
+    
+    /// Description 显示新消息
+    /// - Parameter entity: 消息渲染的实体包含缓存的渲染富文本与高度宽度
+    func showNewMessage(entity: AUIChatEntity)
+}
+
+@objc public protocol AUIChatBottomBarViewEventsDelegate: NSObjectProtocol {
     
     /// Description 唤起输入键盘
     func raiseKeyboard()
@@ -22,20 +30,20 @@ import AUIKit
     func bottomBarEvents(entity: AUIChatFunctionBottomEntity)
 }
 
-@objc open class AUIRoomVoiceChatView: UIView {
+@objc open class AUIChatBottomBarView: UIView,IAUIChatBottomBarView {
         
     private var eventHandlers: NSHashTable<AnyObject> = NSHashTable<AnyObject>.weakObjects()
     
     private var channelName = ""
     
-    public func addActionHandler(actionHandler: AUIRoomVoiceChatViewEventsDelegate) {
+    public func addActionHandler(actionHandler: AUIChatBottomBarViewEventsDelegate) {
         if self.eventHandlers.contains(actionHandler) {
             return
         }
         self.eventHandlers.add(actionHandler)
     }
 
-    public func removeEventHandler(actionHandler: AUIRoomVoiceChatViewEventsDelegate) {
+    public func removeEventHandler(actionHandler: AUIChatBottomBarViewEventsDelegate) {
         self.eventHandlers.remove(actionHandler)
     }
     
@@ -55,12 +63,16 @@ import AUIKit
         return entities
     }
     
-    lazy var messageView: AUIRoomChatView = {
-        AUIRoomChatView(frame: CGRect(x: 0, y: 0, width: AScreenWidth, height: self.frame.height-50-CGFloat(ABottomBarHeight)))
+    lazy var messageView: AUIChatListView = {
+        AUIChatListView(frame: CGRect(x: 0, y: 0, width: AScreenWidth, height: self.frame.height-65-CGFloat(ABottomBarHeight)))
+    }()
+    
+    lazy var emitter: AUIPraiseEffectView = {
+        AUIPraiseEffectView(frame: CGRect(x: AScreenWidth - 80, y: 0, width: 80, height: self.frame.height - 20),images: []).backgroundColor(.clear)
     }()
     
     lazy var bottomBar: AUIRoomBottomFunctionBar = {
-        AUIRoomBottomFunctionBar(frame: CGRect(x: 0, y: self.frame.height-CGFloat(ABottomBarHeight)-27, width: AScreenWidth, height: 54), datas: self.datas, hiddenChat: false)
+        AUIRoomBottomFunctionBar(frame: CGRect(x: 0, y: self.frame.height-CGFloat(ABottomBarHeight)-(ABottomBarHeight > 0 ? 27:60), width: AScreenWidth, height: 54), datas: self.datas, hiddenChat: false)
     }()
     
     lazy var inputBar: AUIChatInputBar = {
@@ -79,8 +91,7 @@ import AUIKit
     @objc public convenience init(frame: CGRect,channelName: String) {
         self.init(frame: frame)
         self.channelName = channelName
-        self.addSubview(self.messageView)
-        self.addSubview(self.bottomBar)
+        self.addSubViews([self.messageView,self.bottomBar,self.emitter])
         getWindow()?.addSubview(self.inputBar)
         self.inputBar.isHidden = true
         self.showNewMessage(entity: self.startMessage(nil))
@@ -99,7 +110,7 @@ import AUIKit
             guard let `self` = self else { return }
             switch entity.index {
             case 3:
-                self.messageView.showLikeAnimation()
+                self.emitter.setupEmitter()
             default:
                 break
             }
@@ -120,7 +131,7 @@ import AUIKit
         }
     }
     
-    func showNewMessage(entity: AUIChatEntity) {
+    public func showNewMessage(entity: AUIChatEntity) {
         self.messageView.messages?.append(entity)
         self.messageView.chatView.reloadData()
         self.messageView.scrollTableViewToBottom()

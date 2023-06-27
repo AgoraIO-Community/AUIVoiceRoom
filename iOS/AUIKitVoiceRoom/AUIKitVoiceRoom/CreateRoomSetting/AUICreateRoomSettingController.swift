@@ -10,22 +10,52 @@ import AUIKit
  
 final class AUICreateRoomSettingController: UIViewController,UITextFieldDelegate {
     
+    private lazy var background: UIImageView = {
+        UIImageView(frame: self.view.frame).image(UIImage(named: "bg_img_of_dark_mode"))
+    }()
+    
+    private lazy var seats: UILabel = {
+        UILabel(frame: CGRect(x: 44, y: AScreenHeight-200, width: 50, height: 20)).font(.systemFont(ofSize: 17, weight: .medium)).textColor(.white).text("Seats")
+    }()
+    
     private lazy var seatTypeSegment: UISegmentedControl = {
-        let segment = UISegmentedControl(items: ["One","Six","Eight","Nine"])
-        segment.frame = CGRect(x: 50, y: ANavigationHeight+100, width: AScreenWidth - 100, height: 30)
-        segment.tintColor = UIColor(0x0066ff)
-        segment.backgroundColor = .white
+        let segment = UISegmentedControl(items: ["1","6","8","9"])
+        segment.frame = CGRect(x: AScreenWidth-234, y: AScreenHeight-210, width: 190, height: 46)
+        segment.setImage(UIImage(named: "dot_1"), forSegmentAt: 0)
+        segment.setImage(UIImage(named: "dot_6"), forSegmentAt: 1)
+        segment.setImage(UIImage(named: "dot_8"), forSegmentAt: 2)
+        segment.setImage(UIImage(named: "dot_9"), forSegmentAt: 3)
+        segment.tintColor = UIColor(0x009EFF)
+        segment.backgroundColor = .clear
+        segment.tag = 11
         segment.selectedSegmentIndex = Int(AUIRoomContext.shared.seatType.rawValue - 1)
-        segment.selectedSegmentTintColor = UIColor(0x0066ff)
+        segment.selectedSegmentTintColor = UIColor(0x009EFF)
         segment.setTitleTextAttributes([.foregroundColor : UIColor.white,.font:UIFont.systemFont(ofSize: 18, weight: .medium)], for: .selected)
-        segment.setTitleTextAttributes([.foregroundColor : UIColor.lightGray,.font:UIFont.systemFont(ofSize: 16, weight: .regular)], for: .normal)
+        segment.setTitleTextAttributes([.foregroundColor : UIColor.white,.font:UIFont.systemFont(ofSize: 16, weight: .regular)], for: .normal)
         segment.addTarget(self, action: #selector(onChanged(sender:)), for: .valueChanged)
         return segment
     }()
     
-    private lazy var seatCountField: UITextField = {
-        UITextField(frame: CGRect(x: 20, y: self.seatTypeSegment.frame.maxY+30, width: AScreenWidth-40, height: 40)).clearButtonMode(.whileEditing).tag(123).textColor(.black).font(.systemFont(ofSize: 16, weight: .semibold)).placeholder("Input mic seat count,you wish.").textAlignment(.center).delegate(self).layerProperties(UIColor(0x009FFF), 2).cornerRadius(3).text("\(AUIRoomContext.shared.seatCount)")
+    lazy var themes: UILabel = {
+        UILabel(frame: CGRect(x: 44, y: self.seats.frame.maxY+52, width: 70, height: 20)).font(.systemFont(ofSize: 17, weight: .medium)).textColor(.white).text("Themes")
     }()
+    
+    private lazy var modeSegment: UISegmentedControl = {
+        let segment = UISegmentedControl(items: ["Light","Dark"])
+        segment.frame = CGRect(x: AScreenWidth-130, y: self.seatTypeSegment.frame.maxY+26, width: 96, height: 46)
+        segment.setImage(UIImage(named: "sun"), forSegmentAt: 0)
+        segment.setImage(UIImage(named: "moon"), forSegmentAt: 1)
+        segment.tintColor = UIColor(0x009EFF)
+        segment.tag = 12
+        segment.backgroundColor = .clear
+        segment.selectedSegmentIndex = 0
+        segment.selectedSegmentTintColor = UIColor(0x009EFF)
+        segment.setTitleTextAttributes([.foregroundColor : UIColor.white,.font:UIFont.systemFont(ofSize: 18, weight: .medium)], for: .selected)
+        segment.setTitleTextAttributes([.foregroundColor : UIColor.white,.font:UIFont.systemFont(ofSize: 16, weight: .regular)], for: .normal)
+        segment.addTarget(self, action: #selector(onChanged(sender:)), for: .valueChanged)
+        return segment
+    }()
+    
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -41,16 +71,17 @@ final class AUICreateRoomSettingController: UIViewController,UITextFieldDelegate
         super.viewDidLoad()
         self.view.backgroundColor = .white
         self.title = "Mic Seat Setting"
-        self.view.addSubViews([self.seatTypeSegment,self.seatCountField])
-        self.seatCountField.keyboardType = .numberPad
-        self.seatCountField.returnKeyType = .done
-        self.seatCountField.attributedPlaceholder = NSAttributedString(string: "Input mic seat count,you wish.", attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightText])
+        self.view.addSubViews([self.background,self.seats,self.seatTypeSegment,self.themes,self.modeSegment])
         
         // Do any additional setup after loading the view.
     }
 
     @objc private func onChanged(sender: UISegmentedControl) {
-        AUIRoomContext.shared.seatType = AUIMicSeatViewLayoutType(rawValue: UInt(sender.selectedSegmentIndex+1)) ?? .eight
+        if sender.tag == 11 {
+            AUIRoomContext.shared.seatType = AUIMicSeatViewLayoutType(rawValue: UInt(sender.selectedSegmentIndex+1)) ?? .eight
+        } else {
+            AUIRoomContext.shared.switchTheme(themeName: sender.selectedSegmentIndex == 0 ? "Light":"Dark")
+        }
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {

@@ -45,7 +45,7 @@ public class AUIMicSeatViewBinder: NSObject {
     public private(set) var micSeatArray: [AUIMicSeatInfo] = []
     public private(set) var userMap: [String: AUIUserInfo] = [:]
     private var rtcEngine: AgoraRtcEngineKit!
-    private weak var micSeatView: AUIMicSeatView?
+    private weak var micSeatView: IAUIMicSeatView?
     
     private weak var eventsDelegate: AUIMicSeatViewEventsDelegate?
     private weak var micSeatDelegate: AUIMicSeatServiceDelegate? {
@@ -83,25 +83,23 @@ public class AUIMicSeatViewBinder: NSObject {
         }
     }
     
-    public func bind(micSeatView: AUIMicSeatView,
+    public func bind(micSeatView: IAUIMicSeatView,
                      micSeatService: AUIMicSeatServiceDelegate,
                      userService: AUIUserServiceDelegate,
                      musicSeatService: AUIMusicServiceDelegate,
                      chorusService: AUIChorusServiceDelegate) {
         self.micSeatView = micSeatView
-        micSeatView.uiDelegate = self
         self.micSeatDelegate = micSeatService
         self.userDelegate = userService
         self.musicDelegate = musicSeatService
         self.chorusDelegate = chorusService
     }
     
-    public func bindVoiceChat(micSeatView: AUIMicSeatView,eventsDelegate: AUIMicSeatViewEventsDelegate,
+    public func bindVoiceChat(micSeatView: IAUIMicSeatView,eventsDelegate: AUIMicSeatViewEventsDelegate,
                      micSeatService: AUIMicSeatServiceDelegate,
                      userService: AUIUserServiceDelegate) {
         self.micSeatView = micSeatView
         self.eventsDelegate = eventsDelegate
-        micSeatView.uiDelegate = self
         self.micSeatDelegate = micSeatService
         self.userDelegate = userService
     }
@@ -251,7 +249,10 @@ public class AUIMicSeatViewBinder: NSObject {
             if isEmptySeat {
                 items.append(muteAudioDialogItem(seatInfo: seatInfo, callback:callback))
                 items.append(lockDialogItem(seatInfo: seatInfo, callback:callback))
-                items.append(inviteDialogItem(seatInfo: seatInfo, callback: callback))
+                if !seatInfo.isLock {
+                    items.append(inviteDialogItem(seatInfo: seatInfo, callback: callback))
+                }
+
             } else {
                 if isCurrentUser {
                 } else {  //other user
@@ -265,7 +266,9 @@ public class AUIMicSeatViewBinder: NSObject {
                 if currentUserAlreadyEnterSeat {
                     items.append(muteAudioDialogItem(seatInfo: seatInfo, callback:callback))
                 } else {
-                    items.append(applyDialogItem(seatInfo: seatInfo, callback: callback))
+                    if !seatInfo.isLock {
+                        items.append(applyDialogItem(seatInfo: seatInfo, callback: callback))
+                    }
                 }
             } else {
                 if isCurrentUser {
@@ -292,7 +295,7 @@ extension AUIMicSeatViewBinder: AUIMicSeatRespDelegate {
             micSeat.user = user
         }
         micSeatArray[seatIndex] = micSeat
-        micSeatView?.collectionView.reloadItems(at: [IndexPath(item: seatIndex, section: 0)])
+        micSeatView?.refresh(index: seatIndex)
   
         updateMic(with: seatIndex, role: .onlineAudience)
 
@@ -320,7 +323,7 @@ extension AUIMicSeatViewBinder: AUIMicSeatRespDelegate {
         let micSeat = micSeatArray[seatIndex]
         micSeat.user = nil
         micSeatArray[seatIndex] = micSeat
-        micSeatView?.collectionView.reloadItems(at: [IndexPath(item: seatIndex, section: 0)])
+        micSeatView?.refresh(index: seatIndex)
 
         updateMic(with: seatIndex, role: .offlineAudience)
  
@@ -341,7 +344,7 @@ extension AUIMicSeatViewBinder: AUIMicSeatRespDelegate {
         let micSeat = micSeatArray[seatIndex]
         micSeat.muteAudio = isMute
         micSeatArray[seatIndex] = micSeat
-        micSeatView?.collectionView.reloadItems(at: [IndexPath(item: seatIndex, section: 0)])
+        micSeatView?.refresh(index: seatIndex)
         
         //TODO: 麦位静音表示不听远端用户的声音，目前是mute remote audio
         guard let uid = UInt(micSeat.user?.userId ?? ""),
@@ -357,7 +360,7 @@ extension AUIMicSeatViewBinder: AUIMicSeatRespDelegate {
         let micSeat = micSeatArray[seatIndex]
         micSeat.muteVideo = isMute
         micSeatArray[seatIndex] = micSeat
-        micSeatView?.collectionView.reloadItems(at: [IndexPath(item: seatIndex, section: 0)])
+        micSeatView?.refresh(index: seatIndex)
         
         guard let uid = UInt(micSeat.user?.userId ?? ""),
               micSeat.user?.userId != micSeatDelegate?.getRoomContext().currentUserInfo.userId else {
@@ -372,17 +375,14 @@ extension AUIMicSeatViewBinder: AUIMicSeatRespDelegate {
         let micSeat = micSeatArray[seatIndex]
         micSeat.lockSeat = isClose ? AUILockSeatStatus.locked : AUILockSeatStatus.idle
         micSeatArray[seatIndex] = micSeat
-        micSeatView?.collectionView.reloadItems(at: [IndexPath(item: seatIndex, section: 0)])
+        micSeatView?.refresh(index: seatIndex)
     }
 }
 
 //MARK: AUIMicSeatViewDelegate
-extension AUIMicSeatViewBinder: AUIMicSeatViewDelegate {
-    public func seatItems(view: AUIMicSeatView) -> [AUIMicSeatCellDataProtocol] {
-        return micSeatArray
-    }
+extension AUIMicSeatViewBinder {
     
-    public func onItemDidClick(view: AUIMicSeatView, seatIndex: Int) {
+    public func binderClickItem(seatIndex: Int) {
         let micSeat = micSeatArray[seatIndex]
 
         let dialogItems = getDialogItems(seatInfo: micSeat) {
@@ -403,7 +403,7 @@ extension AUIMicSeatViewBinder: AUIMicSeatViewDelegate {
         AUICommonDialog.show(contentView: dialogView, theme: AUICommonDialogTheme())
     }
     
-    public func onMuteVideo(view: AUIMicSeatView, seatIndex: Int, canvas: UIView, isMuteVideo: Bool) {
+    public func binderMuteVideo(seatIndex: Int, canvas: UIView, isMuteVideo: Bool) {
         aui_info("onMuteVideo  seatIdx: \(seatIndex) mute: \(isMuteVideo)", tag: "AUIMicSeatViewBinder")
         let videoCanvas = AgoraRtcVideoCanvas()
         let micSeat = micSeatArray[seatIndex]
@@ -420,7 +420,6 @@ extension AUIMicSeatViewBinder: AUIMicSeatViewDelegate {
         } else {
             self.rtcEngine.setupRemoteVideo(videoCanvas)
         }
-        
     }
     
     public func enterMic(seatIndex: Int) {
@@ -463,7 +462,7 @@ extension AUIMicSeatViewBinder: AUIUserRespDelegate {
                 micSeat.user = user
             }
         }
-        micSeatView?.collectionView.reloadData()
+        micSeatView?.refresh(index: -1)
     }
     
     public func onRoomUserEnter(roomId: String, userInfo: AUIUserInfo) {
@@ -488,7 +487,7 @@ extension AUIMicSeatViewBinder: AUIUserRespDelegate {
         for (seatIndex, micSeat) in micSeatArray.enumerated() {
             if let user = userMap[userId], user.userId == micSeat.user?.userId {
                 micSeat.user = user
-                micSeatView?.collectionView.reloadItems(at: [IndexPath(item: seatIndex, section: 0)])
+                micSeatView?.refresh(index: seatIndex)
                 break
             }
         }
@@ -501,7 +500,7 @@ extension AUIMicSeatViewBinder: AUIUserRespDelegate {
         for (seatIndex, micSeat) in micSeatArray.enumerated() {
             if let user = userMap[userId], user.userId == micSeat.user?.userId {
                 micSeat.user = userMap[userId]
-                micSeatView?.collectionView.reloadItems(at: [IndexPath(item: seatIndex, section: 0)])
+                micSeatView?.refresh(index: seatIndex)
                 break
             }
         }
@@ -569,7 +568,7 @@ extension AUIMicSeatViewBinder: AUIChorusRespDelegate {
         let micSeat = micSeatArray[index]
         micSeat.micRole = role
         micSeatArray[index] = micSeat
-        micSeatView?.collectionView.reloadItems(at: [IndexPath(item: index, section: 0)])
+        micSeatView?.refresh(index: index)
     }
 
 }

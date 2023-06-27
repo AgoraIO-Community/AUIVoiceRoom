@@ -37,16 +37,8 @@ final class AUIRoomListViewController: UIViewController {
         return collectionView
     }()
     
-    private lazy var createButton: AUIButton = {
-        let button = AUIButton()
-        let style = AUIButtonDynamicTheme()
-        style.backgroundColor = "CommonColor.primary"
-        style.buttonWidth = ThemeCGFloatPicker(floats: 327)
-        button.style = style
-        button.layoutIfNeeded()
-        button.setTitle("创建房间", for: .normal)
-        button.addTarget(self, action: #selector(self.onCreateAction), for: .touchUpInside)
-        return button
+    private lazy var createButton: UIButton = {
+        UIButton(type: .custom).frame(CGRect(x: 32, y: AScreenHeight-68-50, width: AScreenWidth-64, height: 50)).cornerRadius(25).title("创建房间", .normal).setGradient([UIColor(red: 0, green: 158/255.0, blue: 1, alpha: 1),UIColor(red: 124/255.0, green: 91/255.0, blue: 1, alpha: 1)], [CGPoint(x: 0, y: 0),CGPoint(x: 0, y: 1)]).textColor(.white, .normal).addTargetFor(self, action: #selector(onCreateAction), for: .touchUpInside)
     }()
     
     private lazy var themeButton: AUIButton = {
@@ -69,8 +61,13 @@ final class AUIRoomListViewController: UIViewController {
         return gradientLayer
     }()
     
+    private lazy var empty: AUIEmptyView = {
+        AUIEmptyView(frame: CGRect(x: 0, y: 0, width: AScreenWidth, height: AScreenHeight),title: "No chat room yet",image: nil).backgroundColor(.clear)
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.addSubview(empty)
         AUIRoomContext.shared.themeNames = ["Light", "UIKit"]
         AUIRoomContext.shared.resetTheme()
         UIScrollView.appearance().contentInsetAdjustmentBehavior = .never
@@ -83,7 +80,7 @@ final class AUIRoomListViewController: UIViewController {
         })
         view.addSubview(collectionView)
         view.addSubview(createButton)
-        view.addSubview(themeButton)
+//        view.addSubview(themeButton)
         view.addSubview(setting)
         collectionView.frame = view.bounds
         _layoutButton()
@@ -109,13 +106,9 @@ final class AUIRoomListViewController: UIViewController {
     }
     
     private func _layoutButton() {
-        if self.roomList.count > 0 {
-            createButton.frame = CGRect(origin: CGPoint(x: (view.frame.width - createButton.frame.width) / 2,
-                                                        y: view.frame.height - 74 - UIDevice.current.aui_SafeDistanceBottom),
-                                        size: createButton.frame.size)
-        } else {
-            createButton.center = CGPoint(x: view.frame.size.width / 2, y: view.frame.size.height / 2)
-        }
+        createButton.frame = CGRect(origin: CGPoint(x: (view.frame.width - createButton.frame.width) / 2,
+                                                    y: view.frame.height - 74 - UIDevice.current.aui_SafeDistanceBottom),
+                                    size: createButton.frame.size)
         
         themeButton.frame = CGRect(origin: CGPoint(x: createButton.frame.origin.x, y: createButton.frame.origin.y - themeButton.frame.size.height - 5),
                                    size: themeButton.frame.size)
@@ -143,6 +136,12 @@ final class AUIRoomListViewController: UIViewController {
                 })
             }
             self._layoutButton()
+            if self.roomList.count <= 0 {
+                self.view.bringSubviewToFront(self.empty)
+            } else {
+                self.view.sendSubviewToBack(self.empty)
+            }
+            self.view.bringSubviewToFront(self.createButton)
         })
     }
     

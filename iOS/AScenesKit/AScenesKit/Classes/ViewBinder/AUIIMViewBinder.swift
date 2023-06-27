@@ -10,7 +10,7 @@ import AUIKit
 
 @objcMembers open class AUIIMViewBinder: NSObject {
     
-    private weak var chatView: AUIRoomVoiceChatView?
+    private weak var chatView: IAUIChatBottomBarView?
     
     private weak var chatDelegate: AUIMManagerServiceDelegate? {
         didSet {
@@ -19,7 +19,7 @@ import AUIKit
         }
     }
     
-    public func bind(chat: AUIRoomVoiceChatView, chatService: AUIMManagerServiceDelegate) {
+    public func bind(chat: IAUIChatBottomBarView, chatService: AUIMManagerServiceDelegate) {
         self.chatView = chat
         self.chatDelegate = chatService
     }
@@ -69,7 +69,7 @@ import AUIKit
         let entity = AUIChatEntity()
         entity.messageId = message.messageId
         entity.user = message.user ?? AUIUserThumbnailInfo()
-        entity.content = "Joined"
+        entity.content = "Joined".a.localize(type: .chat)
         entity.joined = true
         entity.attributeContent = entity.attributeContent
         entity.width = entity.width

@@ -8,6 +8,10 @@
 import UIKit
 import AUIKit
 
+@objc public protocol IAUIRoomGiftDialog: NSObjectProtocol {
+    func fillTabs(tabs: [AUIGiftTabEntity])
+}
+
 @objc public protocol AUIRoomGiftDialogEventsDelegate: NSObjectProtocol {
     
     /// Description 送礼action
@@ -15,7 +19,7 @@ import AUIKit
     func sendGiftAction(gift: AUIGiftEntity)
 }
 
-public class AUIRoomGiftDialog: UIView {
+public class AUIRoomGiftDialog: UIView,IAUIRoomGiftDialog {
     
     private var eventHandlers: NSHashTable<AnyObject> = NSHashTable<AnyObject>.weakObjects()
     
@@ -38,7 +42,7 @@ public class AUIRoomGiftDialog: UIView {
                 self.titles = tabs.map { $0.displayName ?? "" }
                 DispatchQueue.main.async {
                     let containers = self.tabs.map({
-                        AUIGiftsView(frame: CGRect(x: 0, y: 0, width: Int(self.frame.width), height: Int(self.frame.height)-44), gifts: $0.gifts ?? [],sentGift: { gift in
+                        AUiGiftListView(frame: CGRect(x: 0, y: 0, width: Int(self.frame.width), height: Int(self.frame.height)-44), gifts: $0.gifts ?? [],sentGift: { gift in
                             self.eventHandlers.allObjects.forEach { handler in
                                 handler.sendGiftAction(gift: gift)
                             }
@@ -65,5 +69,9 @@ public class AUIRoomGiftDialog: UIView {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    public func fillTabs(tabs: [AUIGiftTabEntity]) {
+        self.tabs = tabs
     }
 }
