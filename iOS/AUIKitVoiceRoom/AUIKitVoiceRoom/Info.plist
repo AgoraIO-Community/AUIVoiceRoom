@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>UIUserInterfaceStyle</key>
-	<string>Dark</string>
+	<string>Light</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>UIKit needs to apply for microphone access</string>
 	<key>UIApplicationSceneManifest</key>

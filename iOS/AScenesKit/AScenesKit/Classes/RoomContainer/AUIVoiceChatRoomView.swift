@@ -7,6 +7,7 @@
 
 import UIKit
 import AUIKit
+import SwiftTheme
 
 @objc open class AUIVoiceChatRoomView: UIView {
     
@@ -25,7 +26,7 @@ import AUIKit
     // 关闭按钮
     private lazy var closeButton: AUIButton = {
         let theme = AUIButtonDynamicTheme()
-        theme.icon = auiThemeImage("Room.offBtnIcon")
+        theme.icon = ThemeAnyPicker(keyPath: "Room.offBtnIcon")
         theme.iconWidth = "Room.offBtnIconWidth"
         theme.iconHeight = "Room.offBtnIconHeight"
         theme.buttonWidth = "Room.offBtnWidth"
@@ -384,7 +385,6 @@ extension AUIVoiceChatRoomView: AUIChatBottomBarViewEventsDelegate {
     func showGiftTabs() {
         AUICommonDialog.hidden()
         let theme = AUICommonDialogTheme()
-        theme.contentControlColor = .pickerWithUIColors([UIColor.white])
         AUICommonDialog.show(contentView: self.giftsView,theme: theme)
     }
     

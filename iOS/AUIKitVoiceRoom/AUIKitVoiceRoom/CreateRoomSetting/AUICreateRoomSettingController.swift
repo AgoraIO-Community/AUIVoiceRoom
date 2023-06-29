@@ -48,7 +48,7 @@ final class AUICreateRoomSettingController: UIViewController,UITextFieldDelegate
         segment.tintColor = UIColor(0x009EFF)
         segment.tag = 12
         segment.backgroundColor = .clear
-        segment.selectedSegmentIndex = 0
+        segment.selectedSegmentIndex = AUIRoomContext.shared.themeIdx
         segment.selectedSegmentTintColor = UIColor(0x009EFF)
         segment.setTitleTextAttributes([.foregroundColor : UIColor.white,.font:UIFont.systemFont(ofSize: 18, weight: .medium)], for: .selected)
         segment.setTitleTextAttributes([.foregroundColor : UIColor.white,.font:UIFont.systemFont(ofSize: 16, weight: .regular)], for: .normal)
@@ -79,8 +79,9 @@ final class AUICreateRoomSettingController: UIViewController,UITextFieldDelegate
     @objc private func onChanged(sender: UISegmentedControl) {
         if sender.tag == 11 {
             AUIRoomContext.shared.seatType = AUIMicSeatViewLayoutType(rawValue: UInt(sender.selectedSegmentIndex+1)) ?? .eight
+            
         } else {
-            AUIRoomContext.shared.switchTheme(themeName: sender.selectedSegmentIndex == 0 ? "Light":"Dark")
+            AUIRoomContext.shared.switchThemeToNext()
         }
     }
     

@@ -93,7 +93,7 @@ extension AUIRoomGiftBinder {
         for tab in tabs {
             if let gifts = tab.gifts {
                 for gift in gifts {
-                    if !gift.giftEffect.isEmpty,!gift.effectMD5.isEmpty{
+                    if !gift.giftEffect.isEmpty,!gift.effectMD5.isEmpty {
                         let filePath = self.getFilePath(gift: gift)
                         if !FileManager.default.fileExists(atPath: filePath) {
                             AF.download(URL(string: gift.giftEffect)!).responseData { response in

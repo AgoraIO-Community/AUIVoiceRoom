@@ -8,14 +8,14 @@
 import UIKit
 import AScenesKit
 import AUIKit
-import Kingfisher
+import SDWebImage
 
 class AUIRoomListCell: UICollectionViewCell {
     var roomInfo: AUIRoomInfo? {
         didSet {
             titleLabel.text = roomInfo?.roomName
             statusLabel.text = "\(roomInfo?.memberCount ?? 0)人正在嗨歌"
-            avatarImageView.kf.setImage(with: URL(string:roomInfo?.owner?.userAvatar ?? ""), placeholder: UIImage(systemName: "person.circle"))
+            avatarImageView.sd_setImage(with: URL(string:roomInfo?.owner?.userAvatar ?? ""), placeholderImage: UIImage(systemName: "person.circle"), context: nil)
             ownerLabel.text = "\(roomInfo?.owner?.userName ?? "")的房间"
         }
     }

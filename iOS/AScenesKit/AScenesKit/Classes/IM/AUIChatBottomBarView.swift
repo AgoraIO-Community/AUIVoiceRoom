@@ -68,11 +68,11 @@ import AUIKit
     }()
     
     lazy var emitter: AUIPraiseEffectView = {
-        AUIPraiseEffectView(frame: CGRect(x: AScreenWidth - 80, y: 0, width: 80, height: self.frame.height - 20),images: []).backgroundColor(.clear)
+        AUIPraiseEffectView(frame: CGRect(x: AScreenWidth - 80, y: 0, width: 80, height: self.frame.height - 70),images: []).backgroundColor(.clear)
     }()
     
     lazy var bottomBar: AUIRoomBottomFunctionBar = {
-        AUIRoomBottomFunctionBar(frame: CGRect(x: 0, y: self.frame.height-CGFloat(ABottomBarHeight)-(ABottomBarHeight > 0 ? 27:60), width: AScreenWidth, height: 54), datas: self.datas, hiddenChat: false)
+        AUIRoomBottomFunctionBar(frame: CGRect(x: 0, y: self.frame.height-54, width: AScreenWidth, height: 54), datas: self.datas, hiddenChat: false)
     }()
     
     lazy var inputBar: AUIChatInputBar = {
