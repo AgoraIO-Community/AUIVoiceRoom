@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- 弹幕区域样式 -->
+    <style name="aui_barrage_appearance" parent="AUIBarrageView.Appearance">
+
+    </style>
+
+
+</resources>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="voice_micseat_item_title_idle">User-%d</string>
+    <string name="voice_chatroom_notice">Notice</string>
+    <string name="voice_room_welcome">Welcome to the voice chat room! Pornography, gambling or violence is strictly prohibited in the room.</string>
+    <string name="voice_room_apply_list">Application List</string>
+    <string name="voice_room_contribution_empty">No data</string>
+    <string name="voice_room_apply_action">Apply</string>
+    <string name="voice_room_invited_list">Audience</string>
+    <string name="voice_room_invited_action">Invited</string>
+    <string name="voice_room_apply_accept">同意申请</string>
+</resources>

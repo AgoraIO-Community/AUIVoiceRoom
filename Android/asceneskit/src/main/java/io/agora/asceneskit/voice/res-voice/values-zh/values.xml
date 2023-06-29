@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="voice_micseat_item_title_idle">%d号麦</string>
+    <string name="voice_chatroom_notice">公告</string>
+    <string name="voice_room_welcome">欢迎来到声网语聊房！房间内严禁色情、赌博或暴力内容。</string>
+    <string name="voice_room_contribution_empty">没有数据</string>
+    <string name="voice_room_apply_list">申请列表</string>
+    <string name="voice_room_apply_action">申请上麦</string>
+    <string name="voice_room_invited_list">邀请列表</string>
+    <string name="voice_room_invited_action">邀请上麦</string>
+    <string name="voice_room_apply_accept">同意申请</string>
+</resources>

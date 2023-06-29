@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--top 左侧样式-->
+    <style name="aui_upperLeft_appearance" parent="AUIUpperLeftInformation.Appearance">
+        <item name="aui_upperLeft_rightIcon_Visibility">visible</item>
+        <item name="aui_upperLeft_rightIcon_bg_Visibility">visible</item>
+    </style>
+
+
+</resources>

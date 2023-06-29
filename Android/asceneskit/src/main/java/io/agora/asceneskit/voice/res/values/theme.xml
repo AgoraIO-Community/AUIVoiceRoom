@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.VoiceRoom" parent="Theme.AUIKit">
+        <item name="android:windowBackground">@drawable/voice_bg_room_living</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+
+        <!-- voiceRoom组件 -->
+        <item name="voice_room_appearance">@style/AVoiceRoomView</item>
+
+        <item name="aui_upperLeft_appearance">@style/AVoiceRoomTopLeftView</item>
+        <item name="aui_upperRight_appearance">@style/AVoiceRoomTopRightView</item>
+
+        <item name="aui_primary_appearance">@style/AVoiceRoomPrimaryView</item>
+
+        <item name="aui_barrage_appearance">@style/AVoiceRoomBarrageView</item>
+
+    </style>
+
+</resources>

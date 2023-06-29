@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--================= 主题属性 =================-->
+    <attr name="voice_room_appearance" format="reference"/>
+
+    <!--================= 样式属性 =================-->
+    <declare-styleable name="AVoiceRoomView">
+        <attr name="voice_room_appearance"/>
+        <!-- 背景 -->
+        <attr name="voice_room_background" format="color|reference"/>
+        <!--公告栏背景-->
+        <attr name="voice_room_notice_background" format="color|reference"/>
+        <attr name="voice_room_notice_style" format="reference"/>
+
+    </declare-styleable>
+
+
+
+</resources>

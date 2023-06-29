@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--top 右侧样式-->
+    <style name="aui_upperRight_appearance" parent="AUIUpperRightInformation.Appearance">
+        <item name="aui_roomMoreUser_Visibility">visible</item>
+        <item name="aui_roomClose_Visibility">visible</item>
+        <item name="aui_upperRight_root_layout_width">wrap_content</item>
+        <item name="aui_upperRight_root_layout_height">38dp</item>
+        <item name="aui_upperRight_member1_Visibility">visible</item>
+        <item name="aui_upperRight_member2_Visibility">visible</item>
+        <item name="aui_upperRight_member3_Visibility">visible</item>
+        <item name="aui_upperRight_count_Visibility">gone</item>
+    </style>
+
+</resources>

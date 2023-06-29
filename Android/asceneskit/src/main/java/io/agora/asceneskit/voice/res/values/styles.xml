@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="AVoiceRoomView" parent="voice_room_appearance">
+        <!-- 背景 -->
+        <item name="voice_room_background">@null</item>
+        <item name="voice_room_notice_background">@drawable/voice_bg_rect_radius13_black20</item>
+        <item name="voice_room_notice_style">@style/voice_top_text_style</item>
+    </style>
+
+
+    <style name="AVoiceRoomTopLeftView" parent="AUIUpperLeftInformation.Appearance">
+        <item name="aui_upperLeft_Layout_background">#33000000</item>
+    </style>
+
+    <style name="AVoiceRoomTopRightView" parent="AUIUpperRightInformation.Appearance">
+        <item name="aui_upperRight_count_background">@drawable/aui_member_count_bg</item>
+    </style>
+
+    <style name="AVoiceRoomPrimaryView" parent="AUIPrimaryView.Appearance">
+
+    </style>
+
+    <style name="AVoiceRoomBarrageView" parent="AUIBarrageView.Appearance">
+
+    </style>
+
+
+    <style name="voice_top_text_style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:drawablePadding">3dp</item>
+        <item name="android:paddingStart">8dp</item>
+        <item name="android:paddingEnd">8dp</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/voice_bg_rect_radius13_black20</item>
+    </style>
+
+
+</resources>

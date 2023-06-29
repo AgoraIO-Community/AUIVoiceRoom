@@ -1,0 +1,29 @@
+<resources>
+
+    <style name="Theme.VoiceRoom.Voice" parent="Theme.AUIKit.Basic.Dark">
+        <item name="android:windowBackground">@drawable/voice_bg_app_def_dark</item>
+
+        <!-- VoiceRoom -->
+        <item name="voice_room_appearance">@style/voice_room_appearance</item>
+
+        <!--VoiceRoom Top组件 -->
+        <item name="aui_upperLeft_appearance">@style/aui_upperLeft_appearance</item>
+        <item name="aui_upperRight_appearance">@style/aui_upperRight_appearance</item>
+
+        <!--VoiceRoom input组件 -->
+        <item name="aui_primary_appearance">@style/aui_primary_appearance</item>
+
+        <!-- 弹幕组件 -->
+        <item name="aui_barrage_appearance">@style/aui_barrage_appearance</item>
+
+        <!-- 麦位组件 -->
+        <item name="aui_micSeats_appearance">@style/aui_micSeats_appearance</item>
+        <item name="aui_micSeatItem_appearance">@style/aui_micSeatsItem_appearance</item>
+        <item name="aui_micSeatDialog_appearance">@style/aui_micSeatsDialog_appearance</item>
+
+        <!-- 礼物组件 -->
+<!--        <item name="aui_gift_appearance">@style/AUIGift.Appearance.Voice</item>-->
+
+    </style>
+
+</resources>

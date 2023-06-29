@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="voice_room_appearance">
+
+        <!-- 背景 -->
+        <item name="voice_room_background">@drawable/voice_bg_app_def_dark</item>
+
+
+    </style>
+</resources>

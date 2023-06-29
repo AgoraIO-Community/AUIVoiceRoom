@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="aui_primary_appearance" parent="AUIPrimaryView.Appearance">
+
+    </style>
+</resources>

@@ -1,4 +1,4 @@
 [submodule "AUIKit"]
 	path = AUIKit
 	url = https://github.com/AgoraIO-Community/AUIKit.git
-	branch = dev/rename_voicechat_ios
+	branch = dev/voicechat_android

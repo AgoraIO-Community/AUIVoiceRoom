@@ -1,0 +1,30 @@
+pluginManagement {
+    repositories {
+        maven { url "https://mirrors.tencent.com/nexus/repository/maven-public/" }
+        maven { url 'https://www.jitpack.io' }
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        maven { url "https://mirrors.tencent.com/nexus/repository/maven-public/" }
+        maven { url 'https://www.jitpack.io' }
+        google()
+        mavenCentral()
+    }
+}
+
+rootProject.name = "AUIKitVoiceRoom"
+def uiKitPath = new File(settingsDir, '../AUIKit/Android/auikit')
+print(uiKitPath)
+if(!uiKitPath.exists()){
+    throw new RuntimeException("Please run `git submodule update --init` in AUIKitVoiceRoom root direction.")
+}
+
+include ':app-voice'
+include ':auikit'
+project(':auikit').projectDir = uiKitPath
+include ':asceneskit'
