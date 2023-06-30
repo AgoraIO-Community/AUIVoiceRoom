@@ -18,7 +18,7 @@ This document mainly introduces how to quickly run through the AUIKitVoiceRoom e
 └─ AUIKit                      // Including basic components and services
    ├─ Service                  // Related basic component services, including micseat, jukebox, user, choir, etc
    ├─ UI Widgets               // Basic UI component, supporting one click skin changing through configuration files
-   └─ UI Components            // Related basic business UI modules, including micseat, jukebox, song playback, etc. These UI modules do not contain any business logic and are pure UI modules
+   └─ UI Components            // Related basic business UI modules, including micseat,chat,gift etc. These UI modules do not contain any business logic and are pure UI modules
    
 ```
 
