@@ -72,11 +72,11 @@ import AUIKit
     }()
     
     lazy var bottomBar: AUIRoomBottomFunctionBar = {
-        AUIRoomBottomFunctionBar(frame: CGRect(x: 0, y: self.frame.height-54, width: AScreenWidth, height: 54), datas: self.datas, hiddenChat: false)
+        AUIRoomBottomFunctionBar(frame: CGRect(x: 0, y: self.frame.height-60, width: AScreenWidth, height: 54), datas: self.datas, hiddenChat: false)
     }()
     
     lazy var inputBar: AUIChatInputBar = {
-        AUIChatInputBar(frame: CGRect(x: 0, y: AScreenHeight, width: AScreenWidth, height: 60),config: AUIChatInputBarConfig()).backgroundColor(.white)
+        AUIChatInputBar(frame: CGRect(x: 0, y: AScreenHeight, width: AScreenWidth, height: 60),config: AUIChatInputBarConfig()).theme_backgroundColor(color: "InputBar.backgroundColor")
     }()
 
     override init(frame: CGRect) {
@@ -136,6 +136,12 @@ import AUIKit
         self.messageView.chatView.reloadData()
         self.messageView.scrollTableViewToBottom()
     }
+    
+    public func dismissKeyboard() {
+        self.inputBar.hiddenInputBar()
+        self.window?.endEditing(true)
+    }
+    
     
     func startMessage(_ text: String?) -> AUIChatEntity {
         let entity = AUIChatEntity()

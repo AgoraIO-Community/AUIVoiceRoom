@@ -17,7 +17,7 @@ import SwiftTheme
     
     
     lazy var background: UIImageView = {
-        UIImageView(frame: self.frame).image(UIImage.aui_Image(named: "voicechat_bg@3x"))
+        UIImageView(frame: self.frame).image(UIImage.aui_Image(named: "voicechat_bg"))
     }()
     
     /// 房间信息UI
@@ -112,6 +112,9 @@ import SwiftTheme
         if let folderPath = Bundle.main.path(forResource: "ChatResource", ofType: "bundle") {
             AUIRoomContext.shared.addThemeFolderPath(path: URL(fileURLWithPath: folderPath) )
         }
+        if let folderPath = Bundle.main.path(forResource: "Invitation", ofType: "bundle") {
+            AUIRoomContext.shared.addThemeFolderPath(path: URL(fileURLWithPath: folderPath) )
+        }
     }
     
     required public init?(coder: NSCoder) {
@@ -169,7 +172,9 @@ import SwiftTheme
         service.reportAudioVolumeIndicationOfSpeakers = { [weak self] speckers, totalVolumes in
             self?.micSeatBinder.speakers = speckers
         }
-        
+        micSeatView.touchOnView = { [weak self] in
+            self?.chatView.dismissKeyboard()
+        }
         userBinder.bind(userView: membersView,
                         userService: service.userImpl,
                         micSeatService: service.micSeatImpl)
@@ -231,6 +236,7 @@ import SwiftTheme
         }
         return flow
     }
+
 
 
 }
@@ -329,17 +335,14 @@ extension AUIVoiceChatRoomView: AUIUserOperationEventsDelegate {
                     self.invitationView.userList.removeAll {
                         $0.userId == user.userId
                     }
-                    self.invitationView.tableView.reloadData()
+                    self.invitationView.filter(userId: user.userId)
                 }
                 AUIToast.show(text: error == nil ? "邀请成功":"邀请失败")
             })
         case .apply:
             self.service?.invitationImplement.acceptApply(userId: user.userId, seatIndex: user.seatIndex, callback: { error in
                 if error == nil {
-                    self.applyView.userList.removeAll {
-                        $0.userId == user.userId
-                    }
-                    self.applyView.tableView.reloadData()
+                    self.applyView.filter(userId: user.userId)
                 }
                 AUIToast.show(text: error == nil ? "同意上麦申请成功":"同意上麦申请失败")
             })
