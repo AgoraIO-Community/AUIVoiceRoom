@@ -59,7 +59,7 @@ final class AUIRoomListViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.addSubview(empty)
+//        view.addSubview(empty)
         AUIRoomContext.shared.themeNames = ["Light", "Dark"]
         AUIRoomContext.shared.resetTheme()
         UIScrollView.appearance().contentInsetAdjustmentBehavior = .never
@@ -128,9 +128,9 @@ final class AUIRoomListViewController: UIViewController {
             }
             self._layoutButton()
             if self.roomList.count <= 0 {
-                self.view.bringSubviewToFront(self.empty)
+                self.view.addSubview(self.empty)
             } else {
-                self.view.sendSubviewToBack(self.empty)
+                self.empty.removeFromSuperview()
             }
             self.view.bringSubviewToFront(self.createButton)
         })
@@ -146,6 +146,11 @@ final class AUIRoomListViewController: UIViewController {
 
             if list?.count ?? 0 < kListCountPerPage {
                 self.collectionView.mj_footer?.endRefreshingWithNoMoreData()
+            }
+            if self.roomList.count <= 0 {
+                self.view.bringSubviewToFront(self.empty)
+            } else {
+                self.view.sendSubviewToBack(self.empty)
             }
             self._layoutButton()
         })
