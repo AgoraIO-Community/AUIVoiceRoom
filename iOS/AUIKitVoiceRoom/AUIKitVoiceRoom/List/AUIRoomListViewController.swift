@@ -53,27 +53,17 @@ final class AUIRoomListViewController: UIViewController {
         return button
     }()
     
-    private lazy var gradientLayer: CAGradientLayer = {
-        let gradientLayer = CAGradientLayer()
-        gradientLayer.locations = [0, 1]
-        gradientLayer.startPoint = CGPoint.zero
-        gradientLayer.endPoint = CGPoint(x: 0, y: 1)
-        return gradientLayer
-    }()
-    
     private lazy var empty: AUIEmptyView = {
-        AUIEmptyView(frame: CGRect(x: 0, y: 0, width: AScreenWidth, height: AScreenHeight),title: "No chat room yet",image: nil).backgroundColor(.clear)
+        AUIEmptyView(frame: CGRect(x: 0, y: 0, width: AScreenWidth, height: AScreenHeight),title: "No chat room yet",image: UIImage(named: "empty")).backgroundColor(.clear)
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.addSubview(empty)
-        AUIRoomContext.shared.themeNames = ["Light", "UIKit"]
+        AUIRoomContext.shared.themeNames = ["Light", "Dark"]
         AUIRoomContext.shared.resetTheme()
         UIScrollView.appearance().contentInsetAdjustmentBehavior = .never
-        view.layer.addSublayer(gradientLayer)
-        gradientLayer.frame = view.bounds
-        gradientLayer.theme_colors = AUIGradientColor("CommonColor.normalGradient")
+       
 
         collectionView.mj_header = MJRefreshNormalHeader(refreshingBlock: { [weak self] in
             self?.onRefreshAction()
@@ -90,6 +80,7 @@ final class AUIRoomListViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        self.view.backgroundColor = AUIRoomContext.shared.themeIdx == 1 ? UIColor(0x171A1C):UIColor(0xF9FAFA)
         navigationController?.setNavigationBarHidden(true, animated: false)
     }
     

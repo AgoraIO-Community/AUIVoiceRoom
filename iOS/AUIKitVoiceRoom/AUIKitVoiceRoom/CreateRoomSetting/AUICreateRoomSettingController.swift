@@ -11,7 +11,7 @@ import AUIKit
 final class AUICreateRoomSettingController: UIViewController,UITextFieldDelegate {
     
     private lazy var background: UIImageView = {
-        UIImageView(frame: self.view.frame).image(UIImage(named: "bg_img_of_dark_mode"))
+        UIImageView(frame: self.view.frame).image(UIImage(named: "bg_img_of_light_mode"))
     }()
     
     private lazy var seats: UILabel = {
@@ -81,7 +81,12 @@ final class AUICreateRoomSettingController: UIViewController,UITextFieldDelegate
             AUIRoomContext.shared.seatType = AUIMicSeatViewLayoutType(rawValue: UInt(sender.selectedSegmentIndex+1)) ?? .eight
             
         } else {
-            AUIRoomContext.shared.switchTheme(themeName: sender.selectedSegmentIndex == 0 ? "Light":"Dark")
+            AUIRoomContext.shared.switchThemeToNext()
+            if sender.selectedSegmentIndex == 0 {
+                self.background.image = UIImage(named: "bg_img_of_light_mode")
+            } else {
+                self.background.image = UIImage(named: "bg_img_of_dark_mode")
+            }
         }
     }
     
