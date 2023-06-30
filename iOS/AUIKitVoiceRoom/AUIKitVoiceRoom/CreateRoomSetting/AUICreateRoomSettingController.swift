@@ -81,7 +81,7 @@ final class AUICreateRoomSettingController: UIViewController,UITextFieldDelegate
             AUIRoomContext.shared.seatType = AUIMicSeatViewLayoutType(rawValue: UInt(sender.selectedSegmentIndex+1)) ?? .eight
             
         } else {
-            AUIRoomContext.shared.switchThemeToNext()
+            AUIRoomContext.shared.switchTheme(themeName: sender.selectedSegmentIndex == 0 ? "Light":"Dark")
         }
     }
     
