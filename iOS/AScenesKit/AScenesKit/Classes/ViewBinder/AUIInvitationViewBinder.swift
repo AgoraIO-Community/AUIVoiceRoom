@@ -67,7 +67,7 @@ extension AUIInvitationViewBinder: AUIInvitationRespDelegate {
             .title(title: "邀请上麦").content(content: seatIndex != -1 ? "房主邀请您上\(seatIndex+1)号麦": "房主邀请您上麦")
             .titleColor(color: .white)
             .rightButton(title: "确定").leftButton(title: "拒绝")
-            .theme_leftButtonBackground(color: "CommonColor.danger")
+            .theme_leftButtonBackground(color: "Alert.leftBackgroundColor")
             .theme_rightButtonBackground(color: "CommonColor.primary")
             .rightButtonTapClosure(onTap: {[weak self] text in
                 self?.invitationDelegate?.acceptInvitation(userId: AUIRoomContext.shared.currentUserInfo.userId, seatIndex: seatIndex, callback: { error in

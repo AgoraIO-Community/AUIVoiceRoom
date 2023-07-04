@@ -42,7 +42,7 @@ public class AUIRoomGiftDialog: UIView,IAUIRoomGiftDialog {
                 self.titles = tabs.map { $0.displayName ?? "" }
                 DispatchQueue.main.async {
                     let containers = self.tabs.map({
-                        AUiGiftListView(frame: CGRect(x: 0, y: 0, width: Int(self.frame.width), height: Int(self.frame.height)-44), gifts: $0.gifts ?? [],sentGift: { gift in
+                        AUIGiftListView(frame: CGRect(x: 0, y: 0, width: Int(self.frame.width), height: Int(self.frame.height)-44), gifts: $0.gifts ?? [],sentGift: { gift in
                             self.eventHandlers.allObjects.forEach { handler in
                                 handler.sendGiftAction(gift: gift)
                             }

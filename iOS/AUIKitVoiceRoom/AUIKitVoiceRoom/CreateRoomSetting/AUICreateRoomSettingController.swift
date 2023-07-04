@@ -70,7 +70,7 @@ final class AUICreateRoomSettingController: UIViewController,UITextFieldDelegate
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .white
-        self.title = "Mic Seat Setting"
+        self.title = "Setting"
         self.view.addSubViews([self.background,self.seats,self.seatTypeSegment,self.themes,self.modeSegment])
         
         // Do any additional setup after loading the view.

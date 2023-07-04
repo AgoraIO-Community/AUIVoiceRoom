@@ -11,7 +11,7 @@ import SwiftTheme
 
 @objc open class AUIVoiceChatRoomView: UIView {
     
-    private var service: AUIVoiceChatRoomService?
+    public var service: AUIVoiceChatRoomService?
     
     private var roomInfo: AUIRoomInfo = AUIRoomInfo()
     
@@ -261,6 +261,21 @@ extension AUIVoiceChatRoomView: AUIMicSeatCircleLayoutDataSource,AUIMicSeatHostA
 
 extension AUIVoiceChatRoomView: AUIRoomMemberListViewEventsDelegate {
     public func kickUser(user: AUIUserCellUserDataProtocol) {
+        AUIAlertView.theme_defaultAlert()
+            .contentTextAligment(textAlignment: .center)
+            .isShowCloseButton(isShow: true)
+            .title(title: "踢出用户")
+            .titleColor(color: .white)
+            .rightButton(title: "确定").content(content: "确认踢出？踢出后该用户无法再次进入房间")
+            .theme_rightButtonBackground(color: "CommonColor.primary")
+            .rightButtonTapClosure(onTap: {[weak self] text in
+                guard let self = self else { return }
+                self.kickOut(user: user)
+            }).show()
+        
+    }
+    
+    private func kickOut(user: AUIUserCellUserDataProtocol) {
         guard let channelName = self.service?.channelName else { return }
         self.service?.userImpl.kickUser(roomId: channelName, userId: user.userId, callback: { [weak self] error in
             guard let `self` = self else { return }
@@ -269,6 +284,7 @@ extension AUIVoiceChatRoomView: AUIRoomMemberListViewEventsDelegate {
                     return $0.userId != user.userId
                 })
                 self.membersList.refreshView()
+                self.membersView.removeMember(member: user)
             }
             AUIToast.show(text: error == nil ? "踢出成功" : "踢出失败")
         })
