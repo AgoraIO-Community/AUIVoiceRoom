@@ -54,7 +54,7 @@ class AUIVoiceRoomService constructor(
 
     private val giftImpl:IAUIGiftsService by lazy { AUIGiftServiceImpl(roomInfo.roomId, rtmManager,chatImpl) }
 
-    private val mRtcEngine: RtcEngine = rtcEngine ?: AgoraEngineCreator.createRtcEngine(
+    val mRtcEngine: RtcEngine = rtcEngine ?: AgoraEngineCreator.createRtcEngine(
         AUIRoomContext.shared().commonConfig.context,
         AUIRoomContext.shared().commonConfig.appId
     )
@@ -151,10 +151,10 @@ class AUIVoiceRoomService constructor(
             Constants.AUDIO_PROFILE_MUSIC_HIGH_QUALITY,
             Constants.AUDIO_SCENARIO_GAME_STREAMING
         )
-        mRtcEngine.enableAudioVolumeIndication(50, 10, true)
+        mRtcEngine.enableAudioVolumeIndication(350, 2, true)
         mRtcEngine.setClientRole(if (AUIRoomContext.shared().isRoomOwner(channelName)) Constants.CLIENT_ROLE_BROADCASTER else Constants.CLIENT_ROLE_AUDIENCE)
         val ret: Int = mRtcEngine.joinChannel(
-            roomConfig.rtcToken007,
+            roomConfig.rtcRtcToken006,
             roomConfig.rtcChannelName,
             null,
             AUIRoomContext.shared().commonConfig.userId.toInt()

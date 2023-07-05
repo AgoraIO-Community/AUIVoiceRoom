@@ -8,8 +8,10 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import io.agora.asceneskit.voice.AUIVoiceRoomService;
 import io.agora.auikit.model.AUIChooseMusicModel;
@@ -30,8 +32,10 @@ import io.agora.auikit.service.callback.AUIException;
 import io.agora.auikit.ui.micseats.IMicSeatDialogView;
 import io.agora.auikit.ui.micseats.IMicSeatItemView;
 import io.agora.auikit.ui.micseats.IMicSeatsView;
+import io.agora.rtc2.IRtcEngineEventHandler;
+import io.agora.rtc2.RtcEngine;
 
-public class AUIMicSeatsBindable implements
+public class AUIMicSeatsBindable extends IRtcEngineEventHandler implements
         IAUIBindable,
         IMicSeatsView.ActionDelegate,
         IAUIMicSeatService.AUIMicSeatRespDelegate,
@@ -46,6 +50,8 @@ public class AUIMicSeatsBindable implements
     private final IAUIInvitationService invitationService;
     private Handler mMainHandler;
     private String mLeadSingerId = "";
+    private RtcEngine mRtcEngine;
+    private Map<Integer, String> mSeatMap = new HashMap();
 
     private LinkedList<String> mAccompanySingers = new LinkedList<String>();
 
@@ -58,6 +64,7 @@ public class AUIMicSeatsBindable implements
         this.jukeboxService = voiceService.getJukeboxService();
         this.chorusService = voiceService.getChorusService();
         this.invitationService = voiceService.getInvitationService();
+        this.mRtcEngine = voiceService.getMRtcEngine();
     }
 
     @Override
@@ -68,6 +75,7 @@ public class AUIMicSeatsBindable implements
         jukeboxService.bindRespDelegate(this);
         chorusService.bindRespDelegate(this);
         micSeatsView.setMicSeatActionDelegate(this);
+        mRtcEngine.addHandler(this);
 
         // update view
         IMicSeatItemView[] seatViewList = micSeatsView.getMicSeatItemViewList();
@@ -108,6 +116,9 @@ public class AUIMicSeatsBindable implements
         jukeboxService.unbindRespDelegate(this);
         chorusService.unbindRespDelegate(this);
 
+        mRtcEngine.removeHandler(this);
+        mRtcEngine.registerAudioFrameObserver(null);
+
         micSeatsView.setMicSeatActionDelegate(null);
     }
     private void runOnUiThread(@NonNull Runnable runnable) {
@@ -127,18 +138,18 @@ public class AUIMicSeatsBindable implements
 
     @Override
     public void onAnchorEnterSeat(int seatIndex, @NonNull AUIUserThumbnailInfo userInfo) {
-        Log.e("apex","onAnchorEnterSeat 有人上麦" + seatIndex + "\n" + userInfo.toString());
+        mSeatMap.put(seatIndex - 1,userInfo.userId);
         IMicSeatItemView seatView = micSeatsView.getMicSeatItemViewList()[seatIndex];
-        AUIUserInfo seatUser = userService.getUserInfo(userInfo.userId);
-        if (seatUser != null){
-            seatView.setTitleText(seatUser.userName);
-            seatView.setUserAvatarImageUrl(seatUser.userAvatar);
-        }
+        seatView.setTitleText(userInfo.userName);
+        seatView.setUserAvatarImageUrl(userInfo.userAvatar);
     }
 
     @Override
     public void onAnchorLeaveSeat(int seatIndex, @NonNull AUIUserThumbnailInfo userInfo) {
-        Log.e("apex","onAnchorLeaveSeat 有人下麦" + seatIndex + "\n" + userInfo.toString());
+        String uid = mSeatMap.get(seatIndex - 1);
+        if (uid != null && uid.equals(userInfo.userId)) {
+            mSeatMap.remove(seatIndex);
+        }
         updateSeatView(seatIndex, null);
     }
 
@@ -233,8 +244,6 @@ public class AUIMicSeatsBindable implements
     @Override
     public boolean onClickSeat(int index, IMicSeatDialogView dialogView) {
         AUIMicSeatInfo seatInfo = micSeatService.getMicSeatInfo(index);
-        if (null == seatInfo || null == seatInfo.user) return true;
-        Log.e("apex","onClickSeat: " + index +"\n" + seatInfo.user.toString());
         dialogView.setUserInfo(seatInfo.user);
         boolean isEmptySeat = (seatInfo.user == null || seatInfo.user.userId.length() == 0);
         boolean isCurrentUser = seatInfo.user != null && seatInfo.user.userId.equals(micSeatService.getRoomContext().currentUserInfo.userId);
@@ -242,9 +251,11 @@ public class AUIMicSeatsBindable implements
         boolean inSeat = false;
         for (int i = 0; i <= 7; i++) {
             AUIMicSeatInfo info = micSeatService.getMicSeatInfo(i);
-            if (info.user != null && info.user.userId.equals(micSeatService.getRoomContext().currentUserInfo.userId)) {
-                inSeat = true;
-                break;
+            if (info != null){
+                if (info.user != null && info.user.userId.equals(micSeatService.getRoomContext().currentUserInfo.userId)) {
+                    inSeat = true;
+                    break;
+                }
             }
         }
         if (isRoomOwner) {
@@ -402,7 +413,7 @@ public class AUIMicSeatsBindable implements
 
     @Override
     public void onUserAudioMute(@NonNull String userId, boolean mute) {
-        for (int i = 0; i <= 7; i++) {
+        for (int i = 0; i <= micSeatService.getMicSeatSize(); i++) {
             AUIMicSeatInfo seatInfo = micSeatService.getMicSeatInfo(i);
             if (seatInfo != null && seatInfo.user != null && seatInfo.user.userId.equals(userId)) {
                 updateSeatView(i, seatInfo);
@@ -415,4 +426,27 @@ public class AUIMicSeatsBindable implements
     public void onUserVideoMute(@NonNull String userId, boolean mute) {
 
     }
+
+    @Override
+    public void onAudioVolumeIndication(AudioVolumeInfo[] speakers, int totalVolume) {
+        Log.e("apex","onAudioVolumeIndication1" + totalVolume);
+        for (AudioVolumeInfo speaker : speakers) {
+            int uid = speaker.uid;
+            if (speaker.volume == 0) {
+                for (Map.Entry<Integer, String> entry : mSeatMap.entrySet()) {
+                    Log.e("apex","onAudioVolumeIndication: " + uid +" - "+entry.getValue());
+                    if (String.valueOf(uid).equals(entry.getValue())){
+                        micSeatsView.startRippleAnimation(entry.getKey());
+                    }
+                }
+            } else if (speaker.volume > 0) {
+                for (Map.Entry<Integer, String> entry : mSeatMap.entrySet()) {
+                    if (String.valueOf(uid).equals(entry.getValue())){
+                        micSeatsView.stopRippleAnimation(entry.getKey());
+                    }
+                }
+            }
+        }
+    }
+
 }

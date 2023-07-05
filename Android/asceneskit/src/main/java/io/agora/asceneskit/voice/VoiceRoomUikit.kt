@@ -157,7 +157,6 @@ object VoiceRoomUikit {
         )
 
         mService = roomService
-        Log.e("apex-wt","op1")
 
         val auiChatServiceImpl = roomService.getChatService() as AUIChatServiceImpl
         auiChatServiceImpl.getChatUser {
@@ -197,16 +196,6 @@ object VoiceRoomUikit {
                 voiceRoom.bindService(roomService)
             }
         }
-
-        // login rtm
-//        roomManager.rtmManager.login(config.rtmToken007)
-//        { error ->
-//            if (error == null){
-//                Log.d("VoiceRoomUikit","login rtm suc")
-//            }else{
-//                Log.e("VoiceRoomUikit", " login rtm fail ${ErrorCode.RTM_LOGIN_FAILURE.value}")
-//            }
-//        }
 
         eventHandler?.onRoomLaunchSuccess
     }
