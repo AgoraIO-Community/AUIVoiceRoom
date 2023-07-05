@@ -52,6 +52,7 @@ public class AUIMicSeatsBindable extends IRtcEngineEventHandler implements
     private String mLeadSingerId = "";
     private RtcEngine mRtcEngine;
     private Map<Integer, String> mSeatMap = new HashMap();
+    private Map<String,Integer> mVolumeMap = new HashMap();
 
     private LinkedList<String> mAccompanySingers = new LinkedList<String>();
 
@@ -139,6 +140,7 @@ public class AUIMicSeatsBindable extends IRtcEngineEventHandler implements
     @Override
     public void onAnchorEnterSeat(int seatIndex, @NonNull AUIUserThumbnailInfo userInfo) {
         mSeatMap.put(seatIndex - 1,userInfo.userId);
+        mVolumeMap.put(userInfo.userId,seatIndex - 1);
         IMicSeatItemView seatView = micSeatsView.getMicSeatItemViewList()[seatIndex];
         seatView.setTitleText(userInfo.userName);
         seatView.setUserAvatarImageUrl(userInfo.userAvatar);
@@ -150,6 +152,7 @@ public class AUIMicSeatsBindable extends IRtcEngineEventHandler implements
         if (uid != null && uid.equals(userInfo.userId)) {
             mSeatMap.remove(seatIndex);
         }
+        mVolumeMap.remove(userInfo.userId);
         updateSeatView(seatIndex, null);
     }
 
@@ -293,8 +296,6 @@ public class AUIMicSeatsBindable extends IRtcEngineEventHandler implements
 
     @Override
     public void onClickEnterSeat(int index) {
-        Log.e("apex","onClickEnterSeat " + index);
-//        micSeatService.enterSeat(index, null);
         invitationService.sendApply(index, new AUICallback() {
             @Override
             public void onResult(@Nullable AUIException error) {
@@ -429,21 +430,26 @@ public class AUIMicSeatsBindable extends IRtcEngineEventHandler implements
 
     @Override
     public void onAudioVolumeIndication(AudioVolumeInfo[] speakers, int totalVolume) {
-        Log.e("apex","onAudioVolumeIndication1" + totalVolume);
         for (AudioVolumeInfo speaker : speakers) {
             int uid = speaker.uid;
-            if (speaker.volume == 0) {
-                for (Map.Entry<Integer, String> entry : mSeatMap.entrySet()) {
-                    Log.e("apex","onAudioVolumeIndication: " + uid +" - "+entry.getValue());
-                    if (String.valueOf(uid).equals(entry.getValue())){
-                        micSeatsView.startRippleAnimation(entry.getKey());
-                    }
+            int index  = -1;
+            if (uid == 0){
+                String userId = userService.getRoomContext().currentUserInfo.userId;
+                if (null != mVolumeMap && mVolumeMap.containsKey(userId)){
+                    index = mVolumeMap.get(userId);
                 }
-            } else if (speaker.volume > 0) {
-                for (Map.Entry<Integer, String> entry : mSeatMap.entrySet()) {
-                    if (String.valueOf(uid).equals(entry.getValue())){
-                        micSeatsView.stopRippleAnimation(entry.getKey());
-                    }
+            }else {
+                if (null != mVolumeMap && mVolumeMap.containsKey(String.valueOf(uid))){
+                    index = mVolumeMap.get(String.valueOf(uid));
+                }
+            }
+            if (speaker.volume == 0) {
+                if (index != -1){
+                    micSeatsView.stopRippleAnimation(index);
+                }
+            }else {
+                if (index != -1){
+                    micSeatsView.startRippleAnimation(index);
                 }
             }
         }
