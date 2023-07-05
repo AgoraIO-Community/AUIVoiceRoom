@@ -40,6 +40,10 @@
             android:windowSoftInputMode="adjustNothing"
             android:screenOrientation="portrait"/>
 
+        <activity
+            android:name=".kit.VoiceRoomSettingActivity"
+            android:screenOrientation="portrait"/>
+
     </application>
 
 </manifest>

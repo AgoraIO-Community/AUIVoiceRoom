@@ -1,5 +1,7 @@
 package io.agora.app.voice.kit
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
@@ -7,6 +9,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -27,6 +32,13 @@ class VoiceRoomListActivity: AppCompatActivity() {
     private val mViewBinding by lazy { VoiceRoomListActivityBinding.inflate(LayoutInflater.from(this)) }
     private var mList = listOf<AUIRoomInfo>()
     private val listAdapter by lazy { RoomListAdapter() }
+    private var seatStyle = MicSeatType.EightTag.value.toString()
+    private var seatCount = 8
+
+    private val launcher: ActivityResultLauncher<Intent> =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+            registerForActivity(it)
+        }
 
     companion object {
         private var ThemeId = io.agora.asceneskit.R.style.Theme_VoiceRoom
@@ -66,18 +78,9 @@ class VoiceRoomListActivity: AppCompatActivity() {
             }
         }
 
-        mViewBinding.btnSwitchTheme.setOnClickListener {
-            ThemeId = if (ThemeId == io.agora.asceneskit.R.style.Theme_VoiceRoom) {
-                io.agora.asceneskit.R.style.Theme_VoiceRoom_Voice
-            } else {
-                io.agora.asceneskit.R.style.Theme_VoiceRoom
-            }
-            theme.setTo(resources.newTheme())
-            initView()
-        }
-
         mViewBinding.btnConfig.setOnClickListener {
-
+            val intent = Intent(this, VoiceRoomSettingActivity::class.java)
+            launcher.launch(intent)
         }
 
         mViewBinding.rvList.adapter = listAdapter
@@ -110,10 +113,9 @@ class VoiceRoomListActivity: AppCompatActivity() {
 
     private fun createRoom(roomName: String) {
         val createRoomInfo = AUICreateRoomInfo()
-        Log.e("apex","createRoom ${MicSeatType.SixTag.value} ")
         createRoomInfo.roomName = roomName
-        createRoomInfo.micSeatCount = 8
-        createRoomInfo.micSeatStyle= MicSeatType.EightTag.value.toString()
+        createRoomInfo.micSeatCount = seatCount
+        createRoomInfo.micSeatStyle = seatStyle
         VoiceRoomUikit.createRoom(
             createRoomInfo,
             success = { roomInfo ->
@@ -231,5 +233,40 @@ class VoiceRoomListActivity: AppCompatActivity() {
         }
     }
 
+    private fun registerForActivity(result: ActivityResult){
+        if (result.resultCode == Activity.RESULT_OK) {
+            val data = result.data
+            data.let { intent->
+                val voiceThemeId = intent?.getIntExtra(
+                    "voiceThemeId",
+                    io.agora.asceneskit.R.style.Theme_VoiceRoom
+                )
+                voiceThemeId?.let {
+                    ThemeId = it
+                    theme.setTo(resources.newTheme())
+                    initView()
+                }
+                when (intent?.getIntExtra("voiceSeatsStyle", 8)) {
+                    1 -> {
+                        seatCount = 1
+                        seatStyle = MicSeatType.OneTag.value.toString()
+                    }
+                    6 -> {
+                        seatCount = 6
+                        seatStyle = MicSeatType.SixTag.value.toString()
+                    }
+                    9 -> {
+                        seatCount = 9
+                        seatStyle = MicSeatType.NineTag.value.toString()
+                    }
+                    else -> {
+                        seatCount = 8
+                        seatStyle = MicSeatType.EightTag.value.toString()
+                    }
+                }
+                Log.e("apex","registerForActivity $seatCount $seatStyle")
+            }
+        }
+    }
 
 }
