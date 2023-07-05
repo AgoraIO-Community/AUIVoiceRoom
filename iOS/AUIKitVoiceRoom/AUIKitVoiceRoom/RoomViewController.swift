@@ -157,11 +157,11 @@ extension RoomViewController: AUIRoomManagerRespDelegate {
     
     func onRoomUserBeKicked(roomId: String, userId: String) {
         AUIToast.show(text: "You were kicked out!")
-        VoiceChatUIKit.shared.destoryRoom(roomId: roomInfo?.roomId ?? "")
         VoiceChatUIKit.shared.unsubscribeError(roomId: roomInfo?.roomId ?? "", delegate: self)
         VoiceChatUIKit.shared.unbindRespDelegate(delegate: self)
         AUIToast.hidden(delay:0)
         AUICommonDialog.hidden()
+        self.voiceRoomView?.onBackAction()
         self.navigationController?.popViewController(animated: true)
     }
     

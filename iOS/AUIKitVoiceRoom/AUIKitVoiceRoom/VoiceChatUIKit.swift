@@ -79,11 +79,6 @@ class VoiceChatUIKit: NSObject {
     
     func destoryRoom(roomId: String) {
 //        rtmClient?.logout()
-        rtcEngine?.stopPreview()
-        rtcEngine?.leaveChannel(nil)
-        rtcEngine?.delegate = nil
-        
-        AgoraRtcEngineKit.destroy()
         service = nil
     }
     
