@@ -11,7 +11,7 @@ import AUIKit
 final class AUICreateRoomSettingController: UIViewController,UITextFieldDelegate {
     
     private lazy var background: UIImageView = {
-        UIImageView(frame: self.view.frame).image(UIImage(named: "bg_img_of_light_mode"))
+        UIImageView(frame: self.view.frame)
     }()
     
     private lazy var seats: UILabel = {
@@ -48,7 +48,15 @@ final class AUICreateRoomSettingController: UIViewController,UITextFieldDelegate
         segment.tintColor = UIColor(0x009EFF)
         segment.tag = 12
         segment.backgroundColor = .clear
-        segment.selectedSegmentIndex = AUIRoomContext.shared.themeIdx
+        if let themeName = AUIRoomContext.shared.currentThemeName {
+            if themeName == "Light" {
+                segment.selectedSegmentIndex = 0
+            }
+            if themeName == "Dark" {
+                segment.selectedSegmentIndex = 1
+            }
+        }
+        
         segment.selectedSegmentTintColor = UIColor(0x009EFF)
         segment.setTitleTextAttributes([.foregroundColor : UIColor.white,.font:UIFont.systemFont(ofSize: 18, weight: .medium)], for: .selected)
         segment.setTitleTextAttributes([.foregroundColor : UIColor.white,.font:UIFont.systemFont(ofSize: 16, weight: .regular)], for: .normal)
@@ -60,6 +68,7 @@ final class AUICreateRoomSettingController: UIViewController,UITextFieldDelegate
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.setNavigationBarHidden(false, animated: false)
+        self.background.image(UIImage(named: "bg_img_of_\(AUIRoomContext.shared.themeIdx == 0 ? "light":"dark")_mode"))
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -81,12 +90,15 @@ final class AUICreateRoomSettingController: UIViewController,UITextFieldDelegate
             AUIRoomContext.shared.seatType = AUIMicSeatViewLayoutType(rawValue: UInt(sender.selectedSegmentIndex+1)) ?? .eight
             
         } else {
-            AUIRoomContext.shared.switchThemeToNext()
+            var themeName = ""
             if sender.selectedSegmentIndex == 0 {
                 self.background.image = UIImage(named: "bg_img_of_light_mode")
+                themeName = "Light"
             } else {
                 self.background.image = UIImage(named: "bg_img_of_dark_mode")
+                themeName = "Dark"
             }
+            AUIRoomContext.shared.switchTheme(themeName: themeName)
         }
     }
     
