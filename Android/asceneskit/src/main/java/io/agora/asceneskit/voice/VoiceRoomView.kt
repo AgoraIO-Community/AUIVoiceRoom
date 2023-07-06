@@ -129,16 +129,17 @@ class VoiceRoomView : FrameLayout,
 
 
             val micSeatsBinder = AUIMicSeatsBindable(
-                if (micType == MicSeatType.EightTag){
-                    mRoomViewBinding.micSeatsView
-                }
-//                else if (micType == MicSeatType.NineTag){
-//
-//                }
-                else {
-                    mRoomViewBinding.micSeatsCircleView
-                }
-                ,service
+                when (micType) {
+                    MicSeatType.EightTag -> {
+                        mRoomViewBinding.micSeatsView
+                    }
+                    MicSeatType.NineTag -> {
+                        mRoomViewBinding.micSeatsHostView
+                    }
+                    else -> {
+                        mRoomViewBinding.micSeatsCircleView
+                    }
+                },service
             )
 
             micSeatsBinder.let {
@@ -274,12 +275,12 @@ class VoiceRoomView : FrameLayout,
                 setTitle("房间已销毁")
                 setMessage("请返回房间列表 ")
                 setPositiveButton("我知道了") {
-//                    mVoiceService?.getRoomManager()?.exitRoom(roomId
-//                    ) {
-//                        if (it == null){
-//                            Log.d("VoiceRoomView","exitRoom suc")
-//                        }
-//                    }
+                    mVoiceService?.getRoomManager()?.exitRoom(roomId
+                    ) {
+                        if (it == null){
+                            Log.d("VoiceRoomView","exitRoom suc")
+                        }
+                    }
                     dismiss()
                 }
                 setCancelable(false)
@@ -299,6 +300,7 @@ class VoiceRoomView : FrameLayout,
         when( micType ){
             MicSeatType.OneTag ->{
                 mRoomViewBinding.micSeatsView.visibility = View.GONE
+                mRoomViewBinding.micSeatsHostView.visibility = View.GONE
                 mRoomViewBinding.micSeatsCircleView.visibility = View.VISIBLE
                 mRoomViewBinding.micSeatsCircleView.setOptions(MicSeatOption(
                     roomInfo.micSeatCount,MicSeatType.OneTag
@@ -306,6 +308,7 @@ class VoiceRoomView : FrameLayout,
             }
             MicSeatType.SixTag ->{
                 mRoomViewBinding.micSeatsView.visibility = View.GONE
+                mRoomViewBinding.micSeatsHostView.visibility = View.GONE
                 mRoomViewBinding.micSeatsCircleView.visibility = View.VISIBLE
                 mRoomViewBinding.micSeatsCircleView.setOptions(MicSeatOption(
                     roomInfo.micSeatCount,MicSeatType.SixTag,if (roomInfo.micSeatCount == 3 || roomInfo.micSeatCount == 5) 90 else 0
@@ -314,10 +317,12 @@ class VoiceRoomView : FrameLayout,
             MicSeatType.EightTag ->{
                 mRoomViewBinding.micSeatsView.visibility = View.VISIBLE
                 mRoomViewBinding.micSeatsCircleView.visibility = View.GONE
+                mRoomViewBinding.micSeatsHostView.visibility = View.GONE
             }
             MicSeatType.NineTag ->{
                 mRoomViewBinding.micSeatsView.visibility = View.GONE
                 mRoomViewBinding.micSeatsCircleView.visibility = View.GONE
+                mRoomViewBinding.micSeatsHostView.visibility = View.VISIBLE
             }
             else -> {}
         }

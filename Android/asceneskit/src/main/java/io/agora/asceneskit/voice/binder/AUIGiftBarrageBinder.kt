@@ -75,7 +75,7 @@ class AUIGiftBarrageBinder constructor(
 
     }
 
-    override fun onReceiveGiftMsg(channel:String) {
+    override fun onReceiveGiftMsg(giftEntity:AUIGiftEntity?) {
         Log.d("AUIGiftViewBinder", "onReceiveGiftMsg ")
         ThreadManager.getInstance().runOnMainThread{
             auiGiftBarrageView?.refresh(chatImpl?.getGiftList())

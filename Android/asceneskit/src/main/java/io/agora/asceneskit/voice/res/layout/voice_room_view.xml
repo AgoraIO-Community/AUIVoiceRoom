@@ -47,6 +47,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <io.agora.auikit.ui.micseats.impl.AUIMicSeatHostAudienceLayout
+        android:id="@+id/micSeatsHostView"
+        app:layout_constraintTop_toBottomOf="@+id/leftView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:visibility="gone"
+        android:layout_marginTop="12dp"
+        android:layout_width="0dp"
+        android:layout_height="300dp"/>
+
 
     <io.agora.auikit.ui.gift.impl.AUIGiftBarrageView
         android:id="@+id/giftView"

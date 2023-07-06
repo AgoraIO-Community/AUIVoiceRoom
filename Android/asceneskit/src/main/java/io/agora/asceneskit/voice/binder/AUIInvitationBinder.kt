@@ -30,13 +30,14 @@ class AUIInvitationBinder constructor(
     private var mVoiceService:AUIVoiceRoomService
     private var invitationImpl:AUIInvitationServiceImpl
     private var invitationService:IAUIInvitationService
-    private val applyList = mutableListOf<AUIUserInfo>()
+    private val applyList = mutableListOf<AUIUserInfo?>()
     private val applyDialog:AUIApplyDialog
     private val invitationDialog:AUIInvitationDialog
 
     private var mSeatMap = mutableMapOf<Int, String>()
-    private var mMemberMap = mutableMapOf<String, AUIUserInfo>()
-    private var currentMemberList:MutableList<AUIUserInfo> = mutableListOf()
+    private var mMemberMap = mutableMapOf<String, AUIUserInfo?>()
+    private var currentMemberList:MutableList<AUIUserInfo?> = mutableListOf()
+    private var userService:IAUIUserService
 
     init {
         this.mVoiceService = voiceService
@@ -45,6 +46,7 @@ class AUIInvitationBinder constructor(
         this.activity = activity
         this.applyDialog = AUIApplyDialog()
         this.invitationDialog = AUIInvitationDialog()
+        this.userService = voiceService.getUserService()
     }
 
     override fun bind() {
@@ -70,18 +72,20 @@ class AUIInvitationBinder constructor(
             setApplyDialogListener(object : AUIApplyDialogEventListener {
                 override fun onApplyItemClick(
                     view: View,
-                    applyIndex: Int,
-                    user: AUIUserInfo,
+                    applyIndex: Int?,
+                    user: AUIUserInfo?,
                     position: Int
                 ) {
-                    mVoiceService.getInvitationService().acceptApply(
-                        user.userId,
-                        applyIndex
-                    ) {
-                        if (it == null){
-                            Log.d("apex","房主同意上麦申请 成功")
-                            applyList.removeAt(position)
-                            applyDialog.refreshApplyData(applyList)
+                    if (user?.userId != null && applyIndex != null){
+                        mVoiceService.getInvitationService().acceptApply(
+                            user.userId,
+                            applyIndex
+                        ) {
+                            if (it == null){
+                                Log.d("apex","房主同意上麦申请 成功")
+                                applyList.removeAt(position)
+                                applyDialog.refreshApplyData(applyList)
+                            }
                         }
                     }
                 }
@@ -121,13 +125,15 @@ class AUIInvitationBinder constructor(
                 putInt(AUIInvitationDialog.KEY_CURRENT_ITEM, 0)
             }
             setInvitationDialogListener(object : AUIInvitationDialogEventListener {
-                override fun onInvitedItemClick(view: View, invitedIndex: Int, user: AUIUserInfo) {
-                    mVoiceService.getInvitationService().sendInvitation(
-                        user.userId,
-                        invitedIndex
-                    ) {
-                        if (it == null){
-                            Log.d("apex","邀请${user.userId}上麦成功 $invitedIndex 成功")
+                override fun onInvitedItemClick(view: View, invitedIndex: Int, user: AUIUserInfo?) {
+                    if (user != null){
+                        mVoiceService.getInvitationService().sendInvitation(
+                            user.userId,
+                            invitedIndex
+                        ) {
+                            if (it == null){
+                                Log.d("apex","邀请${user.userId}上麦成功 $invitedIndex 成功")
+                            }
                         }
                     }
                 }
@@ -170,8 +176,9 @@ class AUIInvitationBinder constructor(
 
     /** IAUiUserService.AUiUserRespDelegate */
     override fun onRoomUserEnter(roomId: String, userInfo: AUIUserInfo) {
-        Log.d("apex","onRoomUserEnter ${userInfo.userAvatar} ${userInfo.userId}")
-        mMemberMap[userInfo.userId] = userInfo
+        Log.d("apex","onRoomUserEnter ${userInfo.userId}")
+        val auiUserInfo = userService.getUserInfo(userInfo.userId)
+        mMemberMap[userInfo.userId] = auiUserInfo
         filterCurrentMember()
     }
 
@@ -187,6 +194,7 @@ class AUIInvitationBinder constructor(
 
     override fun onRoomUserSnapshot(roomId: String, userList: MutableList<AUIUserInfo>?) {
         userList?.forEach { userInfo ->
+            Log.e("apex","onRoomUserSnapshot $userInfo")
             mMemberMap[userInfo.userId] = userInfo
         }
         filterCurrentMember()
@@ -210,8 +218,8 @@ class AUIInvitationBinder constructor(
         currentMemberList.clear()
         mMemberMap.values.toList().forEach {  user ->
             // 在麦位数据和所有成员数据中 查找共有的uid
-            val uid = mSeatMap.entries.find { it.value == user.userId }?.value
-            if (user.userId != uid && user.userId != mVoiceService.getRoomInfo().roomOwner?.userId){
+            val uid = mSeatMap.entries.find { it.value == user?.userId }?.value
+            if (user?.userId != uid && user?.userId != mVoiceService.getRoomInfo().roomOwner?.userId){
                 currentMemberList.add(user)
             }
         }

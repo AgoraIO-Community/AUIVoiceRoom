@@ -139,11 +139,14 @@ public class AUIMicSeatsBindable extends IRtcEngineEventHandler implements
 
     @Override
     public void onAnchorEnterSeat(int seatIndex, @NonNull AUIUserThumbnailInfo userInfo) {
+        AUIUserInfo auiUserInfo = userService.getUserInfo(userInfo.userId);
         mSeatMap.put(seatIndex - 1,userInfo.userId);
         mVolumeMap.put(userInfo.userId,seatIndex - 1);
         IMicSeatItemView seatView = micSeatsView.getMicSeatItemViewList()[seatIndex];
-        seatView.setTitleText(userInfo.userName);
-        seatView.setUserAvatarImageUrl(userInfo.userAvatar);
+        if (auiUserInfo != null){
+            seatView.setTitleText(auiUserInfo.userName);
+            seatView.setUserAvatarImageUrl(auiUserInfo.userAvatar);
+        }
     }
 
     @Override
