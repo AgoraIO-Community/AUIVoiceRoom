@@ -51,6 +51,9 @@ extension AUIRoomGiftBinder: AUIGiftsManagerRespDelegate,PAGViewListener,AUIRoom
     public func sendGiftAction(gift: AUIKit.AUIGiftEntity) {
         self.sendGift(gift: gift) { error in
             AUIToast.show(text: error == nil ? "Sent successful!":"Sent failed!")
+            if error == nil {
+                self.receive?.receiveGift(gift: gift)
+            }
         }
     }
     
