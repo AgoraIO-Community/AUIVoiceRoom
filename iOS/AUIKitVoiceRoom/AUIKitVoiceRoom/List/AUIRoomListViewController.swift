@@ -169,7 +169,7 @@ final class AUIRoomListViewController: UIViewController {
         AUIAlertView.theme_defaultAlert()
             .isShowCloseButton(isShow: true)
             .title(title: "房间主题")
-            .rightButton(title: "一起嗨歌")
+            .rightButton(title: "一起嗨")
             .rightButtonTapClosure(onTap: {[weak self] text in
                 guard let self = self else { return }
                 guard let text = text, text.count > 0 else {
