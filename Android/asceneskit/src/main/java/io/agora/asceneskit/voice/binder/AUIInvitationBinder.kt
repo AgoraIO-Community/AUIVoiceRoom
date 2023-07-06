@@ -35,7 +35,7 @@ class AUIInvitationBinder constructor(
     private val invitationDialog:AUIInvitationDialog
 
     private var mSeatMap = mutableMapOf<Int, String>()
-    private var mMemberMap = mutableMapOf<String, AUIUserInfo?>()
+    private var mMemberMap = mutableMapOf<String?, AUIUserInfo?>()
     private var currentMemberList:MutableList<AUIUserInfo?> = mutableListOf()
     private var userService:IAUIUserService
 
@@ -47,6 +47,14 @@ class AUIInvitationBinder constructor(
         this.applyDialog = AUIApplyDialog()
         this.invitationDialog = AUIInvitationDialog()
         this.userService = voiceService.getUserService()
+
+        val roomOwner = voiceService.getRoomInfo().roomOwner
+        val owner = AUIUserInfo()
+        owner.userName = roomOwner?.userName.toString()
+        owner.userId = roomOwner?.userId.toString()
+        owner.userAvatar = roomOwner?.userAvatar.toString()
+        mMemberMap[roomOwner?.userId] = owner
+        mSeatMap[0] = owner.userId
     }
 
     override fun bind() {
@@ -194,7 +202,7 @@ class AUIInvitationBinder constructor(
 
     override fun onRoomUserSnapshot(roomId: String, userList: MutableList<AUIUserInfo>?) {
         userList?.forEach { userInfo ->
-            Log.e("apex","onRoomUserSnapshot $userInfo")
+            Log.e("apex","onRoomUserSnapshot ${userInfo.userName} - ${userInfo.userAvatar}")
             mMemberMap[userInfo.userId] = userInfo
         }
         filterCurrentMember()

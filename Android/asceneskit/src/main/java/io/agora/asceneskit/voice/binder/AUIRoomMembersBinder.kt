@@ -33,8 +33,8 @@ class AUIRoomMembersBinder constructor(
     private var context:Context?=null
     private var roomContext:AUIRoomContext
     private var roomManager:IAUIRoomManager
-    private var mMemberMap = mutableMapOf<String, AUIUserInfo>()
-    private var mSeatMap = mutableMapOf<Int, String>()
+    private var mMemberMap = mutableMapOf<String?, AUIUserInfo?>()
+    private var mSeatMap = mutableMapOf<Int, String?>()
     private var isOwner:Boolean = false
     private var listener:AUIRoomMemberEvent?
     private var dialogMemberView:AUIRoomMemberListView?=null
@@ -49,7 +49,15 @@ class AUIRoomMembersBinder constructor(
         this.memberView = memberView
         this.context = context
         this.listener = listener
-        isOwner = roomContext.currentUserInfo.userId == roomInfo?.roomOwner?.userId
+        val roomOwner = roomInfo?.roomOwner
+        isOwner = roomContext.currentUserInfo.userId == roomOwner?.userId
+
+        val owner = AUIUserInfo()
+        owner.userName = roomOwner?.userName.toString()
+        owner.userId = roomOwner?.userId.toString()
+        owner.userAvatar = roomOwner?.userAvatar.toString()
+        mMemberMap[roomOwner?.userId] = owner
+        mSeatMap[0] = roomOwner?.userId
     }
 
     override fun bind() {
@@ -84,16 +92,18 @@ class AUIRoomMembersBinder constructor(
         dialogMemberView?.setMembers(mMemberMap.values.toList(), mSeatMap)
         dialogMemberView?.setIsOwner(isOwner, roomInfo?.roomOwner?.userId)
         dialogMemberView?.setMemberActionListener(object : AUIRoomMemberListView.ActionListener{
-            override fun onKickClick(view: View, position: Int, user: AUIUserInfo) {
+            override fun onKickClick(view: View, position: Int, user: AUIUserInfo?) {
                 try {
-                    val userId = user.userId.toInt()
+                    val userId = user?.userId?.toInt()
                     if (isOwner){
-                        roomManager.kickUser(roomInfo?.roomId,userId
-                        ) {
-                            if (it == null){
-                                Log.d("AUIRoomMembersBinder","onKickClick suc")
-                            }else{
-                                Log.d("AUIRoomMembersBinder","onKickClick fail ${it.message}")
+                        userId?.let {
+                            roomManager.kickUser(roomInfo?.roomId,it
+                            ) {
+                                if (it == null){
+                                    Log.d("AUIRoomMembersBinder","onKickClick suc")
+                                }else{
+                                    Log.d("AUIRoomMembersBinder","onKickClick fail ${it.message}")
+                                }
                             }
                         }
                     }
@@ -115,7 +125,8 @@ class AUIRoomMembersBinder constructor(
 
     /** IAUiUserService.AUiUserRespDelegate */
     override fun onRoomUserEnter(roomId: String, userInfo: AUIUserInfo) {
-        mMemberMap[userInfo.userId] = userInfo
+        val auiUserInfo = userService?.getUserInfo(userInfo.userId)
+        mMemberMap[userInfo.userId] = auiUserInfo
         memberView?.setMemberData(mMemberMap.values.toList())
     }
 
@@ -139,6 +150,7 @@ class AUIRoomMembersBinder constructor(
 
     /** IAUiMicSeatService.AUiMicSeatRespDelegate */
     override fun onAnchorEnterSeat(seatIndex: Int, userInfo: AUIUserThumbnailInfo) {
+        Log.e("apex","onAnchorEnterSeat $seatIndex ${userInfo.userName}")
         mSeatMap[seatIndex] = userInfo.userId
     }
 

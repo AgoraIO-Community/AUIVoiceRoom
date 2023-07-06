@@ -18,6 +18,7 @@ import io.agora.auikit.model.AUIChooseMusicModel;
 import io.agora.auikit.model.AUIChoristerModel;
 import io.agora.auikit.model.AUIMicSeatInfo;
 import io.agora.auikit.model.AUIMicSeatStatus;
+import io.agora.auikit.model.AUIRoomContext;
 import io.agora.auikit.model.AUIUserInfo;
 import io.agora.auikit.model.AUIUserThumbnailInfo;
 import io.agora.auikit.service.IAUIChorusService;
@@ -48,6 +49,8 @@ public class AUIMicSeatsBindable extends IRtcEngineEventHandler implements
     private final IAUIJukeboxService jukeboxService;
     private final IAUIChorusService chorusService;
     private final IAUIInvitationService invitationService;
+    private final AUIVoiceRoomService mVoiceService;
+    private AUIRoomContext roomContext;
     private Handler mMainHandler;
     private String mLeadSingerId = "";
     private RtcEngine mRtcEngine;
@@ -59,6 +62,7 @@ public class AUIMicSeatsBindable extends IRtcEngineEventHandler implements
     public AUIMicSeatsBindable(
             IMicSeatsView micSeatsView,
             AUIVoiceRoomService voiceService) {
+        this.mVoiceService = voiceService;
         this.userService = voiceService.getUserService();
         this.micSeatsView = micSeatsView;
         this.micSeatService = voiceService.getMicSeatsService();
@@ -66,6 +70,8 @@ public class AUIMicSeatsBindable extends IRtcEngineEventHandler implements
         this.chorusService = voiceService.getChorusService();
         this.invitationService = voiceService.getInvitationService();
         this.mRtcEngine = voiceService.getMRtcEngine();
+        this.roomContext = AUIRoomContext.shared();
+        mSeatMap.put(0,roomContext.getRoomOwner(micSeatService.getChannelName()));
     }
 
     @Override
@@ -250,7 +256,9 @@ public class AUIMicSeatsBindable extends IRtcEngineEventHandler implements
     @Override
     public boolean onClickSeat(int index, IMicSeatDialogView dialogView) {
         AUIMicSeatInfo seatInfo = micSeatService.getMicSeatInfo(index);
-        dialogView.setUserInfo(seatInfo.user);
+        if (seatInfo == null ||  seatInfo.user == null){ return true;}
+        AUIUserInfo userInfo = userService.getUserInfo(seatInfo.user.userId);
+        dialogView.setUserInfo(userInfo);
         boolean isEmptySeat = (seatInfo.user == null || seatInfo.user.userId.length() == 0);
         boolean isCurrentUser = seatInfo.user != null && seatInfo.user.userId.equals(micSeatService.getRoomContext().currentUserInfo.userId);
         boolean isRoomOwner = micSeatService.getRoomContext().isRoomOwner(micSeatService.getChannelName());
