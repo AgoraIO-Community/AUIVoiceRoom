@@ -12,6 +12,7 @@ import Alamofire
 
 public class AUIRoomGiftBinder: NSObject {
     
+    
     private weak var send: IAUIRoomGiftDialog?
     
     private weak var receive: IAUIGiftBarrageView?
@@ -26,6 +27,7 @@ public class AUIRoomGiftBinder: NSObject {
     public func bind(send: IAUIRoomGiftDialog, receive: IAUIGiftBarrageView, giftService: AUIGiftsManagerServiceDelegate) {
         self.send = send
         self.receive = receive
+        self.send?.addActionHandler(actionHandler: self)
         self.giftDelegate = giftService
         self.giftDelegate?.giftsFromService(roomId: giftService.getChannelName(), completion: { [weak self] tabs, error in
             if error == nil {
@@ -45,7 +47,13 @@ extension String {
 }
 
 
-extension AUIRoomGiftBinder: AUIGiftsManagerRespDelegate,PAGViewListener {
+extension AUIRoomGiftBinder: AUIGiftsManagerRespDelegate,PAGViewListener,AUIRoomGiftDialogEventsDelegate {
+    public func sendGiftAction(gift: AUIKit.AUIGiftEntity) {
+        self.sendGift(gift: gift) { error in
+            AUIToast.show(text: error == nil ? "Sent successful!":"Sent failed!")
+        }
+    }
+    
     
     public func receiveGift(gift: AUIGiftEntity) {
         self.receive?.receiveGift(gift: gift)
