@@ -21,7 +21,7 @@ import SwiftTheme
     }()
     
     /// 房间信息UI
-    private lazy var roomInfoView: AUIRoomInfoView = AUIRoomInfoView(frame: CGRect(x: 16, y: AStatusBarHeight, width: 185, height: 40))
+    private lazy var roomInfoView: AUIRoomInfoView = AUIRoomInfoView(frame: CGRect(x: 16, y: AStatusBarHeight, width: 185, height: 40),showExtension: true)
     
     // 关闭按钮
     private lazy var closeButton: AUIButton = {
@@ -179,7 +179,7 @@ import SwiftTheme
                         userService: service.userImpl,
                         micSeatService: service.micSeatImpl)
         
-        chatBinder.bind(chat: self.chatView, chatService: service.chatImplement)
+        chatBinder.bind(chat: self.chatView.messageView, chatService: service.chatImplement)
         chatView.addActionHandler(actionHandler: self)
         
         giftBinder.bind(send: self.giftsView, receive: self.receiveGift, giftService: service.giftImplement)
