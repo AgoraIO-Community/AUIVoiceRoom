@@ -183,7 +183,6 @@ import SwiftTheme
         chatView.addActionHandler(actionHandler: self)
         
         giftBinder.bind(send: self.giftsView, receive: self.receiveGift, giftService: service.giftImplement)
-        giftsView.addActionHandler(actionHandler: self)
         if let roomInfo = AUIRoomContext.shared.roomInfoMap[service.channelName] {
             self.roomInfoView.updateRoomInfo(withRoomId: roomInfo.roomId, roomName: roomInfo.roomName, ownerHeadImg: roomInfo.owner?.userAvatar)
         }

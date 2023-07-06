@@ -56,7 +56,7 @@ import AUIKit
     }
     
     lazy var messageView: AUIChatListView = {
-        AUIChatListView(frame: CGRect(x: 0, y: 0, width: AScreenWidth, height: self.frame.height-65-CGFloat(ABottomBarHeight)))
+        AUIChatListView(frame: CGRect(x: 0, y: 0, width: AScreenWidth, height: self.frame.height-65))
     }()
     
     lazy var emitter: AUIPraiseEffectView = {

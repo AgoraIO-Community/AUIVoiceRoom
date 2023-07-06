@@ -192,10 +192,8 @@ final class AUIRoomListViewController: UIViewController {
                     AUIToast.show(text: error.localizedDescription)
                 }
             })
-            .textFieldPlaceholder(placeholder: "房间主题")
             .textFieldPlaceholder(color: UIColor(hex: "#919BA1"))
             .textFieldPlaceholder(placeholder: "请输入房间主题")
-            .textField(color: AUIRoomContext.shared.themeIdx > 0 ? .lightText:.darkText)
             .textField(text: "room\(arc4random_uniform(99999))")
             .textField(cornerRadius: 25)
             .show()
