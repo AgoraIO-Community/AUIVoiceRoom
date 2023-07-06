@@ -10,7 +10,7 @@ import AUIKit
 
 @objcMembers open class AUIIMViewBinder: NSObject {
     
-    private weak var chatView: IAUIChatBottomBarView?
+    private weak var chatView: IAUIChatListView?
     
     private weak var chatDelegate: AUIMManagerServiceDelegate? {
         didSet {
@@ -19,7 +19,7 @@ import AUIKit
         }
     }
     
-    public func bind(chat: IAUIChatBottomBarView, chatService: AUIMManagerServiceDelegate) {
+    public func bind(chat: IAUIChatListView, chatService: AUIMManagerServiceDelegate) {
         self.chatView = chat
         self.chatDelegate = chatService
     }

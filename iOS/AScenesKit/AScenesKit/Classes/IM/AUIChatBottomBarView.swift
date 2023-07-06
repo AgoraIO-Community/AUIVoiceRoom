@@ -8,14 +8,6 @@
 import UIKit
 import AUIKit
 
-/// Description 聊天整体区域与对应的Binder类数据交互刷新协议，提供给binder调用view里的刷新数据
-@objc public protocol IAUIChatBottomBarView: NSObjectProtocol {
-    
-    /// Description 显示新消息
-    /// - Parameter entity: 消息渲染的实体包含缓存的渲染富文本与高度宽度
-    func showNewMessage(entity: AUIChatEntity)
-}
-
 @objc public protocol AUIChatBottomBarViewEventsDelegate: NSObjectProtocol {
     
     /// Description 唤起输入键盘
@@ -30,7 +22,7 @@ import AUIKit
     func bottomBarEvents(entity: AUIChatFunctionBottomEntity)
 }
 
-@objc open class AUIChatBottomBarView: UIView,IAUIChatBottomBarView {
+@objc open class AUIChatBottomBarView: UIView {
         
     private var eventHandlers: NSHashTable<AnyObject> = NSHashTable<AnyObject>.weakObjects()
     
@@ -94,7 +86,7 @@ import AUIKit
         self.addSubViews([self.messageView,self.bottomBar,self.emitter])
         getWindow()?.addSubview(self.inputBar)
         self.inputBar.isHidden = true
-        self.showNewMessage(entity: self.startMessage(nil))
+        self.messageView.showNewMessage(entity: self.startMessage(nil))
         self.bottomBarEvents()
     }
     
@@ -129,12 +121,6 @@ import AUIKit
             self?.messageView.chatView.reloadData()
             self?.inputBar.inputField.text = ""
         }
-    }
-    
-    public func showNewMessage(entity: AUIChatEntity) {
-        self.messageView.messages?.append(entity)
-        self.messageView.chatView.reloadData()
-        self.messageView.scrollTableViewToBottom()
     }
     
     public func dismissKeyboard() {
