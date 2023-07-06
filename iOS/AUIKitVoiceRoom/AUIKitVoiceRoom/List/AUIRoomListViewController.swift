@@ -80,9 +80,17 @@ final class AUIRoomListViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.view.backgroundColor = AUIRoomContext.shared.themeIdx == 1 ? UIColor(0x171A1C):UIColor(0xF9FAFA)
         navigationController?.setNavigationBarHidden(true, animated: false)
+        if let themeName = AUIRoomContext.shared.currentThemeName {
+            if themeName == "Light" {
+                self.view.backgroundColor = UIColor(0xF9FAFA)
+            } else if themeName == "Dark"  {
+                self.view.backgroundColor = UIColor(0x171A1C)
+            }
+        }
+
     }
+    
     
     private func initEngine() {
         //设置基础信息到KaraokeUIKit里
