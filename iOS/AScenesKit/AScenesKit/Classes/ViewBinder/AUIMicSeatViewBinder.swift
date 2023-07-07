@@ -31,7 +31,10 @@ public class AUIMicSeatViewBinder: NSObject {
                             }
                         } else {
                             if "\(speaker.uid)" == userId {
+                                aui_info("same userId :\(userId)")
                                 index = idx
+                            } else {
+                                aui_info("difference userId :\(userId)")
                             }
                         }
                         if index != nil {
