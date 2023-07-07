@@ -12,6 +12,7 @@ import Alamofire
 
 public class AUIRoomGiftBinder: NSObject {
     
+    private var effectView: AUIGiftEffectView?
     
     private weak var send: IAUIRoomGiftDialog?
     
@@ -65,7 +66,9 @@ extension AUIRoomGiftBinder: AUIGiftsManagerRespDelegate,PAGViewListener,AUIRoom
     public func receiveGift(gift: AUIGiftEntity) {
         self.receive?.receiveGift(gift: gift)
         if !gift.giftEffect.isEmpty {
-            self.effectAnimation(gift: gift)
+            if self.effectView == nil {
+                self.effectAnimation(gift: gift)
+            }
 //            self.notifyHorizontalTextCarousel(gift: gift)
         }
         
@@ -73,7 +76,8 @@ extension AUIRoomGiftBinder: AUIGiftsManagerRespDelegate,PAGViewListener,AUIRoom
     
     public func onAnimationEnd(_ pagView: PAGView!) {
         aui_info("gift effect animation end.")
-        pagView.removeFromSuperview()
+        self.effectView?.removeFromSuperview()
+        self.effectView = nil
     }
     
 }
@@ -87,15 +91,15 @@ extension AUIRoomGiftBinder {
             return
         }
         let file = PAGFile.load(documentPath)
-        guard let window =  getWindow() else { return }
-        let pagView = AUIPagView(frame:CGRect(x: 0, y: 0, width: AScreenWidth, height: window.frame.height))
-        pagView.isUserInteractionEnabled = false
-        pagView.setScaleMode(PAGScaleModeZoom)
-        window.addSubview(pagView)
-        pagView.setComposition(file)
-        pagView.setRepeatCount(1)
-        pagView.add(self)
-        pagView.play()
+        guard let window = getWindow() else { return }
+        self.effectView = AUIGiftEffectView(frame:CGRect(x: 0, y: 0, width: AScreenWidth, height: window.frame.height))
+        self.effectView?.isUserInteractionEnabled = false
+        self.effectView?.setScaleMode(PAGScaleModeZoom)
+        window.addSubview(self.effectView!)
+        self.effectView?.setComposition(file)
+        self.effectView?.setRepeatCount(1)
+        self.effectView?.add(self)
+        self.effectView?.play()
         
     }
     
@@ -149,10 +153,4 @@ extension AUIRoomGiftBinder {
 }
 
 
-final class AUIPagView: PAGView {
-    
-    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
-        super.hitTest(point, with: event)
-    }
-    
-}
+
