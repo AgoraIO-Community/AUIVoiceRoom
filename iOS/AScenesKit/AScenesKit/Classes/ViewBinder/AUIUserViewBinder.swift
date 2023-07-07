@@ -31,7 +31,9 @@ open class AUIUserViewBinder: NSObject {
 
 extension AUIUserViewBinder: AUIUserRespDelegate {
     public func onUserBeKicked(roomId: String, userId: String) {
-        AUIToast.show(text: "")
+        let user = AUIUserThumbnailInfo()
+        user.userId = userId
+        self.userView?.removeMember(member: user)
     }
     
     public func onUserAudioMute(userId: String, mute: Bool) {

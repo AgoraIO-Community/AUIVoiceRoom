@@ -16,6 +16,8 @@ import AUIKit
 
 public class AUIMicSeatViewBinder: NSObject {
     
+    /// Description true为上麦  false下麦
+    private var currentUserMicState: ((Bool) -> ())?
     
     var speakers: [AgoraRtcAudioVolumeInfo] = [] {
         didSet {
@@ -29,7 +31,10 @@ public class AUIMicSeatViewBinder: NSObject {
                             }
                         } else {
                             if "\(speaker.uid)" == userId {
+                                aui_info("same userId :\(userId)")
                                 index = idx
+                            } else {
+                                aui_info("difference userId :\(userId)")
                             }
                         }
                         if index != nil {
@@ -97,11 +102,12 @@ public class AUIMicSeatViewBinder: NSObject {
     
     public func bindVoiceChat(micSeatView: IAUIMicSeatView,eventsDelegate: AUIMicSeatViewEventsDelegate,
                      micSeatService: AUIMicSeatServiceDelegate,
-                     userService: AUIUserServiceDelegate) {
+                              userService: AUIUserServiceDelegate,currenUserMicStateClosure: @escaping (Bool) -> ()) {
         self.micSeatView = micSeatView
         self.eventsDelegate = eventsDelegate
         self.micSeatDelegate = micSeatService
         self.userDelegate = userService
+        self.currentUserMicState = currenUserMicStateClosure
     }
     
     private func enterDialogItem(seatInfo: AUIMicSeatInfo, callback: @escaping ()->()) -> AUIActionSheetItem {
@@ -306,6 +312,7 @@ extension AUIMicSeatViewBinder: AUIMicSeatRespDelegate {
             mediaOption.publishMicrophoneTrack = true
             rtcEngine.updateChannel(with: mediaOption)
             aui_info("update clientRoleType: \(mediaOption.clientRoleType.rawValue)", tag: "AUIMicSeatViewBinder")
+            self.currentUserMicState?(true)
             return
         }
         
@@ -329,6 +336,7 @@ extension AUIMicSeatViewBinder: AUIMicSeatRespDelegate {
  
         //current user enter seat
         guard user.userId == micSeatDelegate?.getRoomContext().commonConfig?.userId else {
+            self.currentUserMicState?(false)
             return
         }
         

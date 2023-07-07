@@ -39,22 +39,6 @@ import AUIKit
         self.eventHandlers.remove(actionHandler)
     }
     
-    
-    var datas: [AUIChatFunctionBottomEntity] {
-        var entities = [AUIChatFunctionBottomEntity]()
-        let names = ["ellipsis_vertical","mic","gift_color","thumb_up_color"]
-        let selectedNames = ["ellipsis_vertical","unmic","gift_color","thumb_up_color"]
-        for i in 0...3 {
-            let entity = AUIChatFunctionBottomEntity()
-            entity.selected = false
-            entity.selectedImage = UIImage.aui_Image(named: selectedNames[i])
-            entity.normalImage = UIImage.aui_Image(named: names[i])
-            entity.index = i
-            entities.append(entity)
-        }
-        return entities
-    }
-    
     lazy var messageView: AUIChatListView = {
         AUIChatListView(frame: CGRect(x: 0, y: 0, width: AScreenWidth, height: self.frame.height-65))
     }()
@@ -64,7 +48,7 @@ import AUIKit
     }()
     
     lazy var bottomBar: AUIRoomBottomFunctionBar = {
-        AUIRoomBottomFunctionBar(frame: CGRect(x: 0, y: self.frame.height-60, width: AScreenWidth, height: 54), datas: self.datas, hiddenChat: false)
+        AUIRoomBottomFunctionBar(frame: CGRect(x: 0, y: self.frame.height-60, width: AScreenWidth, height: 54), datas: self.updateBottomBarDatas(onMic: AUIRoomContext.shared.isRoomOwner(channelName: self.channelName)), hiddenChat: false)
     }()
     
     lazy var inputBar: AUIChatInputBar = {
@@ -94,14 +78,14 @@ import AUIKit
         fatalError("init(coder:) has not been implemented")
     }
     
-    func bottomBarEvents() {
+    @objc func bottomBarEvents() {
         self.bottomBar.actionClosure = { [weak self] entity in
             self?.eventHandlers.allObjects.forEach({ handler in
                 handler.bottomBarEvents(entity: entity)
             })
             guard let `self` = self else { return }
-            switch entity.index {
-            case 3:
+            switch entity.type {
+            case .like:
                 self.emitter.setupEmitter()
             default:
                 break
@@ -123,13 +107,13 @@ import AUIKit
         }
     }
     
-    public func dismissKeyboard() {
+    @objc public func dismissKeyboard() {
         self.inputBar.hiddenInputBar()
         self.window?.endEditing(true)
     }
     
     
-    func startMessage(_ text: String?) -> AUIChatEntity {
+    @objc func startMessage(_ text: String?) -> AUIChatEntity {
         let entity = AUIChatEntity()
         let user = AUIRoomContext.shared.roomInfoMap[self.channelName]?.owner ?? AUIUserThumbnailInfo()
         entity.user = user
@@ -141,8 +125,44 @@ import AUIKit
         return entity
     }
     
-    public func updateBottomBarRedDot(index: Int,show: Bool) {
+    @objc public func updateBottomBarRedDot(index: Int,show: Bool) {
         self.bottomBar.datas[safe: index]?.showRedDot = show
         self.bottomBar.toolBar.reloadItems(at: [IndexPath(item: index, section: 0)])
+    }
+    
+    @objc public func updateBottomBarState(onMic: Bool) {
+        self.bottomBar.refreshToolBar(datas: self.updateBottomBarDatas(onMic: onMic))
+    }
+    
+    @objc func updateBottomBarDatas(onMic: Bool) -> [AUIChatFunctionBottomEntity] {
+        var entities = [AUIChatFunctionBottomEntity]()
+        var names = ["ellipsis_vertical","mic","gift_color","thumb_up_color"]
+        var selectedNames = ["ellipsis_vertical","unmic","gift_color","thumb_up_color"]
+        if onMic == false {
+            names = ["ellipsis_vertical","gift_color","thumb_up_color"]
+            selectedNames = ["ellipsis_vertical","gift_color","thumb_up_color"]
+        }
+        
+        for i in 0...names.count-1 {
+            let entity = AUIChatFunctionBottomEntity()
+            entity.selected = false
+            entity.selectedImage = UIImage.aui_Image(named: selectedNames[i])
+            entity.normalImage = UIImage.aui_Image(named: names[i])
+            switch names[i] {
+            case "ellipsis_vertical":
+                entity.type = .more
+            case "mic","unmic":
+                entity.type = .mic
+            case "gift_color":
+                entity.type = .gift
+            case "thumb_up_color":
+                entity.type = .gift
+            default:
+                entity.type = .unknown
+                break
+            }
+            entities.append(entity)
+        }
+        return entities
     }
 }
