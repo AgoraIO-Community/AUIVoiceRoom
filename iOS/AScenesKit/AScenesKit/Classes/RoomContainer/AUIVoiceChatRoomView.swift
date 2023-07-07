@@ -160,14 +160,16 @@ import SwiftTheme
             return
         }
         service.beKickedClosure = { [weak self] in
-            AUIToast.show(text: "You were kicked!")
+            AUIToast.show(text: "您被踢出房间!")
             self?.onBackAction()
         }
         //绑定Service
 
         micSeatBinder.bindVoiceChat(micSeatView: micSeatView, eventsDelegate: self,
                            micSeatService: service.micSeatImpl,
-                           userService: service.userImpl)
+                                    userService: service.userImpl) { [weak self] onMic in
+            self?.chatView.updateBottomBarState(onMic: onMic)
+        }
         micSeatView.uiDelegate = self
         service.reportAudioVolumeIndicationOfSpeakers = { [weak self] speckers, totalVolumes in
             self?.micSeatBinder.speakers = speckers
@@ -391,10 +393,10 @@ extension AUIVoiceChatRoomView: AUIChatBottomBarViewEventsDelegate {
     }
     
     public func bottomBarEvents(entity: AUIChatFunctionBottomEntity) {
-        switch entity.index {
-        case 0: self.showMoreTabs()
-        case 1: self.muteLocal()
-        case 2: self.showGiftTabs()
+        switch entity.type {
+        case .more : self.showMoreTabs()
+        case .mic: self.muteLocal()
+        case .gift: self.showGiftTabs()
         default:
             break
         }
@@ -521,10 +523,23 @@ extension AUIVoiceChatRoomView: AUIMicSeatViewEventsDelegate {
         }
         service.destory()
         AUIRoomContext.shared.clean(channelName: service.channelName)
-        self.didClickOffButton()
+        if AUIRoomContext.shared.isRoomOwner(channelName: service.channelName) {
+            self.didClickOffButton()
+        }
     }
     
     @objc func onSelectedMusic() {
         aui_info("onSelectedMusic", tag: "AUiKaraokeRoomView")
+    }
+    
+    open override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+        for view in subviews.reversed() {
+            if view.isKind(of: AUIGiftBarrageView.self),view.frame.contains(point),self.micSeatView.frame.contains(point){
+                let childPoint = self.convert(point, to: self.micSeatView)
+                let childView = self.micSeatView.hitTest(childPoint, with: event)
+                return childView
+            }
+        }
+        return super.hitTest(point, with: event)
     }
 }

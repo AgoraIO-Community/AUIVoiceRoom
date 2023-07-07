@@ -49,6 +49,10 @@ extension String {
 
 extension AUIRoomGiftBinder: AUIGiftsManagerRespDelegate,PAGViewListener,AUIRoomGiftDialogEventsDelegate {
     public func sendGiftAction(gift: AUIKit.AUIGiftEntity) {
+        if !gift.giftEffect.isEmpty {
+            AUICommonDialog.hidden()
+            AUIToast.hidden()
+        }
         self.sendGift(gift: gift) { error in
             AUIToast.show(text: error == nil ? "Sent successful!":"Sent failed!")
             if error == nil {
@@ -83,8 +87,11 @@ extension AUIRoomGiftBinder {
             return
         }
         let file = PAGFile.load(documentPath)
-        let pagView = PAGView(frame:CGRect(x: 0, y: 0, width: AScreenWidth, height: AScreenHeight))
-        getWindow()?.addSubview(pagView)
+        guard let window =  getWindow() else { return }
+        let pagView = AUIPagView(frame:CGRect(x: 0, y: 0, width: AScreenWidth, height: window.frame.height))
+        pagView.isUserInteractionEnabled = false
+        pagView.setScaleMode(PAGScaleModeZoom)
+        window.addSubview(pagView)
         pagView.setComposition(file)
         pagView.setRepeatCount(1)
         pagView.add(self)
@@ -142,3 +149,10 @@ extension AUIRoomGiftBinder {
 }
 
 
+final class AUIPagView: PAGView {
+    
+    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+        super.hitTest(point, with: event)
+    }
+    
+}
