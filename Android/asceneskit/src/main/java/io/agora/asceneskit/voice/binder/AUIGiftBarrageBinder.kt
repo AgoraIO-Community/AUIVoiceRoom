@@ -120,6 +120,7 @@ class AUIGiftBarrageBinder constructor(
         }
 
         val file = PAGFile.Load(path)
+        mPAGView?.setScaleMode(3)
         mPAGView?.composition = file
         mPAGView?.setRepeatCount(1)
         mPAGView?.play()

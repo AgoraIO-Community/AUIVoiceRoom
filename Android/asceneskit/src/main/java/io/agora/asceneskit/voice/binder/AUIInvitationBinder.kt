@@ -91,8 +91,10 @@ class AUIInvitationBinder constructor(
                         ) {
                             if (it == null){
                                 Log.d("apex","房主同意上麦申请 成功")
-                                applyList.removeAt(position)
-                                applyDialog.refreshApplyData(applyList)
+                                if (position >=0){
+                                    applyList.removeAt(position)
+                                    applyDialog.refreshApplyData(applyList)
+                                }
                             }
                         }
                     }

@@ -56,6 +56,9 @@ class VoiceRoomActivity : AppCompatActivity(), AUIRtmErrorProxyDelegate,
         mViewBinding.VoiceRoomView.setOnShutDownClick {
             onUserLeaveRoom()
         }
+        mViewBinding.VoiceRoomView.setOnRoomDestroyEvent{
+            shutDownRoom()
+        }
         mPermissionHelp.checkMicPerm(
             {
                 generateToken { config ->

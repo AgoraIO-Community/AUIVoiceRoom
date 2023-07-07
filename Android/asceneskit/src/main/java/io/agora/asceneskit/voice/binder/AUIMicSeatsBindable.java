@@ -146,8 +146,9 @@ public class AUIMicSeatsBindable extends IRtcEngineEventHandler implements
     @Override
     public void onAnchorEnterSeat(int seatIndex, @NonNull AUIUserThumbnailInfo userInfo) {
         AUIUserInfo auiUserInfo = userService.getUserInfo(userInfo.userId);
-        mSeatMap.put(seatIndex - 1,userInfo.userId);
-        mVolumeMap.put(userInfo.userId,seatIndex - 1);
+        mSeatMap.put(seatIndex,userInfo.userId);
+        mVolumeMap.put(userInfo.userId,seatIndex);
+        Log.e("apex-wt","onAnchorEnterSeat: " + userInfo.userId + " - " + seatIndex);
         IMicSeatItemView seatView = micSeatsView.getMicSeatItemViewList()[seatIndex];
         if (auiUserInfo != null){
             seatView.setTitleText(auiUserInfo.userName);
@@ -197,6 +198,9 @@ public class AUIMicSeatsBindable extends IRtcEngineEventHandler implements
         AUIUserInfo userInfo = null;
         if (micSeatInfo.user != null) {
             userInfo = userService.getUserInfo(micSeatInfo.user.userId);
+            if (userInfo != null){
+                mVolumeMap.put(userInfo.userId,seatIndex);
+            }
         }
         seatView.setRoomOwnerVisibility((seatIndex == 0) ? View.VISIBLE : View.GONE);
 
@@ -443,24 +447,30 @@ public class AUIMicSeatsBindable extends IRtcEngineEventHandler implements
     public void onAudioVolumeIndication(AudioVolumeInfo[] speakers, int totalVolume) {
         for (AudioVolumeInfo speaker : speakers) {
             int uid = speaker.uid;
-            int index  = -1;
-            if (uid == 0){
-                String userId = userService.getRoomContext().currentUserInfo.userId;
-                if (null != mVolumeMap && mVolumeMap.containsKey(userId)){
-                    index = mVolumeMap.get(userId);
+            if (uid == 0){// uid == 0 代表自己
+                String userId = roomContext.currentUserInfo.userId;
+                if (roomContext.isRoomOwner(userService.getChannelName())){
+                    if (speaker.volume == 0) {
+                        micSeatsView.stopRippleAnimation(0);
+                    }else {
+                        micSeatsView.startRippleAnimation(0);
+                    }
+                }else {
+                    if (null != mVolumeMap && mVolumeMap.containsKey(userId)){
+                        if (speaker.volume == 0) {
+                            micSeatsView.stopRippleAnimation(mVolumeMap.get(userId));
+                        }else {
+                            micSeatsView.startRippleAnimation(mVolumeMap.get(userId));
+                        }
+                    }
                 }
             }else {
                 if (null != mVolumeMap && mVolumeMap.containsKey(String.valueOf(uid))){
-                    index = mVolumeMap.get(String.valueOf(uid));
-                }
-            }
-            if (speaker.volume == 0) {
-                if (index != -1){
-                    micSeatsView.stopRippleAnimation(index);
-                }
-            }else {
-                if (index != -1){
-                    micSeatsView.startRippleAnimation(index);
+                    if (speaker.volume == 0) {
+                        micSeatsView.stopRippleAnimation(mVolumeMap.get(String.valueOf(uid)));
+                    }else {
+                        micSeatsView.startRippleAnimation(mVolumeMap.get(String.valueOf(uid)));
+                    }
                 }
             }
         }

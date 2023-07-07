@@ -11,6 +11,7 @@ import io.agora.auikit.model.AUIUserThumbnailInfo
 import io.agora.auikit.service.IAUIMicSeatService
 import io.agora.auikit.service.IAUIRoomManager
 import io.agora.auikit.service.IAUIUserService
+import io.agora.auikit.ui.basic.AUIAlertDialog
 import io.agora.auikit.ui.basic.AUIBottomDialog
 import io.agora.auikit.ui.member.IAUIRoomMembersView
 import io.agora.auikit.ui.member.impl.AUIRoomMemberListView
@@ -24,7 +25,7 @@ class AUIRoomMembersBinder constructor(
     listener:AUIRoomMemberEvent?,
 ):
     IAUIBindable, IAUIUserService.AUIUserRespDelegate, AUIRoomMembersActionListener,
-    IAUIMicSeatService.AUIMicSeatRespDelegate {
+    IAUIMicSeatService.AUIMicSeatRespDelegate, IAUIRoomManager.AUIRoomManagerRespDelegate {
 
     private var userService:IAUIUserService?
     private var micSeats:IAUIMicSeatService?
@@ -64,12 +65,14 @@ class AUIRoomMembersBinder constructor(
         micSeats?.bindRespDelegate(this)
         userService?.bindRespDelegate(this)
         memberView?.setMemberActionListener(this)
+        roomManager.bindRespDelegate(this)
     }
 
     override fun unBind() {
         userService?.unbindRespDelegate(this)
         micSeats?.unbindRespDelegate(this)
         memberView?.setMemberActionListener(null)
+        roomManager.unbindRespDelegate(this)
     }
 
     override fun onMemberRankClickListener(view: View) {
@@ -127,17 +130,17 @@ class AUIRoomMembersBinder constructor(
     override fun onRoomUserEnter(roomId: String, userInfo: AUIUserInfo) {
         val auiUserInfo = userService?.getUserInfo(userInfo.userId)
         mMemberMap[userInfo.userId] = auiUserInfo
-        memberView?.setMemberData(mMemberMap.values.toList())
+        updateMemberView()
     }
 
     override fun onRoomUserLeave(roomId: String, userInfo: AUIUserInfo) {
         mMemberMap.remove(userInfo.userId)
-        memberView?.setMemberData(mMemberMap.values.toList())
+        updateMemberView()
     }
 
     override fun onRoomUserUpdate(roomId: String, userInfo: AUIUserInfo) {
         mMemberMap[userInfo.userId] = userInfo
-        memberView?.setMemberData(mMemberMap.values.toList())
+        updateMemberView()
     }
 
     override fun onRoomUserSnapshot(roomId: String, userList: MutableList<AUIUserInfo>?) {
@@ -152,11 +155,25 @@ class AUIRoomMembersBinder constructor(
     override fun onAnchorEnterSeat(seatIndex: Int, userInfo: AUIUserThumbnailInfo) {
         Log.e("apex","onAnchorEnterSeat $seatIndex ${userInfo.userName}")
         mSeatMap[seatIndex] = userInfo.userId
+        updateMemberView()
     }
 
     override fun onAnchorLeaveSeat(seatIndex: Int, userInfo: AUIUserThumbnailInfo) {
         if (mSeatMap[seatIndex].equals(userInfo.userId)) {
             mSeatMap.remove(seatIndex)
+            updateMemberView()
+        }
+    }
+
+    private fun updateMemberView(){
+        memberView?.setMemberData(mMemberMap.values.toList())
+        dialogMemberView?.setMembers(mMemberMap.values.toList(), mSeatMap)
+    }
+
+    override fun onRoomUserBeKicked(roomId: String?, userId: String?) {
+        if (roomId == roomInfo?.roomId){
+            mMemberMap.remove(userId)
+            updateMemberView()
         }
     }
 

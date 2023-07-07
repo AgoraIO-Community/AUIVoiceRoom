@@ -37,6 +37,7 @@ class VoiceRoomView : FrameLayout,
     private var moreDialog:VoiceRoomMoreDialog?=null
     private var micType:MicSeatType?=null
     private var mOnClickShutDown: (() -> Unit)? = null
+    private var mOnRoomDestroyEvent: (() -> Unit)? = null
     private var chatServiceImpl:AUIChatServiceImpl?=null
     private var invitationBinder:AUIInvitationBinder?=null
     private var auiGiftBarrageBinder :AUIGiftBarrageBinder?=null
@@ -279,6 +280,7 @@ class VoiceRoomView : FrameLayout,
                     ) {
                         if (it == null){
                             Log.d("VoiceRoomView","exitRoom suc")
+                            mOnRoomDestroyEvent?.invoke()
                         }
                     }
                     dismiss()
@@ -289,8 +291,22 @@ class VoiceRoomView : FrameLayout,
         }
     }
 
+    override fun onRoomUserBeKicked(roomId: String?, userId: String?) {
+        if (roomId == mVoiceService?.getRoomInfo()?.roomId){
+            AUIAlertDialog(context).apply {
+                setTitle("您已被踢出房间")
+                show()
+            }
+            mOnRoomDestroyEvent?.invoke()
+        }
+    }
+
     fun setOnShutDownClick(action: () -> Unit) {
         mOnClickShutDown = action
+    }
+
+    fun setOnRoomDestroyEvent(action: () -> Unit){
+        mOnRoomDestroyEvent = action
     }
 
     private fun setUpRoomStyle(roomInfo:AUIRoomInfo){

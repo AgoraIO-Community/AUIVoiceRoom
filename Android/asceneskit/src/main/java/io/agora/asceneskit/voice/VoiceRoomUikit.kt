@@ -74,6 +74,15 @@ object VoiceRoomUikit {
 
     fun destroyRoom(roomId: String?) {
         (mService?.getChatService() as AUIChatServiceImpl).logoutChat()
+        (mService?.getChatService() as AUIChatServiceImpl).userQuitRoom(object : CallBack{
+            override fun onSuccess() {
+
+            }
+
+            override fun onError(code: Int, error: String?) {
+                Log.e("apex","userQuitRoom $code $error")
+            }
+        })
         mService?.destroyRoom()
         mService = null
     }
@@ -167,33 +176,31 @@ object VoiceRoomUikit {
                 auiChatServiceImpl.loginChat(object : CallBack{
                     override fun onSuccess() {
                         Log.d("VoiceRoomUikit","loginChat suc")
+                        if (it == null && lunchType == LaunchType.CREATE){
+                            auiChatServiceImpl.createChatRoom(roomInfo.roomId,object :
+                                AUICreateChatRoomCallback{
+                                override fun onResult(error: AUIException?, chatRoomId: String?) {
+                                    if (error == null){
+                                        chatRoomId.let {
+                                            ThreadManager.getInstance().runOnMainThread{
+                                                voiceRoom.bindService(roomService)
+                                            }
+                                            Log.d("VoiceRoomUikit","setChatRoomId suc")
+                                        }
+                                    }else{
+                                        Log.e("VoiceRoomUikit","createChatRoom fail ${error.message}")
+                                    }
+                                }
+                            })
+                        }else{
+                            voiceRoom.bindService(roomService)
+                        }
                     }
 
                     override fun onError(code: Int, error: String?) {
                         Log.e("VoiceRoomUikit","loginChat error $code  $error")
                     }
                 })
-            }
-
-            if (it == null && lunchType == LaunchType.CREATE){
-                Log.e("apex-wt","op5 ${roomInfo.roomId}")
-                auiChatServiceImpl.createChatRoom(roomInfo.roomId,object :
-                    AUICreateChatRoomCallback{
-                    override fun onResult(error: AUIException?, chatRoomId: String?) {
-                        if (error == null){
-                            chatRoomId.let {
-                                ThreadManager.getInstance().runOnMainThread{
-                                    voiceRoom.bindService(roomService)
-                                }
-                                Log.d("VoiceRoomUikit","setChatRoomId suc")
-                            }
-                        }else{
-                            Log.e("VoiceRoomUikit","createChatRoom fail ${error.message}")
-                        }
-                    }
-                })
-            }else{
-                voiceRoom.bindService(roomService)
             }
         }
 

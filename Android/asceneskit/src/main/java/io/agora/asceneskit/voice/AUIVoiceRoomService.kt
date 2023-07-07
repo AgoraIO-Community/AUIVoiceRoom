@@ -153,11 +153,15 @@ class AUIVoiceRoomService constructor(
         )
         mRtcEngine.enableAudioVolumeIndication(350, 2, true)
         mRtcEngine.setClientRole(if (AUIRoomContext.shared().isRoomOwner(channelName)) Constants.CLIENT_ROLE_BROADCASTER else Constants.CLIENT_ROLE_AUDIENCE)
+
+        Log.e("apex-wt", "joinChannel uid:${AUIRoomContext.shared().currentUserInfo.userId.toInt()}")
         val ret: Int = mRtcEngine.joinChannel(
             roomConfig.rtcRtcToken006,
             roomConfig.rtcChannelName,
+//            roomConfig.rtcToken007,
+//            roomConfig.channelName,
             null,
-            AUIRoomContext.shared().commonConfig.userId.toInt()
+            AUIRoomContext.shared().currentUserInfo.userId.toInt()
         )
 
         if (ret == Constants.ERR_OK) {
