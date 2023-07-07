@@ -166,23 +166,6 @@ public class AUIMicSeatViewBinder: NSObject {
         return item
     }
     
-    private func closeDialogItem(seatInfo: AUIMicSeatInfo, callback: @escaping ()->()) -> AUIActionSheetItem {
-        let item = AUIActionSheetThemeItem()
-        item.title = seatInfo.lockSeat == .locked ? aui_localized("closeSeat") : aui_localized("openSeat")
-        item.titleColor = "CommonColor.danger"
-        item.callback = { [weak self] in
-            self?.micSeatDelegate?.closeSeat(seatIndex: Int(seatInfo.seatIndex),
-                                             isClose: seatInfo.lockSeat != .locked,
-                                             callback: { error in
-                guard let err = error else {return}
-                AUIToast.show(text: err.localizedDescription)
-            })
-            callback()
-        }
-        
-        return item
-    }
-    
     private func lockDialogItem(seatInfo: AUIMicSeatInfo, callback: @escaping ()->()) -> AUIActionSheetItem {
         let item = AUIActionSheetThemeItem()
         item.title = seatInfo.lockSeat == .locked ? aui_localized("unlockSeat") : aui_localized("lockSeat")
@@ -248,17 +231,16 @@ public class AUIMicSeatViewBinder: NSObject {
         if isRoomOwner {
             if isEmptySeat {
                 items.append(muteAudioDialogItem(seatInfo: seatInfo, callback:callback))
-                items.append(lockDialogItem(seatInfo: seatInfo, callback:callback))
                 if !seatInfo.isLock {
                     items.append(inviteDialogItem(seatInfo: seatInfo, callback: callback))
                 }
-
+                items.append(lockDialogItem(seatInfo: seatInfo, callback:callback))
             } else {
                 if isCurrentUser {
                 } else {  //other user
                     items.append(kickDialogItem(seatInfo: seatInfo, callback:callback))
                     items.append(muteAudioDialogItem(seatInfo: seatInfo, callback:callback))
-                    items.append(closeDialogItem(seatInfo: seatInfo, callback:callback))
+                    items.append(lockDialogItem(seatInfo: seatInfo, callback:callback))
                 }
             }
         } else {
