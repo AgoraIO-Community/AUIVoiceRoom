@@ -88,9 +88,7 @@ extension AUIRoomGiftBinder: AUIGiftsManagerRespDelegate,PAGViewListener,AUIRoom
     }
     
     public func onAnimationEnd(_ pagView: PAGView!) {
-        aui_info("gift effect animation end.")
         if let path = pagView.getPath() {
-            aui_info("gift effect animation end. paths:\(self.animationPaths) path: \(path).")
             self.animationPaths.removeFirst()
         }
         if self.animationPaths.count <= 0 {
@@ -99,6 +97,10 @@ extension AUIRoomGiftBinder: AUIGiftsManagerRespDelegate,PAGViewListener,AUIRoom
         } else {
             self.playDelayAnimation()
         }
+    }
+    
+    public func onAnimationCancel(_ pagView: PAGView!) {
+        self.effectView.isHidden = true
     }
     
 }
