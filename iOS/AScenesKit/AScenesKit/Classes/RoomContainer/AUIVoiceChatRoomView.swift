@@ -41,7 +41,7 @@ import SwiftTheme
         return button
     }()
     
-    private lazy var micSeatView: AUIMicSeatView = AUIMicSeatView(frame: CGRect(x: 16, y: ANavigationHeight+60, width: self.bounds.size.width - 16 * 2, height: 324),layout: self.layout(type: AUIMicSeatViewLayoutType(rawValue: self.roomInfo.micSeatStyle) ?? .eight))
+    private lazy var micSeatView: AUIMicSeatView = AUIMicSeatView(frame: CGRect(x: 16, y: AStatusBarHeight + 74, width: self.bounds.size.width - 16 * 2, height: 324),layout: self.layout(type: AUIMicSeatViewLayoutType(rawValue: self.roomInfo.micSeatStyle) ?? .eight))
     
     private lazy var micSeatBinder: AUIMicSeatViewBinder = AUIMicSeatViewBinder(rtcEngine: self.service!.rtcEngine,roomInfo: self.roomInfo)
 
@@ -278,6 +278,7 @@ extension AUIVoiceChatRoomView: AUIRoomMemberListViewEventsDelegate {
     
     private func kickOut(user: AUIUserCellUserDataProtocol) {
         guard let channelName = self.service?.channelName else { return }
+        aui_info("kick out channelName:\(channelName)  uid:\(user.userId) op:\(AUIRoomContext.shared.currentUserInfo.userId)")
         self.service?.userImpl.kickUser(roomId: channelName, userId: user.userId, callback: { [weak self] error in
             guard let `self` = self else { return }
             if error == nil {
@@ -523,9 +524,7 @@ extension AUIVoiceChatRoomView: AUIMicSeatViewEventsDelegate {
         }
         service.destory()
         AUIRoomContext.shared.clean(channelName: service.channelName)
-        if AUIRoomContext.shared.isRoomOwner(channelName: service.channelName) {
-            self.didClickOffButton()
-        }
+//        self.didClickOffButton()
     }
     
     @objc func onSelectedMusic() {
