@@ -10,5 +10,17 @@ target 'AUIKitVoiceRoom' do
   pod 'AUIKit', :path => '../../../AUIKit/iOS'
   pod 'AgoraRtcEngine_iOS', :path => './libs'
   pod 'AgoraLyricsScore', '1.1.1-beta-3'
-
+  pod 'DoraemonKit',:configurations => ['Debug']
+ #When pod install occur errors, the low version of the three-party library reports an error. You can fill in your teamId and the minimum iOS version currently supported by Xcode and open the comment below.
+#  post_install do |installer|
+#    installer.generated_projects.each do |project|
+#      project.targets.each do |target|
+#        target.build_configurations.each do |config|
+#          config.build_settings["IPHONEOS_DEPLOYMENT_TARGET"] = "11.0"
+#          config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"
+#          config.build_settings["DEVELOPMENT_TEAM"] = "Your teamID"
+#        end
+#      end
+#    end
+#  end
 end
