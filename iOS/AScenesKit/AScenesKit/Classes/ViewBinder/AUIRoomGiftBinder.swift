@@ -10,13 +10,26 @@ import AUIKit
 import libpag
 import Alamofire
 
+
 public class AUIRoomGiftBinder: NSObject {
     
-    private var effectView: AUIGiftEffectView?
+    private lazy var effectView: AUIGiftEffectView = {
+        let pag = AUIGiftEffectView(frame:CGRect(x: 0, y: 0, width: AScreenWidth, height: AScreenHeight))
+        getWindow()?.addSubview(pag)
+        pag.isUserInteractionEnabled = false
+        pag.setScaleMode(PAGScaleModeZoom)
+        pag.setRepeatCount(1)
+        pag.add(self)
+        return pag
+    }()
     
     private weak var send: IAUIRoomGiftDialog?
     
     private weak var receive: IAUIGiftBarrageView?
+    
+    private var queue: AnimationQueue = AnimationQueue()
+    
+    private var animationPaths = [String]()
     
     private weak var giftDelegate: AUIGiftsManagerServiceDelegate? {
         didSet {
@@ -66,9 +79,9 @@ extension AUIRoomGiftBinder: AUIGiftsManagerRespDelegate,PAGViewListener,AUIRoom
     public func receiveGift(gift: AUIGiftEntity) {
         self.receive?.receiveGift(gift: gift)
         if !gift.giftEffect.isEmpty {
-            if self.effectView == nil {
-                self.effectAnimation(gift: gift)
-            }
+            AUICommonDialog.hidden()
+            AUIToast.hidden()
+            self.effectAnimation(gift: gift)
 //            self.notifyHorizontalTextCarousel(gift: gift)
         }
         
@@ -76,8 +89,16 @@ extension AUIRoomGiftBinder: AUIGiftsManagerRespDelegate,PAGViewListener,AUIRoom
     
     public func onAnimationEnd(_ pagView: PAGView!) {
         aui_info("gift effect animation end.")
-        self.effectView?.removeFromSuperview()
-        self.effectView = nil
+        if let path = pagView.getPath() {
+            aui_info("gift effect animation end. paths:\(self.animationPaths) path: \(path).")
+            self.animationPaths.removeFirst()
+        }
+        if self.animationPaths.count <= 0 {
+            self.effectView.remove(self)
+            self.effectView.isHidden = true
+        } else {
+            self.playDelayAnimation()
+        }
     }
     
 }
@@ -90,17 +111,27 @@ extension AUIRoomGiftBinder {
         if effectName.isEmpty,!FileManager.default.fileExists(atPath: documentPath) {
             return
         }
-        let file = PAGFile.load(documentPath)
-        guard let window = getWindow() else { return }
-        self.effectView = AUIGiftEffectView(frame:CGRect(x: 0, y: 0, width: AScreenWidth, height: window.frame.height))
-        self.effectView?.isUserInteractionEnabled = false
-        self.effectView?.setScaleMode(PAGScaleModeZoom)
-        window.addSubview(self.effectView!)
-        self.effectView?.setComposition(file)
-        self.effectView?.setRepeatCount(1)
-        self.effectView?.add(self)
-        self.effectView?.play()
-        
+        self.effectView.isHidden = false
+        if !self.animationPaths.contains(documentPath) {
+            self.animationPaths.append(documentPath)
+        }
+        if !self.effectView.isPlaying() {
+            self.playAnimation(path: documentPath)
+        }
+    }
+    
+    private func playAnimation(path: String) {
+        aui_info("play effect animation")
+        self.effectView.setPath(path)
+        self.effectView.play()
+    }
+    
+    private func playDelayAnimation() {
+        if let animationPath = self.animationPaths.first {
+            aui_info("play effect animation")
+            self.effectView.setPath(animationPath)
+            self.effectView.play()
+        }
     }
     
     func refreshGifts(tabs: [AUIGiftTabEntity]) {
@@ -153,4 +184,35 @@ extension AUIRoomGiftBinder {
 }
 
 
-
+final class AnimationQueue {
+    var animations: [() -> Void] = []
+    private var isAnimating: Bool = false
+    
+    func addAnimation(animation: @escaping () -> Void, delay: TimeInterval = 3) {
+        let delayedAnimation = {
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                animation()
+                self.startNextAnimation()
+            }
+        }
+        
+        self.animations.append(delayedAnimation)
+        if !self.isAnimating {
+            self.startNextAnimation()
+        }
+    }
+    
+    private func startNextAnimation() {
+        guard !self.isAnimating else {
+            return
+        }
+        
+        if let animation = self.animations.first {
+            self.isAnimating = true
+            animation()
+            self.animations.removeFirst()
+        } else {
+            self.isAnimating = false
+        }
+    }
+}
