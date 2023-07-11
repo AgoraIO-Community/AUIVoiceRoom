@@ -5,16 +5,16 @@ PODS:
   - Alamofire (5.7.1)
   - AScenesKit (0.1.0):
     - AUIKit
-    - SVGAPlayer
+    - libpag
   - AUIKit (0.1.0):
     - Agora_Chat_iOS
     - AgoraLyricsScore
     - AgoraRtcEngine_iOS
     - Alamofire
     - AUIKit/AUIKit (= 0.1.0)
-    - Kingfisher (~> 7.6.2)
     - MJRefresh
     - ScoreEffectUI
+    - SDWebImage
     - SwiftTheme
     - SwiftyBeaver (= 1.9.5)
     - YYModel
@@ -24,26 +24,36 @@ PODS:
     - AgoraLyricsScore
     - AgoraRtcEngine_iOS
     - Alamofire
-    - Kingfisher (~> 7.6.2)
     - MJRefresh
     - ScoreEffectUI
+    - SDWebImage
     - SwiftTheme
     - SwiftyBeaver (= 1.9.5)
     - YYModel
     - Zip
-  - Kingfisher (7.6.2)
+  - DoraemonKit (3.1.3):
+    - DoraemonKit/Core (= 3.1.3)
+  - DoraemonKit/Core (3.1.3):
+    - FMDB
+    - GCDWebServer
+    - GCDWebServer/WebDAV
+    - GCDWebServer/WebUploader
+  - FMDB (2.7.5):
+    - FMDB/standard (= 2.7.5)
+  - FMDB/standard (2.7.5)
+  - GCDWebServer (3.5.4):
+    - GCDWebServer/Core (= 3.5.4)
+  - GCDWebServer/Core (3.5.4)
+  - GCDWebServer/WebDAV (3.5.4):
+    - GCDWebServer/Core
+  - GCDWebServer/WebUploader (3.5.4):
+    - GCDWebServer/Core
+  - libpag (4.2.92)
   - MJRefresh (3.7.5)
-  - Protobuf (3.23.3)
   - ScoreEffectUI (1.0.1)
-  - SSZipArchive (2.4.3)
-  - SVGAPlayer (2.5.7):
-    - SVGAPlayer/Core (= 2.5.7)
-    - SVGAPlayer/ProtoFiles (= 2.5.7)
-  - SVGAPlayer/Core (2.5.7):
-    - SSZipArchive (>= 1.8.1)
-    - SVGAPlayer/ProtoFiles
-  - SVGAPlayer/ProtoFiles (2.5.7):
-    - Protobuf (~> 3.4)
+  - SDWebImage (5.16.0):
+    - SDWebImage/Core (= 5.16.0)
+  - SDWebImage/Core (5.16.0)
   - SwiftTheme (0.6.4)
   - SwiftyBeaver (1.9.5)
   - YYModel (1.0.4)
@@ -54,18 +64,20 @@ DEPENDENCIES:
   - AgoraRtcEngine_iOS (from `./libs`)
   - AScenesKit (from `../AScenesKit`)
   - AUIKit (from `../../../AUIKit/iOS`)
+  - DoraemonKit
 
 SPEC REPOS:
   trunk:
     - Agora_Chat_iOS
     - AgoraLyricsScore
     - Alamofire
-    - Kingfisher
+    - DoraemonKit
+    - FMDB
+    - GCDWebServer
+    - libpag
     - MJRefresh
-    - Protobuf
     - ScoreEffectUI
-    - SSZipArchive
-    - SVGAPlayer
+    - SDWebImage
     - SwiftTheme
     - SwiftyBeaver
     - YYModel
@@ -84,19 +96,20 @@ SPEC CHECKSUMS:
   AgoraLyricsScore: 7e25860ccecd3c6ed73f2b503f1d73d8849079e1
   AgoraRtcEngine_iOS: 7af3b344c55059556eeb05dc748ff124c593d4fb
   Alamofire: 0123a34370cb170936ae79a8df46cc62b2edeb88
-  AScenesKit: 1e9abaa710a76a1e079b18630dd39badd5dd9749
-  AUIKit: 9aa2a2ae9ac11a4fea7e44528d93fc1a1fd936f5
-  Kingfisher: 6c5449c6450c5239166510ba04afe374a98afc4f
+  AScenesKit: 6d5fc64c23b9e20e34c974ac5ee3a12fc6e1babd
+  AUIKit: dce879a72897e4fc44a6eff30b1fe171cc0b2290
+  DoraemonKit: 7448814a80d9ca56bc8db9105c464b7ec2e62623
+  FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
+  GCDWebServer: 2c156a56c8226e2d5c0c3f208a3621ccffbe3ce4
+  libpag: f241ce26187b505bf17e68db6c1495619af88a6a
   MJRefresh: fdf5e979eb406a0341468932d1dfc8b7f9fce961
-  Protobuf: d9c3d7e5a3574aa6a5d521f2d9f733c76d294be8
   ScoreEffectUI: 1a3bbd83b17cfef1c16a3a4eede2854f89c9eb10
-  SSZipArchive: fe6a26b2a54d5a0890f2567b5cc6de5caa600aef
-  SVGAPlayer: 318b85a78b61292d6ae9dfcd651f3f0d1cdadd86
+  SDWebImage: 2aea163b50bfcb569a2726b6a754c54a4506fcf6
   SwiftTheme: 007cbaf1f9e171caf6448a4657533e54c682b285
   SwiftyBeaver: 84069991dd5dca07d7069100985badaca7f0ce82
   YYModel: 2a7fdd96aaa4b86a824e26d0c517de8928c04b30
   Zip: b3fef584b147b6e582b2256a9815c897d60ddc67
 
-PODFILE CHECKSUM: 57a26687213cf743b2b75988aaa1b1992beeb25f
+PODFILE CHECKSUM: 93a6e2d5ca3c1b63e2f3d078beb9164e2ff77d5e
 
 COCOAPODS: 1.12.0
