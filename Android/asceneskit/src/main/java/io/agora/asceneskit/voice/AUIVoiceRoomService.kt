@@ -77,7 +77,7 @@ class AUIVoiceRoomService constructor(
     private val mKtvApi: KTVApi = ktvApi ?: run {
         val config = KTVApiConfig(
             AUIRoomContext.shared().commonConfig.appId,
-            roomConfig.rtcRtmToken006,
+            roomConfig.rtcRtmToken,
             mRtcEngine,
             roomConfig.rtcChannelName,
             AUIRoomContext.shared().commonConfig.userId.toInt(),
@@ -171,10 +171,8 @@ class AUIVoiceRoomService constructor(
 
         Log.e("apex-pp", "joinChannel uid:${AUIRoomContext.shared().currentUserInfo.userId.toInt()}")
         val ret: Int = mRtcEngine.joinChannel(
-            roomConfig.rtcRtcToken006,
+            roomConfig.rtcRtcToken,
             roomConfig.rtcChannelName,
-//            roomConfig.rtcToken007,
-//            roomConfig.channelName,
             null,
             AUIRoomContext.shared().commonConfig.userId.toInt()
         )
