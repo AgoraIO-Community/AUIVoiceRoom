@@ -5,9 +5,24 @@ import io.agora.auikit.model.AUIRoomConfig
 import io.agora.auikit.model.AUIRoomContext
 import io.agora.auikit.model.AUIRoomInfo
 import io.agora.auikit.model.AUIUserInfo
-import io.agora.auikit.service.*
+import io.agora.auikit.service.IAUIChatService
+import io.agora.auikit.service.IAUIChorusService
+import io.agora.auikit.service.IAUIGiftsService
+import io.agora.auikit.service.IAUIInvitationService
+import io.agora.auikit.service.IAUIJukeboxService
+import io.agora.auikit.service.IAUIMicSeatService
+import io.agora.auikit.service.IAUIMusicPlayerService
+import io.agora.auikit.service.IAUIUserService
 import io.agora.auikit.service.callback.AUIException
-import io.agora.auikit.service.imp.*
+import io.agora.auikit.service.imp.AUIChatServiceImpl
+import io.agora.auikit.service.imp.AUIChorusServiceImpl
+import io.agora.auikit.service.imp.AUIGiftServiceImpl
+import io.agora.auikit.service.imp.AUIInvitationServiceImpl
+import io.agora.auikit.service.imp.AUIJukeboxServiceImpl
+import io.agora.auikit.service.imp.AUIMicSeatServiceImpl
+import io.agora.auikit.service.imp.AUIMusicPlayerServiceImpl
+import io.agora.auikit.service.imp.AUIRoomManagerImpl
+import io.agora.auikit.service.imp.AUIUserServiceImpl
 import io.agora.auikit.service.ktv.KTVApi
 import io.agora.auikit.service.ktv.KTVApiConfig
 import io.agora.auikit.service.ktv.KTVApiImpl
@@ -32,6 +47,11 @@ class AUIVoiceRoomService constructor(
     private val channelName: String
         get() { return  roomInfo.roomId }
 
+    val mRtcEngine: RtcEngine = rtcEngine ?: AgoraEngineCreator.createRtcEngine(
+        AUIRoomContext.shared().commonConfig.context,
+        AUIRoomContext.shared().commonConfig.appId
+    )
+
     private val rtmManager: AUIRtmManager = roomManager.rtmManager
 
     private val userImpl: IAUIUserService by lazy {
@@ -53,11 +73,6 @@ class AUIVoiceRoomService constructor(
     private val invitationImpl: IAUIInvitationService by lazy { AUIInvitationServiceImpl(roomInfo.roomId, rtmManager) }
 
     private val giftImpl:IAUIGiftsService by lazy { AUIGiftServiceImpl(roomInfo.roomId, rtmManager,chatImpl) }
-
-    val mRtcEngine: RtcEngine = rtcEngine ?: AgoraEngineCreator.createRtcEngine(
-        AUIRoomContext.shared().commonConfig.context,
-        AUIRoomContext.shared().commonConfig.appId
-    )
 
     private val mKtvApi: KTVApi = ktvApi ?: run {
         val config = KTVApiConfig(
