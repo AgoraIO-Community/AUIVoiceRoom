@@ -156,7 +156,7 @@ import AUIKit
             case "gift_color":
                 entity.type = .gift
             case "thumb_up_color":
-                entity.type = .gift
+                entity.type = .like
             default:
                 entity.type = .unknown
                 break
