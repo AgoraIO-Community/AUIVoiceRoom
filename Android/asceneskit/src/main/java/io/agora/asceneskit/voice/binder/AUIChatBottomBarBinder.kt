@@ -52,6 +52,9 @@ class AUIChatBottomBarBinder constructor(
         this.roomContext = AUIRoomContext.shared()
 
         chatImpl = chatService as AUIChatServiceImpl
+        if (roomContext?.isRoomOwner(chatImpl?.channelName) != true){
+            chatBottomBarView.setShowMic(false)
+        }
     }
 
     override fun bind() {
@@ -92,8 +95,8 @@ class AUIChatBottomBarBinder constructor(
             R.id.voice_extend_item_mic -> {
                 //点击下方麦克风
                 Log.e("apex","mic")
-                mLocalMute = !mLocalMute
                 setLocalMute(mLocalMute)
+                mLocalMute = !mLocalMute
                 event?.onClickMic(view)
             }
             R.id.voice_extend_item_gift -> {
@@ -147,6 +150,7 @@ class AUIChatBottomBarBinder constructor(
     override fun onAnchorEnterSeat(seatIndex: Int, userInfo: AUIUserThumbnailInfo) {
         val localUserId = roomContext?.currentUserInfo?.userId ?: ""
         if (userInfo.userId == localUserId) { // 本地用户上麦
+            chatBottomBarView?.setShowMic(true)
             mVoiceService?.setupLocalStreamOn(true)
             val micSeatInfo = mVoiceService?.getMicSeatsService()?.getMicSeatInfo(seatIndex)
             val userInfo = mVoiceService?.getUserService()?.getUserInfo(localUserId)
@@ -158,7 +162,7 @@ class AUIChatBottomBarBinder constructor(
     override fun onAnchorLeaveSeat(seatIndex: Int, userInfo: AUIUserThumbnailInfo) {
         val localUserId = roomContext?.currentUserInfo?.userId ?: ""
         if (userInfo.userId == localUserId) { // 本地用户下麦
-            setLocalMute(true)
+            chatBottomBarView?.setShowMic(false)
             mVoiceService?.setupLocalStreamOn(false)
         }
     }
