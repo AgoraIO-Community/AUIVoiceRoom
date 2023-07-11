@@ -148,7 +148,6 @@ public class AUIMicSeatsBindable extends IRtcEngineEventHandler implements
         AUIUserInfo auiUserInfo = userService.getUserInfo(userInfo.userId);
         mSeatMap.put(seatIndex,userInfo.userId);
         mVolumeMap.put(userInfo.userId,seatIndex);
-        Log.e("apex-wt","onAnchorEnterSeat: " + userInfo.userId + " - " + seatIndex);
         IMicSeatItemView seatView = micSeatsView.getMicSeatItemViewList()[seatIndex];
         if (auiUserInfo != null){
             seatView.setTitleText(auiUserInfo.userName);

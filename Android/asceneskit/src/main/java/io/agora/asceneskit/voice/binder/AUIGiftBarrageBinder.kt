@@ -13,7 +13,6 @@ import io.agora.auikit.service.IAUIChatService
 import io.agora.auikit.service.IAUIGiftsService
 import io.agora.auikit.service.imp.AUIChatServiceImpl
 import io.agora.auikit.ui.gift.IAUIGiftBarrageView
-import io.agora.auikit.ui.gift.impl.AUIGiftBarrageView
 import io.agora.auikit.ui.gift.impl.dialog.AUiGiftListView
 import io.agora.auikit.utils.ThreadManager
 import org.libpag.PAGFile
@@ -71,7 +70,6 @@ class AUIGiftBarrageBinder constructor(
                         giftService.sendGift(it1) { error ->
                             if (error == null) {
                                 ThreadManager.getInstance().runOnMainThread{
-                                    Log.d("AUIGiftViewBinder", "sendGift suc ${giftService.channelName}")
                                     chatImpl?.addGiftList(it1)
                                     auiGiftBarrageView?.refresh(chatImpl?.getGiftList())
                                 }
@@ -91,7 +89,6 @@ class AUIGiftBarrageBinder constructor(
         if (path == null || path.isEmpty() || !File(path).exists()) {
             return
         }
-        Log.d(TAG, "effectAnimation $path")
         if (mPAGView == null) {
             val pagView = PAGView(activity)
             pagView.layoutParams = LinearLayout.LayoutParams(
@@ -177,7 +174,6 @@ class AUIGiftBarrageBinder constructor(
     }
 
     override fun onReceiveGiftMsg(giftEntity:AUIGiftEntity?) {
-        Log.d(TAG, "onReceiveGiftMsg ")
         ThreadManager.getInstance().runOnMainThread{
             giftEntity?.let { effectAnimation(it) }
             auiGiftBarrageView?.refresh(chatImpl?.getGiftList())

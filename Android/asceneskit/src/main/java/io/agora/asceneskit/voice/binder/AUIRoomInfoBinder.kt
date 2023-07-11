@@ -32,7 +32,7 @@ class AUIRoomInfoBinder constructor(
         auiRoomInfo.let {
             it.roomOwner?.userAvatar?.let { it1 -> auiRoomInfoView?.setMemberAvatar(it1) }
             it.roomName.let { it1 -> auiRoomInfoView?.setVoiceTitle(it1) }
-            auiRoomInfoView?.setVoiceSubTitle(it.roomId)
+            it.roomId.let { it1 -> auiRoomInfoView?.setVoiceSubTitle("房间ID: $it1") }
         }
     }
 
