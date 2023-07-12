@@ -231,10 +231,12 @@ class VoiceRoomView : FrameLayout,
     private fun joinRoom(roomId:String){
         chatServiceImpl?.joinedChatRoom(roomId,object : AUIChatMsgCallback{
             override fun onOriginalResult(error: AUIException?, message: ChatMessage?) {
-                ThreadManager.getInstance().runOnMainThread{
+                if (error == null){
                     chatServiceImpl?.saveWelcomeMsg(context.getString(R.string.voice_room_welcome))
                     message?.let { chatServiceImpl?.parseMsgChatEntity(it) }
                     mRoomViewBinding.chatListView.refreshSelectLast(chatServiceImpl?.getMsgList())
+                }else{
+                    mOnRoomDestroyEvent?.invoke()
                 }
             }
         })
@@ -295,9 +297,12 @@ class VoiceRoomView : FrameLayout,
         if (roomId == mVoiceService?.getRoomInfo()?.roomId){
             AUIAlertDialog(context).apply {
                 setTitle("您已被踢出房间")
+                setPositiveButton("确认") {
+                    dismiss()
+                    mOnRoomDestroyEvent?.invoke()
+                }
                 show()
             }
-            mOnRoomDestroyEvent?.invoke()
         }
     }
 

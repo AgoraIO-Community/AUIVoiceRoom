@@ -72,6 +72,7 @@ public class AUIMicSeatsBindable extends IRtcEngineEventHandler implements
         this.mRtcEngine = voiceService.getMRtcEngine();
         this.roomContext = AUIRoomContext.shared();
         mSeatMap.put(0,roomContext.getRoomOwner(micSeatService.getChannelName()));
+        mVolumeMap.put(roomContext.getRoomOwner(micSeatService.getChannelName()),0);
     }
 
     @Override
@@ -163,6 +164,7 @@ public class AUIMicSeatsBindable extends IRtcEngineEventHandler implements
         }
         mVolumeMap.remove(userInfo.userId);
         updateSeatView(seatIndex, null);
+        micSeatsView.stopRippleAnimation(seatIndex);
     }
 
     @Override
@@ -175,6 +177,7 @@ public class AUIMicSeatsBindable extends IRtcEngineEventHandler implements
     public void onSeatVideoMute(int seatIndex, boolean isMute) {
         AUIMicSeatInfo seatInfo = micSeatService.getMicSeatInfo(seatIndex);
         updateSeatView(seatIndex, seatInfo);
+        micSeatsView.stopRippleAnimation(seatIndex);
     }
 
     @Override
@@ -182,6 +185,7 @@ public class AUIMicSeatsBindable extends IRtcEngineEventHandler implements
         AUIMicSeatInfo seatInfo = micSeatService.getMicSeatInfo(seatIndex);
         IMicSeatItemView seatView = micSeatsView.getMicSeatItemViewList()[seatIndex];
         seatView.setMicSeatState(seatInfo.seatStatus);
+        micSeatsView.stopRippleAnimation(seatIndex);
     }
 
     private void updateSeatView(int seatIndex, @Nullable AUIMicSeatInfo micSeatInfo) {

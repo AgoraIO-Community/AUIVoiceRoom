@@ -11,7 +11,6 @@ import io.agora.auikit.model.AUIUserThumbnailInfo
 import io.agora.auikit.service.IAUIMicSeatService
 import io.agora.auikit.service.IAUIRoomManager
 import io.agora.auikit.service.IAUIUserService
-import io.agora.auikit.ui.basic.AUIAlertDialog
 import io.agora.auikit.ui.basic.AUIBottomDialog
 import io.agora.auikit.ui.member.IAUIRoomMembersView
 import io.agora.auikit.ui.member.impl.AUIRoomMemberListView
@@ -100,12 +99,13 @@ class AUIRoomMembersBinder constructor(
                     val userId = user?.userId?.toInt()
                     if (isOwner){
                         userId?.let {
-                            roomManager.kickUser(roomInfo?.roomId,it
-                            ) {
-                                if (it == null){
+                            roomManager.kickUser(roomInfo?.roomId,it) { it1 ->
+                                if (it1 == null){
+                                    mMemberMap.remove(it.toString())
+                                    updateMemberView()
                                     Log.d("AUIRoomMembersBinder","onKickClick suc")
                                 }else{
-                                    Log.d("AUIRoomMembersBinder","onKickClick fail ${it.message}")
+                                    Log.d("AUIRoomMembersBinder","onKickClick fail ${it1.message}")
                                 }
                             }
                         }
