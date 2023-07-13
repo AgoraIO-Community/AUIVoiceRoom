@@ -97,7 +97,7 @@ generateToken {[weak self] roomConfig, appId in
 #### 6.1 Proactively exiting
 ```swift
 //AUIVoiceChatRoomView 提供一个关闭的闭包
-karaokeView.onClickOffButton = { [weak self] in
+voiceRoomView.onClickOffButton = { [weak self] in
     self.navigationController?.popViewController(animated: true)
     VoiceRoomUIKit.shared.destoryRoom(roomId: self.roomInfo?.roomId ?? "")
 }
@@ -159,7 +159,7 @@ AUIRoomContext.shared.switchThemeToNext()
 AUIRoomContext.shared.switchTheme(themeName: "UIKit")
 ```
 - 您还可以通过修改 [configuration file](../AUIKit/AUIKit/Resource/auiTheme.bundle/UIKit/theme) or replacing the [resource file](../AUIKit/AUIKit/Resource/auiTheme.bundle/UIKit/resource)
-- 更多换皮问题请参考 [Skin Settings](./KaraokeTheme.md)
+- 更多换皮问题请参考 [Skin Settings](./VoiceRoomTheme.md)
 
 ## License
 版权所有 © Agora Corporation。 版权所有。
