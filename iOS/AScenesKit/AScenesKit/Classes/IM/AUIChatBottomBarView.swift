@@ -22,6 +22,7 @@ import AUIKit
     func bottomBarEvents(entity: AUIChatFunctionBottomEntity)
 }
 
+/// Description 弹幕区域点赞动画区域底部功能区域的集合体
 @objc open class AUIChatBottomBarView: UIView {
         
     private var eventHandlers: NSHashTable<AnyObject> = NSHashTable<AnyObject>.weakObjects()

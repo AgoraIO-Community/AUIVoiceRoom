@@ -16,8 +16,12 @@
 
 目前聊天室的IM服务商为AgoraChat，暂时不支持更换，后期迭代会支持更换。
 
+## 4 使用同一个userId加入rtm rtc channel时返回的用户id不一致问题
 
-## 4 集成遇到困难如何联系声网寻求帮助
+请先加入rtc channel后再加入rtm channel，rtc sdk代理中回调的用户ui就会与加入的channel userId 一致
+
+
+## 5 集成遇到困难如何联系声网寻求帮助
 
 1：如果您已经在使用声网服务或正在对接中，可联系对接销售或服务
 

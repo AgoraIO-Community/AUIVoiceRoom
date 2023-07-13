@@ -174,9 +174,7 @@ import SwiftTheme
         service.reportAudioVolumeIndicationOfSpeakers = { [weak self] speckers, totalVolumes in
             self?.micSeatBinder.speakers = speckers
         }
-        micSeatView.touchOnView = { [weak self] in
-            self?.chatView.dismissKeyboard()
-        }
+        
         userBinder.bind(userView: membersView,
                         userService: service.userImpl,
                         micSeatService: service.micSeatImpl)
