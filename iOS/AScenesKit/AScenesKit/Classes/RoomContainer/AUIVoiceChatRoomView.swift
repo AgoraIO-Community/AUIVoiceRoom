@@ -259,6 +259,7 @@ extension AUIVoiceChatRoomView: AUIMicSeatCircleLayoutDataSource,AUIMicSeatHostA
 
 extension AUIVoiceChatRoomView: AUIRoomMemberListViewEventsDelegate {
     public func kickUser(user: AUIUserCellUserDataProtocol) {
+        AUIChatInputBar.hiddenInput()
         AUIAlertView.theme_defaultAlert()
             .contentTextAligment(textAlignment: .center)
             .isShowCloseButton(isShow: true)
@@ -465,6 +466,7 @@ extension AUIVoiceChatRoomView: AUIMicSeatViewEventsDelegate {
             self.invitationView.refreshUsers(users: self.filterMicUsers())
             AUICommonDialog.show(contentView: self.invitationView, theme: AUICommonDialogTheme())
         } else {
+            AUIChatInputBar.hiddenInput()
             AUIAlertView.theme_defaultAlert()
                 .contentTextAligment(textAlignment: .center)
                 .isShowCloseButton(isShow: true)
