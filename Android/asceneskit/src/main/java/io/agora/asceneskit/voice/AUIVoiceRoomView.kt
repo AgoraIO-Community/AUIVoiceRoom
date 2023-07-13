@@ -25,7 +25,7 @@ import io.agora.auikit.ui.chatBottomBar.listener.AUISoftKeyboardHeightChangeList
 import io.agora.auikit.utils.ThreadManager
 import io.agora.chat.ChatMessage
 
-class VoiceRoomView : FrameLayout,
+class AUIVoiceRoomView : FrameLayout,
     IAUIRoomManager.AUIRoomManagerRespDelegate,
     IAUIMicSeatService.AUIMicSeatRespDelegate,
     IAUIChatService.AUIChatRespDelegate {

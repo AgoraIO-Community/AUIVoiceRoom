@@ -31,9 +31,9 @@ class VoiceRoomActivity : AppCompatActivity(), AUIRtmErrorProxyDelegate,
     companion object {
         private var roomInfo: AUIRoomInfo? = null
         private var themeId: Int = View.NO_ID
-        private var lunchType:VoiceRoomUikit.LaunchType = VoiceRoomUikit.LaunchType.UNKNOWN
+        private var lunchType:AUIVoiceRoomUikit.LaunchType = AUIVoiceRoomUikit.LaunchType.UNKNOWN
 
-        fun launch(lunchType: VoiceRoomUikit.LaunchType,context: Context, roomInfo: AUIRoomInfo, themeId: Int = R.style.Theme_VoiceRoom) {
+        fun launch(lunchType: AUIVoiceRoomUikit.LaunchType, context: Context, roomInfo: AUIRoomInfo, themeId: Int = R.style.Theme_VoiceRoom) {
             Companion.roomInfo = roomInfo
             VoiceRoomActivity.themeId = themeId
             Companion.lunchType = lunchType
@@ -61,17 +61,17 @@ class VoiceRoomActivity : AppCompatActivity(), AUIRtmErrorProxyDelegate,
         }
         mPermissionHelp.checkMicPerm(
             {
-                generateToken { config ->
-                    VoiceRoomUikit.launchRoom(
+                generateToken(roomInfo.roomId) { config ->
+                    AUIVoiceRoomUikit.launchRoom(
                         lunchType,
                         roomInfo,
                         config,
                         mViewBinding.VoiceRoomView,
-                        VoiceRoomUikit.RoomEventHandler {
+                        AUIVoiceRoomUikit.RoomEventHandler {
 
                         })
-                    VoiceRoomUikit.subscribeError(roomInfo.roomId, this)
-                    VoiceRoomUikit.bindRespDelegate(this)
+                    AUIVoiceRoomUikit.subscribeError(roomInfo.roomId, this)
+                    AUIVoiceRoomUikit.bindRespDelegate(this)
                 }
             },
             {
@@ -86,8 +86,8 @@ class VoiceRoomActivity : AppCompatActivity(), AUIRtmErrorProxyDelegate,
         onUserLeaveRoom()
     }
 
-    private fun generateToken(onSuccess: (AUIRoomConfig) -> Unit) {
-        val config = AUIRoomConfig( roomInfo?.roomId ?: "")
+    private fun generateToken(roomId:String?,onSuccess: (AUIRoomConfig) -> Unit) {
+        val config = AUIRoomConfig( roomId ?: "")
         config.themeId = themeId
         var response = 3
         val trySuccess = {
@@ -149,7 +149,9 @@ class VoiceRoomActivity : AppCompatActivity(), AUIRtmErrorProxyDelegate,
     }
 
     override fun onTokenPrivilegeWillExpire(channelName: String?) {
-
+        generateToken(channelName, onSuccess = {
+            AUIRoomContext.shared().roomConfig = it
+        })
     }
 
     private fun onUserLeaveRoom() {
@@ -174,9 +176,9 @@ class VoiceRoomActivity : AppCompatActivity(), AUIRtmErrorProxyDelegate,
 
     private fun shutDownRoom() {
         roomInfo?.roomId?.let { roomId ->
-            VoiceRoomUikit.destroyRoom(roomId)
-            VoiceRoomUikit.unsubscribeError(roomId, this@VoiceRoomActivity)
-            VoiceRoomUikit.unbindRespDelegate(this@VoiceRoomActivity)
+            AUIVoiceRoomUikit.destroyRoom(roomId)
+            AUIVoiceRoomUikit.unsubscribeError(roomId, this@VoiceRoomActivity)
+            AUIVoiceRoomUikit.unbindRespDelegate(this@VoiceRoomActivity)
         }
         finish()
     }

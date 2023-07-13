@@ -4,7 +4,6 @@ import android.util.Log
 import io.agora.CallBack
 import io.agora.auikit.model.*
 import io.agora.auikit.service.IAUIRoomManager
-import io.agora.auikit.service.callback.AUICallback
 import io.agora.auikit.service.callback.AUICreateChatRoomCallback
 import io.agora.auikit.service.callback.AUIException
 import io.agora.auikit.service.http.HttpManager
@@ -17,7 +16,7 @@ import io.agora.rtc2.RtcEngine
 import io.agora.rtc2.RtcEngineEx
 import io.agora.rtm.RtmClient
 
-object VoiceRoomUikit {
+object AUIVoiceRoomUikit {
     private val notInitException =
         RuntimeException("The VoiceServiceManager has not been initialized!")
     private val initedException =
@@ -152,7 +151,7 @@ object VoiceRoomUikit {
         lunchType: LaunchType,
         roomInfo: AUIRoomInfo,
         config: AUIRoomConfig,
-        voiceRoom:VoiceRoomView,
+        voiceRoom:AUIVoiceRoomView,
         eventHandler: RoomEventHandler? = null,
     ) {
         AUIRoomContext.shared().roomConfig = config
@@ -182,9 +181,7 @@ object VoiceRoomUikit {
                                 override fun onResult(error: AUIException?, chatRoomId: String?) {
                                     if (error == null){
                                         chatRoomId.let {
-                                            ThreadManager.getInstance().runOnMainThread{
-                                                voiceRoom.bindService(roomService)
-                                            }
+                                            voiceRoom.bindService(roomService)
                                             Log.d("VoiceRoomUikit","setChatRoomId suc")
                                         }
                                     }else{

@@ -21,7 +21,7 @@ import io.agora.app.voice.BuildConfig
 import io.agora.app.voice.databinding.VoiceRoomListActivityBinding
 import io.agora.app.voice.databinding.VoiceRoomListItemBinding
 import io.agora.asceneskit.voice.VoiceRoomActivity
-import io.agora.asceneskit.voice.VoiceRoomUikit
+import io.agora.asceneskit.voice.AUIVoiceRoomUikit
 import io.agora.auikit.model.*
 import io.agora.auikit.ui.basic.AUIAlertDialog
 import io.agora.auikit.utils.BindingViewHolder
@@ -52,7 +52,7 @@ class VoiceRoomListActivity: AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        VoiceRoomUikit.release()
+        AUIVoiceRoomUikit.release()
     }
 
     private fun initView() {
@@ -101,7 +101,7 @@ class VoiceRoomListActivity: AppCompatActivity() {
         config.userName = "user_$mUserId"
         config.userAvatar = randomAvatar()
         // init AUiKit
-        VoiceRoomUikit.init(
+        AUIVoiceRoomUikit.init(
             config = config, // must
             rtmClient = null, // option
             rtcEngineEx = null, // option
@@ -116,11 +116,11 @@ class VoiceRoomListActivity: AppCompatActivity() {
         createRoomInfo.roomName = roomName
         createRoomInfo.micSeatCount = seatCount
         createRoomInfo.micSeatStyle = seatStyle
-        VoiceRoomUikit.createRoom(
+        AUIVoiceRoomUikit.createRoom(
             createRoomInfo,
             success = { roomInfo ->
                 Log.e("apex", "createRoom success ${roomInfo.roomId}  ${roomInfo.roomOwner?.userId}")
-                gotoRoomDetailPage(VoiceRoomUikit.LaunchType.CREATE,roomInfo)
+                gotoRoomDetailPage(AUIVoiceRoomUikit.LaunchType.CREATE,roomInfo)
             },
             failure = {
                 Toast.makeText(this@VoiceRoomListActivity, "Create room failed!", Toast.LENGTH_SHORT)
@@ -136,7 +136,7 @@ class VoiceRoomListActivity: AppCompatActivity() {
                 lastCreateTime = it.createTime
             }
         }
-        VoiceRoomUikit.getRoomList(lastCreateTime,10,
+        AUIVoiceRoomUikit.getRoomList(lastCreateTime,10,
                 success = { roomList ->
                     if (roomList.size < 10) {
                         listAdapter.loadingMoreState = LoadingMoreState.NoMoreData
@@ -174,7 +174,7 @@ class VoiceRoomListActivity: AppCompatActivity() {
         fetchRoomList()
     }
 
-    private fun gotoRoomDetailPage(lunchType: VoiceRoomUikit.LaunchType, roomInfo: AUIRoomInfo) {
+    private fun gotoRoomDetailPage(lunchType: AUIVoiceRoomUikit.LaunchType, roomInfo: AUIRoomInfo) {
         val config = AUIRoomConfig(roomInfo.roomId)
         config.themeId = ThemeId
         VoiceRoomActivity.launch(lunchType,this, roomInfo, ThemeId)
@@ -220,7 +220,7 @@ class VoiceRoomListActivity: AppCompatActivity() {
             holder.binding.tvRoomName.text = item.roomName
             holder.binding.tvRoomOwner.text = item.roomOwner?.userName ?: "unKnowUser"
             holder.binding.root.setOnClickListener {
-                this@VoiceRoomListActivity.gotoRoomDetailPage(VoiceRoomUikit.LaunchType.JOIN,item) }
+                this@VoiceRoomListActivity.gotoRoomDetailPage(AUIVoiceRoomUikit.LaunchType.JOIN,item) }
 
             Glide.with(holder.binding.ivAvatar)
                 .load(item.roomOwner?.userAvatar)
