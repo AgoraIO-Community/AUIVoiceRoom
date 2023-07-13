@@ -18,12 +18,14 @@ import androidx.recyclerview.widget.ListAdapter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import io.agora.app.voice.BuildConfig
+import io.agora.app.voice.R
 import io.agora.app.voice.databinding.VoiceRoomListActivityBinding
 import io.agora.app.voice.databinding.VoiceRoomListItemBinding
 import io.agora.asceneskit.voice.VoiceRoomActivity
 import io.agora.asceneskit.voice.AUIVoiceRoomUikit
 import io.agora.auikit.model.*
 import io.agora.auikit.ui.basic.AUIAlertDialog
+import io.agora.auikit.ui.basic.AUISpaceItemDecoration
 import io.agora.auikit.utils.BindingViewHolder
 import java.util.*
 
@@ -83,6 +85,12 @@ class VoiceRoomListActivity: AppCompatActivity() {
             launcher.launch(intent)
         }
 
+        mViewBinding.rvList.addItemDecoration(
+            AUISpaceItemDecoration(
+                resources.getDimensionPixelSize(R.dimen.voice_room_list_item_space_h),
+                resources.getDimensionPixelSize(R.dimen.voice_room_list_item_space_v)
+            )
+        )
         mViewBinding.rvList.adapter = listAdapter
 
         mViewBinding.swipeRefresh.setOnRefreshListener {
