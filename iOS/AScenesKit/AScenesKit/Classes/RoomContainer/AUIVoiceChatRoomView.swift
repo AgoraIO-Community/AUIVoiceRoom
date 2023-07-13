@@ -88,7 +88,6 @@ import SwiftTheme
     public var onClickOffButton: (()->())?
 
     deinit {
-        giftsView.removeFromSuperview()
         aui_info("deinit AUiKaraokeRoomView", tag: "AUiKaraokeRoomView")
     }
     
@@ -520,6 +519,8 @@ extension AUIVoiceChatRoomView: AUIMicSeatViewEventsDelegate {
             service.roomManagerImpl.exitRoom(roomId: service.channelName) { err in
             }
         }
+        AUICommonDialog.hidden()
+        AUIToast.hidden()
         service.destory()
         AUIRoomContext.shared.clean(channelName: service.channelName)
 //        self.didClickOffButton()
