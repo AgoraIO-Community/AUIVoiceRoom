@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.fragment.app.FragmentActivity
+import io.agora.asceneskit.R
 import io.agora.asceneskit.voice.AUIVoiceRoomService
 import io.agora.auikit.model.AUIActionModel
 import io.agora.auikit.model.AUIUserInfo
@@ -160,20 +161,26 @@ class AUIInvitationBinder constructor(
         // 收到上麦邀请
         activity?.let {
             AUIAlertDialog(it).apply {
-                setTitle("收到上麦邀请")
-                setMessage("是否同意上麦？")
-                setPositiveButton("同意") {
+                setTitle(context.getString(R.string.voice_room_invited_action))
+                setMessage(
+                    if (micIndex == -1){
+                        context.getString(R.string.voice_room_receive_invitation_content)
+                    }else{
+                        context.getString(R.string.voice_room_receive_invitation_title,micIndex+1)
+                    }
+                )
+                setPositiveButton(context.getString(R.string.voice_room_confirm)) {
                     mVoiceService.getInvitationService().acceptInvitation(userId,micIndex
-                    ) {
-                        if (it == null){
+                    ) { e->
+                        if (e == null){
                             Log.d("apex","同意上麦邀请成功")
                         }
                     }
                     dismiss()
                 }
-                setNegativeButton("拒绝") {
-                    mVoiceService.getInvitationService().rejectInvitation(userId){
-                        if (it == null){
+                setNegativeButton( context.getString(R.string.voice_room_reject)) {
+                    mVoiceService.getInvitationService().rejectInvitation(userId){ e ->
+                        if (e == null){
                             Log.d("apex","拒绝上麦邀请成功")
                         }
                     }

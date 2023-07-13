@@ -1,9 +1,10 @@
 package io.agora.asceneskit.voice.binder;
 
+import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,6 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import io.agora.asceneskit.R;
 import io.agora.asceneskit.voice.AUIVoiceRoomService;
 import io.agora.auikit.model.AUIChooseMusicModel;
 import io.agora.auikit.model.AUIChoristerModel;
@@ -30,6 +32,7 @@ import io.agora.auikit.service.callback.AUICallback;
 import io.agora.auikit.service.callback.AUIChooseSongListCallback;
 import io.agora.auikit.service.callback.AUIChoristerListCallback;
 import io.agora.auikit.service.callback.AUIException;
+import io.agora.auikit.ui.basic.AUIAlertDialog;
 import io.agora.auikit.ui.micseats.IMicSeatDialogView;
 import io.agora.auikit.ui.micseats.IMicSeatItemView;
 import io.agora.auikit.ui.micseats.IMicSeatsView;
@@ -56,10 +59,13 @@ public class AUIMicSeatsBindable extends IRtcEngineEventHandler implements
     private RtcEngine mRtcEngine;
     private Map<Integer, String> mSeatMap = new HashMap();
     private Map<String,Integer> mVolumeMap = new HashMap();
+    private Context context;
+    private AUIAlertDialog auiAlertDialog;
 
     private LinkedList<String> mAccompanySingers = new LinkedList<String>();
 
     public AUIMicSeatsBindable(
+            Context context,
             IMicSeatsView micSeatsView,
             AUIVoiceRoomService voiceService) {
         this.mVoiceService = voiceService;
@@ -71,6 +77,7 @@ public class AUIMicSeatsBindable extends IRtcEngineEventHandler implements
         this.invitationService = voiceService.getInvitationService();
         this.mRtcEngine = voiceService.getMRtcEngine();
         this.roomContext = AUIRoomContext.shared();
+        this.context = context;
         mSeatMap.put(0,roomContext.getRoomOwner(micSeatService.getChannelName()));
         mVolumeMap.put(roomContext.getRoomOwner(micSeatService.getChannelName()),0);
     }
@@ -314,14 +321,29 @@ public class AUIMicSeatsBindable extends IRtcEngineEventHandler implements
 
     @Override
     public void onClickEnterSeat(int index) {
-        invitationService.sendApply(index, new AUICallback() {
-            @Override
-            public void onResult(@Nullable AUIException error) {
-                if (error == null){
-                    Log.d("apex","sendApply suc");
-                }
-            }
-        });
+        showEnterDialog(index);
+    }
+
+    public void showEnterDialog(int index) {
+        if (auiAlertDialog == null) {
+            auiAlertDialog = new AUIAlertDialog(context);
+            auiAlertDialog.setTitle(context.getString(R.string.voice_room_apply_action));
+            auiAlertDialog.setMessage(context.getString(R.string.voice_room_apply_micSeat,index+1));
+            auiAlertDialog.setPositiveButton(context.getString(R.string.voice_room_confirm), view -> {
+                invitationService.sendApply(index, new AUICallback() {
+                    @Override
+                    public void onResult(@Nullable AUIException error) {
+                        if (error == null){
+                            Toast.makeText(context, "申请成功!", Toast.LENGTH_SHORT).show();
+                        }else {
+                            Toast.makeText(context, "申请失败!", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+                auiAlertDialog.dismiss();
+            });
+        }
+        auiAlertDialog.show();
     }
 
     @Override

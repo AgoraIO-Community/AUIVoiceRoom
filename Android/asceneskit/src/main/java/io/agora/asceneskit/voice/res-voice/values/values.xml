@@ -8,5 +8,10 @@
     <string name="voice_room_apply_action">Apply</string>
     <string name="voice_room_invited_list">Audience</string>
     <string name="voice_room_invited_action">Invited</string>
-    <string name="voice_room_apply_accept">同意申请</string>
+    <string name="voice_room_apply_accept">Accept</string>
+    <string name="voice_room_receive_invitation_title">The owner invites you to join the %d number micSeat</string>
+    <string name="voice_room_receive_invitation_content">The owner invites you join the micSeat</string>
+    <string name="voice_room_confirm">confirm</string>
+    <string name="voice_room_reject">reject</string>
+    <string name="voice_room_apply_micSeat">Apply for the number %d micSeat</string>
 </resources>

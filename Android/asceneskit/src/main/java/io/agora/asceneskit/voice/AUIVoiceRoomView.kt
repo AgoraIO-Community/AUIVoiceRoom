@@ -130,6 +130,7 @@ class AUIVoiceRoomView : FrameLayout,
 
 
             val micSeatsBinder = AUIMicSeatsBindable(
+                context,
                 when (micType) {
                     MicSeatType.EightTag -> {
                         mRoomViewBinding.micSeatsView

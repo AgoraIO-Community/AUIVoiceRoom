@@ -9,4 +9,10 @@
     <string name="voice_room_invited_list">邀请列表</string>
     <string name="voice_room_invited_action">邀请上麦</string>
     <string name="voice_room_apply_accept">同意申请</string>
+    <string name="voice_room_receive_invitation_title">房主邀请您上%d号麦</string>
+    <string name="voice_room_receive_invitation_content">房主邀请您上麦</string>
+    <string name="voice_room_confirm">确定</string>
+    <string name="voice_room_reject">拒绝</string>
+    <string name="voice_room_apply_micSeat">申请上%d号麦</string>
+
 </resources>
