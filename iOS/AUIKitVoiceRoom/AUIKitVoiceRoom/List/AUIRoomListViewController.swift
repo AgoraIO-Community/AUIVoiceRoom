@@ -38,7 +38,7 @@ final class AUIRoomListViewController: UIViewController {
     }()
     
     private lazy var createButton: UIButton = {
-        UIButton(type: .custom).frame(CGRect(x: 32, y: AScreenHeight-68-50, width: AScreenWidth-64, height: 50)).cornerRadius(25).title("创建房间", .normal).setGradient([UIColor(red: 0, green: 158/255.0, blue: 1, alpha: 1),UIColor(red: 124/255.0, green: 91/255.0, blue: 1, alpha: 1)], [CGPoint(x: 0, y: 0),CGPoint(x: 0, y: 1)]).textColor(.white, .normal).addTargetFor(self, action: #selector(onCreateAction), for: .touchUpInside)
+        UIButton(type: .custom).frame(CGRect(x: 32, y: AScreenHeight - CGFloat(ABottomBarHeight) - 50, width: AScreenWidth-64, height: 50)).cornerRadius(25).title("创建房间", .normal).setGradient([UIColor(red: 0, green: 158/255.0, blue: 1, alpha: 1),UIColor(red: 124/255.0, green: 91/255.0, blue: 1, alpha: 1)], [CGPoint(x: 0, y: 0),CGPoint(x: 0, y: 1)]).textColor(.white, .normal).addTargetFor(self, action: #selector(onCreateAction), for: .touchUpInside)
     }()
     
     private lazy var themeButton: AUIButton = {
@@ -72,7 +72,7 @@ final class AUIRoomListViewController: UIViewController {
         view.addSubview(createButton)
 //        view.addSubview(themeButton)
         view.addSubview(setting)
-        collectionView.frame = view.bounds
+        collectionView.frame = CGRect(x: 0, y: AStatusBarHeight, width: AScreenWidth, height: AScreenHeight-ANavigationHeight)
         _layoutButton()
         initEngine()
         onRefreshAction()
@@ -105,12 +105,12 @@ final class AUIRoomListViewController: UIViewController {
     }
     
     private func _layoutButton() {
-        createButton.frame = CGRect(origin: CGPoint(x: (view.frame.width - createButton.frame.width) / 2,
-                                                    y: view.frame.height - 74 - UIDevice.current.aui_SafeDistanceBottom),
-                                    size: createButton.frame.size)
+//        createButton.frame = CGRect(origin: CGPoint(x: (view.frame.width - createButton.frame.width) / 2,
+//                                                    y: view.frame.height - 74 - UIDevice.current.aui_SafeDistanceBottom),
+//                                    size: createButton.frame.size)
         
-        themeButton.frame = CGRect(origin: CGPoint(x: createButton.frame.origin.x, y: createButton.frame.origin.y - themeButton.frame.size.height - 5),
-                                   size: themeButton.frame.size)
+//        themeButton.frame = CGRect(origin: CGPoint(x: createButton.frame.origin.x, y: createButton.frame.origin.y - themeButton.frame.size.height - 5),
+//                                   size: themeButton.frame.size)
     }
     
     func onRefreshAction() {
