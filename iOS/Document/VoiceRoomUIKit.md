@@ -98,7 +98,7 @@ generateToken {[weak self] roomConfig, appId in
 #### 6.1 Proactively exiting
 ```swift
 //AUIVoiceChatRoomView provides a closure for onClickOffButton
-karaokeView.onClickOffButton = { [weak self] in
+voiceRoomView.onClickOffButton = { [weak self] in
     self.navigationController?.popViewController(animated: true)
     VoiceRoomUIKit.shared.destoryRoom(roomId: self.roomInfo?.roomId ?? "")
 }
@@ -160,7 +160,7 @@ AUIRoomContext.shared.switchThemeToNext()
 AUIRoomContext.shared.switchTheme(themeName: "UIKit")
 ```
 - You can also change the skin of the component by modifying the [configuration file](../AUIKit/AUIKit/Resource/auiTheme.bundle/UIKit/theme) or replacing the [resource file](../AUIKit/AUIKit/Resource/auiTheme.bundle/UIKit/resource)
-- For more skin changing issues, please refer to [Skin Settings](./KaraokeTheme.md)
+- For more skin changing issues, please refer to [Skin Settings](./VoiceRoomTheme.md)
 
 ## License
 Copyright © Agora Corporation. All rights reserved.
