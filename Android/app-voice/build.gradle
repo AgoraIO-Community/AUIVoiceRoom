@@ -50,10 +50,25 @@ android {
         buildConfigField "String", "SERVER_HOST", "\"${properties.getProperty("SERVER_HOST")}\""
     }
 
+    signingConfigs {
+        debug {
+            storeFile file('../keystore')
+            storePassword '230713'
+            keyAlias 'voiceroom'
+            keyPassword '230713'
+        }
+    }
+
     buildTypes {
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug
         }
     }
 
