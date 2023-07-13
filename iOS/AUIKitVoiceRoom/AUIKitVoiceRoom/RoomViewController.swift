@@ -29,6 +29,7 @@ class RoomViewController: UIViewController {
         let isOwner = roomInfo?.owner?.userId == uid ? true : false
         voiceRoomView.onClickOffButton = { [weak self] in
             aui_info("onClickOffButton", tag: "RoomViewController")
+            AUIChatInputBar.hiddenInput()
             AUIAlertView.theme_defaultAlert()
                 .contentTextAligment(textAlignment: .center)
                 .title(title: isOwner ? "解散房间" : "离开房间")
@@ -169,6 +170,8 @@ extension RoomViewController: AUIRoomManagerRespDelegate {
     }
     
     func onRoomDestroy(roomId: String) {
+        AUIChatInputBar.hiddenInput()
+        
         AUIAlertView.theme_defaultAlert()
             .isShowCloseButton(isShow: true)
             .title(title: "房间已销毁")
