@@ -11,7 +11,7 @@ android {
         minSdk 21
         targetSdk 32
         versionCode 1
-        versionName "1.0"
+        versionName "0.1.0"
 
         def properties = new Properties()
         properties.load(rootProject.file("local.properties").newDataInputStream())
@@ -50,10 +50,25 @@ android {
         buildConfigField "String", "SERVER_HOST", "\"${properties.getProperty("SERVER_HOST")}\""
     }
 
+    signingConfigs {
+        debug {
+            storeFile file('../keystore')
+            storePassword '230713'
+            keyAlias 'voiceroom'
+            keyPassword '230713'
+        }
+    }
+
     buildTypes {
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug
         }
     }
 
