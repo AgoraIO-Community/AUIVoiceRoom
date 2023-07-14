@@ -28,8 +28,7 @@ AUIKitVoiceRoom 提供以下核心功能：
 
 
 ## Demo 体验
- | ![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/IMG_8055.PNG?x-oss-process=image/resize,w_200) | ![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/IMG_8056.PNG?x-oss-process=image/resize,w_200) | ![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/IMG_8057.PNG?x-oss-process=image/resize,w_200) |
----|---
+  ![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/IMG_8055.PNG)  ![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/IMG_8056.PNG)  ![Alt](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/IMG_8057.PNG) 
 
 | iOS                                                          | Android                                                      |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
@@ -37,11 +36,12 @@ AUIKitVoiceRoom 提供以下核心功能：
 
 ## 快速开始
 
-| iOS                                           | Android                                                                                    | Backend                                                                                    |
-|-----------------------------------------------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|
-| [VoiceRoom（iOS）](iOS/Example/AUIKitVoiceRoom) | [VoiceRoom（Android）](https://github.com/AgoraIO-Community/AUIKitKaraoke/tree/main/Android) | [VoiceRoom（Backend）](https://github.com/AgoraIO-Community/AUIKitKaraoke/tree/main/backend) |
-|                                               |                                                                                            |                                                                                            |
-|                                               |                                                                                            |                                                                                            |
+| iOS                                           | Android                       | Backend                       |
+|-----------------------------------------------|-------------------------------|-------------------------------|
+| [VoiceRoom（iOS）](iOS/Example/AUIKitVoiceRoom) | [VoiceRoom（Android）](Android) | [VoiceRoom（Backend）](backend) |
+|                                               |                               |                               |
+|                                               |                               |                               |
+|                                               |                               |                               |
 
 
 ## 交流&反馈
