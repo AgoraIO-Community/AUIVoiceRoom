@@ -15,7 +15,7 @@ public class AUIRoomGiftBinder: NSObject {
     
     private lazy var effectView: AUIGiftEffectView = {
         let pag = AUIGiftEffectView(frame:CGRect(x: 0, y: 0, width: AScreenWidth, height: AScreenHeight))
-        getWindow()?.addSubview(pag)
+        pag.isHidden = true
         pag.isUserInteractionEnabled = false
         pag.setScaleMode(PAGScaleModeZoom)
         pag.setRepeatCount(1)
@@ -49,8 +49,13 @@ public class AUIRoomGiftBinder: NSObject {
                 self?.downloadEffectResource(tabs: tabs)
             }
         })
+        
+        getWindow()?.addSubview(self.effectView)
     }
 
+    deinit {
+        effectView.removeFromSuperview()
+    }
 }
 
 extension String {
@@ -88,11 +93,8 @@ extension AUIRoomGiftBinder: AUIGiftsManagerRespDelegate,PAGViewListener,AUIRoom
     }
     
     public func onAnimationEnd(_ pagView: PAGView!) {
-        if let path = pagView.getPath() {
-            self.animationPaths.removeFirst()
-        }
+        self.animationPaths.removeFirst()
         if self.animationPaths.count <= 0 {
-            self.effectView.remove(self)
             self.effectView.isHidden = true
         } else {
             self.playDelayAnimation()
@@ -101,6 +103,10 @@ extension AUIRoomGiftBinder: AUIGiftsManagerRespDelegate,PAGViewListener,AUIRoom
     
     public func onAnimationCancel(_ pagView: PAGView!) {
         self.effectView.isHidden = true
+    }
+    
+    public func onAnimationRepeat(_ pagView: PAGView!) {
+        pagView.isHidden = true
     }
     
 }
@@ -124,14 +130,16 @@ extension AUIRoomGiftBinder {
     
     private func playAnimation(path: String) {
         aui_info("play effect animation")
-        self.effectView.setPath(path)
+        let file = PAGFile.load(path)
+        self.effectView.setComposition(file)
         self.effectView.play()
     }
     
     private func playDelayAnimation() {
         if let animationPath = self.animationPaths.first {
-            aui_info("play effect animation")
-            self.effectView.setPath(animationPath)
+            aui_info("playDelayAnimation animation")
+            let file = PAGFile.load(animationPath)
+            self.effectView.setComposition(file)
             self.effectView.play()
         }
     }
