@@ -118,7 +118,7 @@ import AUIKit
         let entity = AUIChatEntity()
         let user = AUIRoomContext.shared.roomInfoMap[self.channelName]?.owner ?? AUIUserThumbnailInfo()
         entity.user = user
-        entity.content = text == nil ? "Welcome to the voice chat room! Pornography, gambling or violence is strictly prohibited in the room.":text
+        entity.content = text == nil ? NSLocalizedString("startMessage", comment: ""):text
         entity.attributeContent = entity.attributeContent
         entity.width = entity.width
         entity.height = entity.height
