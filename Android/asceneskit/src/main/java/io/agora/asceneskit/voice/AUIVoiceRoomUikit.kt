@@ -190,7 +190,9 @@ object AUIVoiceRoomUikit {
                                 }
                             })
                         }else{
-                            voiceRoom.bindService(roomService)
+                            ThreadManager.getInstance().runOnMainThread {
+                                voiceRoom.bindService(roomService)
+                            }
                         }
                     }
 

@@ -325,24 +325,22 @@ public class AUIMicSeatsBindable extends IRtcEngineEventHandler implements
     }
 
     public void showEnterDialog(int index) {
-        if (auiAlertDialog == null) {
-            auiAlertDialog = new AUIAlertDialog(context);
-            auiAlertDialog.setTitle(context.getString(R.string.voice_room_apply_action));
-            auiAlertDialog.setMessage(context.getString(R.string.voice_room_apply_micSeat,index+1));
-            auiAlertDialog.setPositiveButton(context.getString(R.string.voice_room_confirm), view -> {
-                invitationService.sendApply(index, new AUICallback() {
-                    @Override
-                    public void onResult(@Nullable AUIException error) {
-                        if (error == null){
-                            Toast.makeText(context, "申请成功!", Toast.LENGTH_SHORT).show();
-                        }else {
-                            Toast.makeText(context, "申请失败!", Toast.LENGTH_SHORT).show();
-                        }
+        auiAlertDialog = new AUIAlertDialog(context);
+        auiAlertDialog.setTitle(context.getString(R.string.voice_room_apply_action));
+        auiAlertDialog.setMessage(context.getString(R.string.voice_room_apply_micSeat,index+1));
+        auiAlertDialog.setPositiveButton(context.getString(R.string.voice_room_confirm), view -> {
+            invitationService.sendApply(index, new AUICallback() {
+                @Override
+                public void onResult(@Nullable AUIException error) {
+                    if (error == null){
+                        Toast.makeText(context, "申请成功!", Toast.LENGTH_SHORT).show();
+                    }else {
+                        Toast.makeText(context, "申请失败!", Toast.LENGTH_SHORT).show();
                     }
-                });
-                auiAlertDialog.dismiss();
+                }
             });
-        }
+            auiAlertDialog.dismiss();
+        });
         auiAlertDialog.show();
     }
 

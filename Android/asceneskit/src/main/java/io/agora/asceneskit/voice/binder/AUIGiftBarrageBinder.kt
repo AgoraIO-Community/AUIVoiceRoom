@@ -85,7 +85,7 @@ class AUIGiftBarrageBinder constructor(
 
     }
     private fun effectAnimation(gift: AUIGiftEntity) {
-        val path = filePath(gift.giftEffect ?: "")
+        val path = filePath(gift.effectMD5 ?: "")
         if (path == null || path.isEmpty() || !File(path).exists()) {
             return
         }
@@ -128,11 +128,14 @@ class AUIGiftBarrageBinder constructor(
             tab.gifts.forEach { gift ->
                 Log.d(TAG, "for each gift: $gift")
                 val url = gift?.giftEffect
-                val savePath = filePath(gift?.giftEffect ?: "")
-                if (url != null && savePath != null) {
-                    Log.d(TAG, "down load resource $url to path $savePath")
-                    val task = NetworkTask(url, savePath)
-                    task.execute()
+                val savePath = filePath(gift?.effectMD5 ?: "")
+                savePath?.let {
+                    val file = File(it)
+                    if (!file.exists() && url != null){
+                        Log.d(TAG, "down load resource $url to path $savePath")
+                        val task = NetworkTask(url, savePath)
+                        task.execute()
+                    }
                 }
             }
         }
@@ -146,7 +149,7 @@ class AUIGiftBarrageBinder constructor(
             if (!dir.exists()){
                 dir.mkdirs()
             }
-            val file = dir.resolve("${calculateMD5(fileName)}.pag")
+            val file = dir.resolve("$fileName.pag")
             return file.absoluteFile.toString()
         }
     }

@@ -58,10 +58,6 @@ class AUIVoiceRoomView : FrameLayout,
         val giftService = service.getGiftService()
         setUpRoomStyle(service.getRoomInfo())
 
-        ThreadManager.getInstance().runOnMainThread {
-            getSoftKeyboardHeight()
-        }
-
         if (chatServiceImpl?.isOwner() == true){
             chatServiceImpl?.getCurrentRoom()?.let { joinRoom(it) }
         }
@@ -189,6 +185,7 @@ class AUIVoiceRoomView : FrameLayout,
             }
         })
 
+        getSoftKeyboardHeight()
     }
 
 
@@ -211,14 +208,16 @@ class AUIVoiceRoomView : FrameLayout,
     private fun isRoomOwner() = chatServiceImpl?.isOwner()
 
     private fun getSoftKeyboardHeight(){
-        activity?.let {
-            AUIKeyboardStatusWatcher(
-                it, activity!!
-            ) { isKeyboardShowed: Boolean, keyboardHeight: Int? ->
-                Log.e("apex", "isKeyboardShowed: $isKeyboardShowed $keyboardHeight")
-                listener?.onSoftKeyboardHeightChanged(isKeyboardShowed,keyboardHeight)
+        ThreadManager.getInstance().runOnMainThreadDelay({
+            activity?.let {
+                AUIKeyboardStatusWatcher(
+                    it, activity!!
+                ) { isKeyboardShowed: Boolean, keyboardHeight: Int? ->
+                    Log.e("apex", "isKeyboardShowed: $isKeyboardShowed $keyboardHeight")
+                    listener?.onSoftKeyboardHeightChanged(isKeyboardShowed,keyboardHeight)
+                }
             }
-        }
+        },200)
     }
 
     override fun onUpdateChatRoomId(roomId: String) {

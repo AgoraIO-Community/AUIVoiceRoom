@@ -32,21 +32,20 @@ class AUIInvitationBinder constructor(
     private var invitationImpl:AUIInvitationServiceImpl
     private var invitationService:IAUIInvitationService
     private val applyList = mutableListOf<AUIUserInfo?>()
-    private val applyDialog:AUIApplyDialog
-    private val invitationDialog:AUIInvitationDialog
+    private var applyDialog:AUIApplyDialog?=null
+    private var invitationDialog:AUIInvitationDialog?=null
 
     private var mSeatMap = mutableMapOf<Int, String>()
     private var mMemberMap = mutableMapOf<String?, AUIUserInfo?>()
     private var currentMemberList:MutableList<AUIUserInfo?> = mutableListOf()
     private var userService:IAUIUserService
+    private var applyUserList = ArrayList<AUIUserInfo?>()
 
     init {
         this.mVoiceService = voiceService
         this.invitationService = voiceService.getInvitationService()
         this.invitationImpl = invitationService as AUIInvitationServiceImpl
         this.activity = activity
-        this.applyDialog = AUIApplyDialog()
-        this.invitationDialog = AUIInvitationDialog()
         this.userService = voiceService.getUserService()
 
         val roomOwner = voiceService.getRoomInfo().roomOwner
@@ -72,8 +71,11 @@ class AUIInvitationBinder constructor(
 
     // 显示申请列表
     fun showApplyDialog(){
+        if (applyDialog == null){
+            applyDialog = AUIApplyDialog()
+        }
         val applyInfo = AUIActionModel(applyList)
-        applyDialog.apply {
+        applyDialog?.apply {
             arguments = Bundle().apply {
                 putSerializable(AUIApplyDialog.KEY_ROOM_APPLY_BEAN, applyInfo)
                 putInt(AUIApplyDialog.KEY_CURRENT_ITEM, 0)
@@ -94,7 +96,7 @@ class AUIInvitationBinder constructor(
                                 Log.d("apex","房主同意上麦申请 成功")
                                 if (position >=0){
                                     applyList.removeAt(position)
-                                    applyDialog.refreshApplyData(applyList)
+                                    applyDialog?.refreshApplyData(applyList)
                                 }
                             }
                         }
@@ -103,24 +105,23 @@ class AUIInvitationBinder constructor(
             })
         }
         activity?.supportFragmentManager?.let {
-            applyDialog.show(
+            applyDialog?.show(
                 it, "AUIApplyDialog"
             )
         }
     }
 
-    override fun onApplyListUpdate(userList: ArrayList<AUIUserInfo>?) {
-        ThreadManager.getInstance().runOnMainThread{
-            applyList.clear()
-            userList?.forEach { it1 ->
-                val userInfo = mVoiceService.getUserService().getUserInfo(it1.userId)
-                userInfo?.micIndex = it1.micIndex
-                userInfo?.let {
-                    applyList.add(it)
-                }
+    override fun onApplyListUpdate(userList: ArrayList<AUIUserInfo?>) {
+        applyUserList = userList
+        applyList.clear()
+        userList.forEach { it1 ->
+            val userInfo = mMemberMap[it1?.userId]
+            userInfo?.micIndex = it1?.micIndex
+            userInfo?.let {
+                applyList.add(it)
             }
-            applyDialog.refreshApplyData(applyList)
         }
+        applyDialog?.refreshApplyData(applyList)
     }
 
     //显示邀请列表
@@ -129,8 +130,8 @@ class AUIInvitationBinder constructor(
         invitationInfo.userList = currentMemberList
         invitationInfo.invitedIndex = index
         Log.e("apex","onShowInvited $index $invitationInfo")
-
-        invitationDialog.apply {
+        invitationDialog = AUIInvitationDialog()
+        invitationDialog?.apply {
             arguments = Bundle().apply {
                 putSerializable(AUIInvitationDialog.KEY_ROOM_INVITED_BEAN, invitationInfo)
                 putInt(AUIInvitationDialog.KEY_CURRENT_ITEM, 0)
@@ -151,7 +152,7 @@ class AUIInvitationBinder constructor(
             })
         }
         activity?.supportFragmentManager?.let {
-            invitationDialog.show(
+            invitationDialog?.show(
                 it, "AUIInvitationDialog"
             )
         }
@@ -206,6 +207,7 @@ class AUIInvitationBinder constructor(
 
     override fun onRoomUserUpdate(roomId: String, userInfo: AUIUserInfo) {
         mMemberMap[userInfo.userId] = userInfo
+        updateApplyUserInfo()
         filterCurrentMember()
     }
 
@@ -240,7 +242,19 @@ class AUIInvitationBinder constructor(
                 currentMemberList.add(user)
             }
         }
-        invitationDialog.refreshInvitationData(currentMemberList)
+        invitationDialog?.refreshInvitationData(currentMemberList)
+    }
+
+    private fun updateApplyUserInfo(){
+        applyList.clear()
+        applyUserList.forEach { it1 ->
+            val userInfo = mMemberMap[it1?.userId]
+            userInfo?.micIndex = it1?.micIndex
+            userInfo?.let {
+                applyList.add(it)
+            }
+        }
+        applyDialog?.refreshApplyData(applyList)
     }
 
 }
