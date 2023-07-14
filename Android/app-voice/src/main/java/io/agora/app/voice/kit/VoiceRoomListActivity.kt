@@ -82,6 +82,7 @@ class VoiceRoomListActivity: AppCompatActivity() {
 
         mViewBinding.btnConfig.setOnClickListener {
             val intent = Intent(this, VoiceRoomSettingActivity::class.java)
+            intent.putExtra("CurrentThemeId", ThemeId)
             launcher.launch(intent)
         }
 

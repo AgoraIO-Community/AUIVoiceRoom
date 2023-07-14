@@ -29,6 +29,17 @@ class VoiceRoomSettingActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val extra = intent?.getIntExtra(
+            "CurrentThemeId",
+            io.agora.asceneskit.R.style.Theme_VoiceRoom
+        )
+        extra?.let {
+            ThemeId = it
+            if (it != io.agora.asceneskit.R.style.Theme_VoiceRoom){
+                isThemeChange = true
+                mThemeSelectorPosition = 1
+            }
+        }
         initView()
     }
 

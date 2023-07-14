@@ -39,7 +39,6 @@
     <io.agora.auikit.ui.micseats.impl.AUIMicSeatCircleLayout
         android:id="@+id/micSeatsCircleView"
         app:layout_constraintTop_toBottomOf="@+id/leftView"
-        app:layout_constraintBottom_toTopOf="@+id/giftView"
         android:layout_width="297dp"
         android:layout_height="292dp"
         android:layout_marginTop="16dp"
