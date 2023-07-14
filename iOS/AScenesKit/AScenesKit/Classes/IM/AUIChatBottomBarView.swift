@@ -49,7 +49,7 @@ import AUIKit
     }()
     
     lazy var bottomBar: AUIRoomBottomFunctionBar = {
-        AUIRoomBottomFunctionBar(frame: CGRect(x: 0, y: self.frame.height-60, width: AScreenWidth, height: 54), datas: self.updateBottomBarDatas(onMic: AUIRoomContext.shared.isRoomOwner(channelName: self.channelName)), hiddenChat: false)
+        AUIRoomBottomFunctionBar(frame: CGRect(x: 0, y: self.frame.height-70, width: AScreenWidth, height: 54), datas: self.updateBottomBarDatas(onMic: AUIRoomContext.shared.isRoomOwner(channelName: self.channelName)), hiddenChat: false)
     }()
     
     lazy var inputBar: AUIChatInputBar = {

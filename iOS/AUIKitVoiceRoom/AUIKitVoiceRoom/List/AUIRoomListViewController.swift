@@ -38,7 +38,7 @@ final class AUIRoomListViewController: UIViewController {
     }()
     
     private lazy var createButton: UIButton = {
-        UIButton(type: .custom).frame(CGRect(x: 32, y: AScreenHeight - CGFloat(ABottomBarHeight) - 50, width: AScreenWidth-64, height: 50)).cornerRadius(25).title("创建房间", .normal).setGradient([UIColor(red: 0, green: 158/255.0, blue: 1, alpha: 1),UIColor(red: 124/255.0, green: 91/255.0, blue: 1, alpha: 1)], [CGPoint(x: 0, y: 0),CGPoint(x: 0, y: 1)]).textColor(.white, .normal).addTargetFor(self, action: #selector(onCreateAction), for: .touchUpInside)
+        UIButton(type: .custom).frame(CGRect(x: 32, y: AScreenHeight - CGFloat(ABottomBarHeight) - 60, width: AScreenWidth-64, height: 50)).cornerRadius(25).title("创建房间", .normal).setGradient([UIColor(red: 0, green: 158/255.0, blue: 1, alpha: 1),UIColor(red: 124/255.0, green: 91/255.0, blue: 1, alpha: 1)], [CGPoint(x: 0, y: 0),CGPoint(x: 0, y: 1)]).textColor(.white, .normal).addTargetFor(self, action: #selector(onCreateAction), for: .touchUpInside)
     }()
     
     private lazy var themeButton: AUIButton = {

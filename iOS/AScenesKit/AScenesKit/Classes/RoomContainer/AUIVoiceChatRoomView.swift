@@ -241,7 +241,7 @@ import SwiftTheme
 
 extension AUIVoiceChatRoomView: AUIMicSeatCircleLayoutDataSource,AUIMicSeatHostAudienceLayoutDataSource {
     public var radius: CGFloat {
-        return min(self.frame.width, self.frame.height)/2.8
+        return min(self.micSeatView.frame.width, self.micSeatView.frame.height)/3.2
     }
     
     public func rowSpace() -> CGFloat {
