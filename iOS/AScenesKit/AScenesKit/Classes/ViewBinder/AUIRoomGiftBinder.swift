@@ -83,11 +83,13 @@ extension AUIRoomGiftBinder: AUIGiftsManagerRespDelegate,PAGViewListener,AUIRoom
     
     public func receiveGift(gift: AUIGiftEntity) {
         self.receive?.receiveGift(gift: gift)
-        if !gift.giftEffect.isEmpty {
+        if !gift.effectMD5.isEmpty {
             AUICommonDialog.hidden()
             AUIToast.hidden()
             self.effectAnimation(gift: gift)
 //            self.notifyHorizontalTextCarousel(gift: gift)
+        } else {
+            self.effectView.isHidden = true
         }
         
     }
@@ -106,7 +108,7 @@ extension AUIRoomGiftBinder: AUIGiftsManagerRespDelegate,PAGViewListener,AUIRoom
     }
     
     public func onAnimationRepeat(_ pagView: PAGView!) {
-        pagView.isHidden = true
+        self.effectView.isHidden = true
     }
     
 }
@@ -116,7 +118,8 @@ extension AUIRoomGiftBinder {
         let effectName = gift.effectMD5
         let path = String.documentsPath
         let documentPath = path + "AUIKitGiftEffect/\(effectName)"
-        if effectName.isEmpty,!FileManager.default.fileExists(atPath: documentPath) {
+        if effectName.isEmpty || !FileManager.default.fileExists(atPath: documentPath) {
+            aui_info("effectMD5 is empty!")
             return
         }
         self.effectView.isHidden = false
