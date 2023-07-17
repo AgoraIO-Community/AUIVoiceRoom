@@ -118,7 +118,7 @@ import AUIKit
         let entity = AUIChatEntity()
         let user = AUIRoomContext.shared.roomInfoMap[self.channelName]?.owner ?? AUIUserThumbnailInfo()
         entity.user = user
-        entity.content = text == nil ? NSLocalizedString("startMessage", comment: ""):text
+        entity.content = text == nil ? aui_localized("startMessage", bundleName: "auiVoiceChatLocalizable"):text
         entity.attributeContent = entity.attributeContent
         entity.width = entity.width
         entity.height = entity.height
