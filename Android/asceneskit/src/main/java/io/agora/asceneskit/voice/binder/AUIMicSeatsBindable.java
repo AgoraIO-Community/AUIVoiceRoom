@@ -210,11 +210,15 @@ public class AUIMicSeatsBindable extends IRtcEngineEventHandler implements
             userInfo = userService.getUserInfo(micSeatInfo.user.userId);
             if (userInfo != null){
                 mVolumeMap.put(userInfo.userId,seatIndex);
+                micSeatInfo.user.userName = userInfo.userName;
+                micSeatInfo.user.userAvatar = userInfo.userAvatar;
             }
         }
         seatView.setRoomOwnerVisibility((seatIndex == 0) ? View.VISIBLE : View.GONE);
 
-        seatView.setMicSeatState(AUIMicSeatStatus.locked);
+        if (micSeatInfo.seatStatus == AUIMicSeatStatus.locked){
+            seatView.setMicSeatState(AUIMicSeatStatus.locked);
+        }
 
         boolean isAudioMute = (micSeatInfo.muteAudio != 0);
         if (userInfo != null) {

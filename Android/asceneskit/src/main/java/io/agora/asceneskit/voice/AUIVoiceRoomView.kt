@@ -149,6 +149,17 @@ class AUIVoiceRoomView : FrameLayout,
                 service,
                 mRoomViewBinding.chatBottomBar,
                 mRoomViewBinding.chatListView,
+                when (micType) {
+                    MicSeatType.EightTag -> {
+                        mRoomViewBinding.micSeatsView
+                    }
+                    MicSeatType.NineTag -> {
+                        mRoomViewBinding.micSeatsHostView
+                    }
+                    else -> {
+                        mRoomViewBinding.micSeatsCircleView
+                    }
+                },
                 object : AUIChatBottomBarBinder.AUIChatBottomBarEventDelegate{
                     override fun onClickGift(view: View?) {
                         auiGiftBarrageBinder?.showBottomGiftDialog()
@@ -332,7 +343,8 @@ class AUIVoiceRoomView : FrameLayout,
                 mRoomViewBinding.micSeatsHostView.visibility = View.GONE
                 mRoomViewBinding.micSeatsCircleView.visibility = View.VISIBLE
                 mRoomViewBinding.micSeatsCircleView.setOptions(MicSeatOption(
-                    roomInfo.micSeatCount,MicSeatType.SixTag,if (roomInfo.micSeatCount == 3 || roomInfo.micSeatCount == 5) 90 else 0
+                    roomInfo.micSeatCount,MicSeatType.SixTag,if (
+                    roomInfo.micSeatCount == 3 || roomInfo.micSeatCount == 5) 90 else 0
                 ))
             }
             MicSeatType.EightTag ->{
