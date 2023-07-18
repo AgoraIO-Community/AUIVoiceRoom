@@ -32,7 +32,7 @@ AUIKitVoiceRoom 提供以下核心功能：
 
 | iOS                                                          | Android                                                      |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| ![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/qrcode/voiceroom_ios.png) | ![](https://download.agora.io/demo/release/android_uikit_karaoke_demo_1.0.0.png) |
+| ![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/qrcode/voiceroom_ios.png) | ![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/qrcode/voiceroom_android.png) |
 
 ## 快速开始
 
