@@ -1,0 +1,13 @@
+use_frameworks!
+
+platform :ios, '13.0'
+
+target 'AScenesKit_Example' do
+  pod 'AScenesKit', :path => '../'
+  pod 'AUiKit', :path => '../../../../AUiKit/iOS'
+  target 'AScenesKit_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end
