@@ -1,0 +1,59 @@
+version: "3.7"
+
+networks:
+    uikit-voiceroom-network:
+        driver: bridge
+
+services:
+    api:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: uikit-api
+        ports:
+            - 8080:8080
+        environment:
+            - SPRING_PROFILES_ACTIVE=staging
+            - SPRING_DATA_MONGODB_URI=mongodb://dev:test@uikit-voiceroom-mongo:27017/test
+            - NCS_SECRET=${NCS_SECRET}
+            - SPRING_REDIS_HOST=uikit-voiceroom-redis
+            - SPRING_REDIS_PASSWORD=test
+            - SPRING_REDIS_PORT=6379
+            - SPRING_REDIS_DATABASE=2
+            - TOKEN_APPID=${TOKEN_APPID}
+            - TOKEN_APPCERTIFICATE=${TOKEN_APPCERTIFICATE}
+            - TOKEN_BASICAUTH_USERNAME=${TOKEN_BASICAUTH_USERNAME}
+            - TOKEN_BASICAUTH_PASSWORD=${TOKEN_BASICAUTH_PASSWORD}
+            - EM_AUTH_APPKEY=${EM_AUTH_APPKEY}
+            - EM_AUTH_CLIENTID=${EM_AUTH_CLIENTID}
+            - EM_AUTH_CLIENTSECRET=${EM_AUTH_CLIENTSECRET}
+        networks:
+            - uikit-voiceroom-network
+        depends_on:
+            - redis
+            - mongo
+    redis:
+        image: redis:6.0
+        platform: linux/amd64
+        container_name: uikit-voiceroom-redis
+        restart: always
+        ports:
+            - 6379:6379
+        command: >
+            --requirepass test
+        networks:
+            - uikit-voiceroom-network
+    mongo:
+        image: mongo:6.0
+        container_name: uikit-voiceroom-mongo
+        restart: always
+        ports:
+            - 27017:27017
+        environment:
+            - MONGO_INITDB_DATABASE=test
+            - MONGO_INITDB_ROOT_USERNAME=admin
+            - MONGO_INITDB_ROOT_PASSWORD=admin
+        volumes:
+            - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+        networks:
+            - uikit-voiceroom-network

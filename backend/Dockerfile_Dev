@@ -1,0 +1,38 @@
+FROM ubuntu:20.04
+
+ENV JAVA_HOME=/usr/lib/jvm/default-java
+
+# Change apt repository to a China network friendly site.
+RUN sed -i s@/archive.ubuntu.com/@/mirrors.tuna.tsinghua.edu.cn/@g /etc/apt/sources.list
+RUN sed -i s@/security.ubuntu.com/@/mirrors.tuna.tsinghua.edu.cn/@g /etc/apt/sources.list
+
+RUN apt-get clean
+RUN apt-get update
+
+RUN apt-get install -y --no-install-recommends \
+    apt-utils \
+    software-properties-common \
+    lsb-release \
+    wget \
+    curl \
+    libssl-dev \
+    libssl-dev \
+    libcrypto++-dev \
+    libc++-dev
+
+# Add dependencies for RTC.
+RUN apt-get install -y libxdamage1 \
+    libxcomposite-dev \
+    libdrm-dev
+
+# Install java
+RUN apt-get -y install default-jdk
+
+# Install maven
+RUN apt-get -y install maven
+
+# Maven aliyun
+COPY mvn_settings.xml /root/.m2/settings.xml
+
+# Copy dynamic library
+COPY src/main/resources/lib/*.so /usr/lib
