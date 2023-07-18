@@ -13,6 +13,7 @@ import Alamofire
 
 public class AUIRoomGiftBinder: NSObject {
     
+
     private weak var send: IAUIRoomGiftDialog?
     
     private weak var receive: IAUIGiftBarrageView?
@@ -40,9 +41,10 @@ public class AUIRoomGiftBinder: NSObject {
             }
         })
         
-    }
+
 
     deinit {
+       
     }
 }
 
