@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="aui_giftBottomDialog_appearance" parent="AUIGiftBottomDialog.Appearance.Dark">
+
+    </style>
+
+
+</resources>

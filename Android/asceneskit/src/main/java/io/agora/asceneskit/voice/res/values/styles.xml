@@ -8,22 +8,18 @@
         <item name="voice_room_notice_style">@style/voice_top_text_style</item>
     </style>
 
-
-    <style name="AVoiceRoomTopLeftView" parent="AUIUpperLeftInformation.Appearance">
-        <item name="aui_upperLeft_Layout_background">#33000000</item>
+    <style name="AVoiceRoomInfoView" parent="AUIRoomInfo.Appearance">
+        <item name="aui_upperLeft_Layout_background">#33FFFFFF</item>
     </style>
-
-    <style name="AVoiceRoomTopRightView" parent="AUIUpperRightInformation.Appearance">
-        <item name="aui_upperRight_count_background">@drawable/aui_member_count_bg</item>
+    <style name="AVoiceRoomMemberInfoView" parent="AUIMemberInfo.Appearance">
+        <item name="aui_upperRight_count_background">@drawable/aui_member_count_dark_bg</item>
     </style>
-
-    <style name="AVoiceRoomPrimaryView" parent="AUIPrimaryView.Appearance">
-
-    </style>
-
-    <style name="AVoiceRoomBarrageView" parent="AUIBarrageView.Appearance">
-
-    </style>
+    <style name="AVoiceRoomChatBottomView" parent="AUIChatBottomView.Appearance"></style>
+    <style name="AVoiceRoomEmojiView" parent="AUIEmojiView.Appearance"></style>
+    <style name="AVoiceRoomChatListView" parent="AUIChatListView.Appearance"></style>
+    <style name="AVoiceRoomGiftBarrageView" parent="AUIGiftBarrageView.Appearance"></style>
+    <style name="AVoiceRoomGiftBottomDialog" parent="AUIGiftBottomDialog.Appearance"></style>
+    <style name="AVoiceRoomAction" parent="AUIAction.Appearance"></style>
 
 
     <style name="voice_top_text_style">

@@ -2,7 +2,7 @@
 <resources>
 
     <!-- 弹幕区域样式 -->
-    <style name="aui_barrage_appearance" parent="AUIBarrageView.Appearance">
+    <style name="aui_chatListView_appearance" parent="AUIChatListView.Appearance.Dark">
 
     </style>
 

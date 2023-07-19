@@ -8,7 +8,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="@drawable/voice_bg_rect_top_radius20_gradient_white"
+        android:background="@drawable/voice_bg_rect_top_radius20_gradient_light"
         app:layout_constraintTop_toTopOf="@+id/ivSheetTitle"
         app:layout_constraintBottom_toBottomOf="@+id/ivSheetTitle"/>
 
