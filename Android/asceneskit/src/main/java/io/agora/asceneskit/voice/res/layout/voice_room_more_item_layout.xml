@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:theme="?attr/voice_room_appearance"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
@@ -28,7 +29,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end"
         android:gravity="center"
-        android:textColor="@color/voice_more_item_title_color"
+        android:textColor="?attr/voice_room_textColor"
         android:textSize="12sp"
         tools:text="Application  List" />
 

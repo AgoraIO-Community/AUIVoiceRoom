@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="AVoiceRoomView" parent="voice_room_appearance">
+    <style name="AVoiceRoomView">
         <!-- 背景 -->
         <item name="voice_room_background">@null</item>
-        <item name="voice_room_notice_background">@drawable/voice_bg_rect_radius13_black20</item>
+        <item name="voice_room_textColor">@color/voice_room_textColor_171A1C</item>
         <item name="voice_room_notice_style">@style/voice_top_text_style</item>
+        <item name="voice_room_more_dialog_background">@drawable/voice_bg_radius20_light</item>
     </style>
 
     <style name="AVoiceRoomInfoView" parent="AUIRoomInfo.Appearance">

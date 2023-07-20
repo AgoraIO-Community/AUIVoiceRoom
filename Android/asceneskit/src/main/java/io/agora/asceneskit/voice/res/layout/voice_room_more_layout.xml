@@ -3,14 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/voice_bg_radius20_white">
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:background="@drawable/voice_bg_rect_top_radius20_gradient_light"
-        app:layout_constraintTop_toTopOf="@+id/ivSheetTitle"
-        app:layout_constraintBottom_toBottomOf="@+id/ivSheetTitle"/>
+    android:theme="?attr/voice_room_appearance"
+    android:background="?attr/voice_room_more_dialog_background">
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/ivSheetTitle"

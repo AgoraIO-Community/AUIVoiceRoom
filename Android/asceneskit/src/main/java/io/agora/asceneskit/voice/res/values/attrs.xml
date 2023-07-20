@@ -9,9 +9,10 @@
         <attr name="voice_room_appearance"/>
         <!-- 背景 -->
         <attr name="voice_room_background" format="color|reference"/>
-        <!--公告栏背景-->
-        <attr name="voice_room_notice_background" format="color|reference"/>
         <attr name="voice_room_notice_style" format="reference"/>
+        <attr name="voice_room_more_dialog_background" format="color|reference"/>
+        <!-- 通用主题文字颜色 -->
+        <attr name="voice_room_textColor" format="color|reference"/>
 
     </declare-styleable>
 
