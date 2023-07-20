@@ -31,12 +31,10 @@ class VoiceRoomActivity : AppCompatActivity(), AUIRtmErrorProxyDelegate,
     companion object {
         private var roomInfo: AUIRoomInfo? = null
         private var themeId: Int = View.NO_ID
-        private var lunchType:AUIVoiceRoomUikit.LaunchType = AUIVoiceRoomUikit.LaunchType.UNKNOWN
 
-        fun launch(lunchType: AUIVoiceRoomUikit.LaunchType, context: Context, roomInfo: AUIRoomInfo, themeId: Int = R.style.Theme_VoiceRoom) {
+        fun launch(context: Context, roomInfo: AUIRoomInfo, themeId: Int = R.style.Theme_VoiceRoom) {
             Companion.roomInfo = roomInfo
             VoiceRoomActivity.themeId = themeId
-            Companion.lunchType = lunchType
 
             val intent = Intent(context, VoiceRoomActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -63,7 +61,6 @@ class VoiceRoomActivity : AppCompatActivity(), AUIRtmErrorProxyDelegate,
             {
                 generateToken(roomInfo.roomId) { config ->
                     AUIVoiceRoomUikit.launchRoom(
-                        lunchType,
                         roomInfo,
                         config,
                         mViewBinding.VoiceRoomView,

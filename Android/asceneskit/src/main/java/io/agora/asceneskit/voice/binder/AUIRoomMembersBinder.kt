@@ -15,7 +15,6 @@ import io.agora.auikit.ui.basic.AUIBottomDialog
 import io.agora.auikit.ui.member.IAUIRoomMembersView
 import io.agora.auikit.ui.member.impl.AUIRoomMemberListView
 import io.agora.auikit.ui.member.listener.AUIRoomMembersActionListener
-import java.lang.Exception
 
 class AUIRoomMembersBinder constructor(
     context: Context,
@@ -118,7 +117,6 @@ class AUIRoomMembersBinder constructor(
 
         dialogMemberView.let {
             AUIBottomDialog(context).apply {
-                setBackground(null)
                 it?.let { it1 -> setCustomView(it1) }
                 show()
             }
