@@ -70,6 +70,11 @@ class AUIGiftBarrageBinder constructor(
                         giftService.sendGift(it1) { error ->
                             if (error == null) {
                                 ThreadManager.getInstance().runOnMainThread{
+                                    effectAnimation(it1)
+                                    val path = filePath(it1.effectMD5 ?: "")
+                                    if (path != null && path.isNotEmpty() && File(path).exists()) {
+                                        dialog.dismiss()
+                                    }
                                     chatImpl?.addGiftList(it1)
                                     auiGiftBarrageView?.refresh(chatImpl?.getGiftList())
                                 }
@@ -117,6 +122,7 @@ class AUIGiftBarrageBinder constructor(
         }
 
         val file = PAGFile.Load(path)
+        mPAGView?.bringToFront()
         mPAGView?.setScaleMode(3)
         mPAGView?.composition = file
         mPAGView?.setRepeatCount(1)
