@@ -15,20 +15,17 @@ import io.agora.asceneskit.voice.binder.*
 import io.agora.asceneskit.voice.dialog.*
 import io.agora.auikit.model.*
 import io.agora.auikit.service.*
-import io.agora.auikit.service.callback.AUIChatMsgCallback
 import io.agora.auikit.service.callback.AUIException
 import io.agora.auikit.service.callback.AUIGiftListCallback
-import io.agora.auikit.service.imp.AUIChatServiceImpl
+import io.agora.auikit.service.imp.AUIIMManagerServiceImpl
 import io.agora.auikit.ui.basic.AUIAlertDialog
 import io.agora.auikit.ui.chatBottomBar.impl.AUIKeyboardStatusWatcher
 import io.agora.auikit.ui.chatBottomBar.listener.AUISoftKeyboardHeightChangeListener
 import io.agora.auikit.utils.ThreadManager
-import io.agora.chat.ChatMessage
 
 class AUIVoiceRoomView : FrameLayout,
     IAUIRoomManager.AUIRoomManagerRespDelegate,
-    IAUIMicSeatService.AUIMicSeatRespDelegate,
-    IAUIChatService.AUIChatRespDelegate {
+    IAUIMicSeatService.AUIMicSeatRespDelegate {
     private val mRoomViewBinding = VoiceRoomViewBinding.inflate(LayoutInflater.from(context))
     private val mBinders = mutableListOf<IAUIBindable>()
     private var mVoiceService: AUIVoiceRoomService? = null
@@ -38,7 +35,7 @@ class AUIVoiceRoomView : FrameLayout,
     private var micType:MicSeatType?=null
     private var mOnClickShutDown: (() -> Unit)? = null
     private var mOnRoomDestroyEvent: (() -> Unit)? = null
-    private var chatServiceImpl:AUIChatServiceImpl?=null
+    private var imManagerService:IAUIIMManagerService?=null
     private var invitationBinder:AUIInvitationBinder?=null
     private var auiGiftBarrageBinder :AUIGiftBarrageBinder?=null
 
@@ -53,19 +50,18 @@ class AUIVoiceRoomView : FrameLayout,
     }
 
     fun bindService(service: AUIVoiceRoomService) {
-        mVoiceService = service
-        chatServiceImpl = service.getChatService() as AUIChatServiceImpl
         val giftService = service.getGiftService()
+        val chatManager = service.getChatManager()
+        mVoiceService = service
+        imManagerService = service.getIMManagerService() as AUIIMManagerServiceImpl
+
         setUpRoomStyle(service.getRoomInfo())
 
-        if (chatServiceImpl?.isOwner() == true){
-            chatServiceImpl?.getCurrentRoom()?.let { joinRoom(it) }
-        }
-        chatServiceImpl?.bindRespDelegate(this)
         service.getRoomManager().bindRespDelegate(this)
         service.getMicSeatsService().bindRespDelegate(this)
 
         service.enterRoom({
+
             /** 获取礼物列表 初始化礼物Binder */
             giftService.getGiftsFromService(object : AUIGiftListCallback{
                 override fun onResult(error: AUIException?, giftList: List<AUIGiftTabEntity>) {
@@ -74,7 +70,7 @@ class AUIVoiceRoomView : FrameLayout,
                         mRoomViewBinding.giftView,
                         giftList,
                         giftService,
-                        service.getChatService()
+                        service.getChatManager()
                     )
                     auiGiftBarrageBinder?.let {
                         it.bind()
@@ -84,15 +80,19 @@ class AUIVoiceRoomView : FrameLayout,
             })
 
             val chatListBinder = AUIChatListBinder(
+                service.getRoomInfo(),
                 mRoomViewBinding.chatListView,
                 mRoomViewBinding.chatBottomBar,
-                service.getChatService(),
-                service.getRoomInfo()
+                service.getChatManager(),
+                service.getIMManagerService(),
             )
             chatListBinder.let {
                 it.bind()
                 mBinders.add(it)
             }
+
+            chatManager.saveWelcomeMsg(context.getString(R.string.voice_room_welcome))
+            mRoomViewBinding.chatListView.refreshSelectLast(chatManager.getMsgList())
 
             val roomInfoBinder = AUIRoomInfoBinder(
                 mRoomViewBinding.leftView,
@@ -213,10 +213,14 @@ class AUIVoiceRoomView : FrameLayout,
         mBinders.forEach {
             it.unBind()
         }
-        chatServiceImpl?.clearChatService()
+        if(isRoomOwner()){
+            imManagerService?.userDestroyedChatroom()
+        }else {
+            imManagerService?.userQuitRoom()
+        }
     }
 
-    private fun isRoomOwner() = chatServiceImpl?.isOwner()
+    private fun isRoomOwner() = AUIRoomContext.shared().isRoomOwner(mVoiceService?.getRoomInfo()?.roomId)
 
     private fun getSoftKeyboardHeight(){
         ThreadManager.getInstance().runOnMainThreadDelay({
@@ -231,27 +235,6 @@ class AUIVoiceRoomView : FrameLayout,
         },200)
     }
 
-    override fun onUpdateChatRoomId(roomId: String) {
-        if (isRoomOwner() != true){
-            Log.d("VoiceRoomView","onUpdateChatRoomId $roomId")
-            chatServiceImpl?.setChatRoomId(roomId)
-            joinRoom(roomId)
-        }
-    }
-
-    private fun joinRoom(roomId:String){
-        chatServiceImpl?.joinedChatRoom(roomId,object : AUIChatMsgCallback{
-            override fun onOriginalResult(error: AUIException?, message: ChatMessage?) {
-                if (error == null){
-                    chatServiceImpl?.saveWelcomeMsg(context.getString(R.string.voice_room_welcome))
-                    message?.let { chatServiceImpl?.parseMsgChatEntity(it) }
-                    mRoomViewBinding.chatListView.refreshSelectLast(chatServiceImpl?.getMsgList())
-                }else{
-                    mOnRoomDestroyEvent?.invoke()
-                }
-            }
-        })
-    }
 
     @SuppressLint("UseCompatLoadingForDrawables")
     private fun showMoreDialog(){

@@ -21,13 +21,17 @@ import io.agora.app.voice.BuildConfig
 import io.agora.app.voice.R
 import io.agora.app.voice.databinding.VoiceRoomListActivityBinding
 import io.agora.app.voice.databinding.VoiceRoomListItemBinding
-import io.agora.asceneskit.voice.VoiceRoomActivity
 import io.agora.asceneskit.voice.AUIVoiceRoomUikit
-import io.agora.auikit.model.*
+import io.agora.asceneskit.voice.VoiceRoomActivity
+import io.agora.auikit.model.AUICommonConfig
+import io.agora.auikit.model.AUICreateRoomInfo
+import io.agora.auikit.model.AUIRoomConfig
+import io.agora.auikit.model.AUIRoomInfo
+import io.agora.auikit.model.MicSeatType
 import io.agora.auikit.ui.basic.AUIAlertDialog
 import io.agora.auikit.ui.basic.AUISpaceItemDecoration
 import io.agora.auikit.utils.BindingViewHolder
-import java.util.*
+import java.util.Random
 
 class VoiceRoomListActivity: AppCompatActivity() {
     private val mUserId = Random().nextInt(99999999).toString()
@@ -107,7 +111,7 @@ class VoiceRoomListActivity: AppCompatActivity() {
         config.context = application
         config.appId = BuildConfig.AGORA_APP_ID
         config.userId = mUserId
-        config.userName = "user_$mUserId"
+        config.userName = randomUserName()
         config.userAvatar = randomAvatar()
         // init AUiKit
         AUIVoiceRoomUikit.init(
@@ -129,7 +133,7 @@ class VoiceRoomListActivity: AppCompatActivity() {
             createRoomInfo,
             success = { roomInfo ->
                 Log.e("apex", "createRoom success ${roomInfo.roomId}  ${roomInfo.roomOwner?.userId}")
-                gotoRoomDetailPage(AUIVoiceRoomUikit.LaunchType.CREATE,roomInfo)
+                gotoRoomDetailPage(roomInfo)
             },
             failure = {
                 Toast.makeText(this@VoiceRoomListActivity, "Create room failed!", Toast.LENGTH_SHORT)
@@ -183,15 +187,40 @@ class VoiceRoomListActivity: AppCompatActivity() {
         fetchRoomList()
     }
 
-    private fun gotoRoomDetailPage(lunchType: AUIVoiceRoomUikit.LaunchType, roomInfo: AUIRoomInfo) {
+    private fun gotoRoomDetailPage(roomInfo: AUIRoomInfo) {
         val config = AUIRoomConfig(roomInfo.roomId)
         config.themeId = ThemeId
-        VoiceRoomActivity.launch(lunchType,this, roomInfo, ThemeId)
+        VoiceRoomActivity.launch(this, roomInfo, ThemeId)
     }
 
     private fun randomAvatar(): String {
         val randomValue = Random().nextInt(8) + 1
         return "https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/sample_avatar/sample_avatar_${randomValue}.png"
+    }
+
+    private fun randomUserName(): String {
+        val userNames = arrayListOf(
+            "安迪",
+            "路易",
+            "汤姆",
+            "杰瑞",
+            "杰森",
+            "布朗",
+            "吉姆",
+            "露西",
+            "莉莉",
+            "韩梅梅",
+            "李雷",
+            "张三",
+            "李四",
+            "小红",
+            "小明",
+            "小刚",
+            "小霞",
+            "小智",
+        )
+        val randomValue = Random().nextInt(userNames.size) + 1
+        return userNames[randomValue % userNames.size]
     }
 
     enum class LoadingMoreState {
@@ -229,7 +258,7 @@ class VoiceRoomListActivity: AppCompatActivity() {
             holder.binding.tvRoomName.text = item.roomName
             holder.binding.tvRoomOwner.text = item.roomOwner?.userName ?: "unKnowUser"
             holder.binding.root.setOnClickListener {
-                this@VoiceRoomListActivity.gotoRoomDetailPage(AUIVoiceRoomUikit.LaunchType.JOIN,item) }
+                this@VoiceRoomListActivity.gotoRoomDetailPage(item) }
 
             Glide.with(holder.binding.ivAvatar)
                 .load(item.roomOwner?.userAvatar)

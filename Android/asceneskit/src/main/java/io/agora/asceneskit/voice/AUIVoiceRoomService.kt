@@ -5,18 +5,19 @@ import io.agora.auikit.model.AUIRoomConfig
 import io.agora.auikit.model.AUIRoomContext
 import io.agora.auikit.model.AUIRoomInfo
 import io.agora.auikit.model.AUIUserInfo
-import io.agora.auikit.service.IAUIChatService
 import io.agora.auikit.service.IAUIChorusService
 import io.agora.auikit.service.IAUIGiftsService
+import io.agora.auikit.service.IAUIIMManagerService
 import io.agora.auikit.service.IAUIInvitationService
 import io.agora.auikit.service.IAUIJukeboxService
 import io.agora.auikit.service.IAUIMicSeatService
 import io.agora.auikit.service.IAUIMusicPlayerService
 import io.agora.auikit.service.IAUIUserService
 import io.agora.auikit.service.callback.AUIException
-import io.agora.auikit.service.imp.AUIChatServiceImpl
+import io.agora.auikit.service.im.AUIChatManager
 import io.agora.auikit.service.imp.AUIChorusServiceImpl
 import io.agora.auikit.service.imp.AUIGiftServiceImpl
+import io.agora.auikit.service.imp.AUIIMManagerServiceImpl
 import io.agora.auikit.service.imp.AUIInvitationServiceImpl
 import io.agora.auikit.service.imp.AUIJukeboxServiceImpl
 import io.agora.auikit.service.imp.AUIMicSeatServiceImpl
@@ -54,13 +55,15 @@ class AUIVoiceRoomService constructor(
 
     private val rtmManager: AUIRtmManager = roomManager.rtmManager
 
+    private val chatManager = AUIChatManager(roomInfo.roomId, AUIRoomContext.shared())
+
     private val userImpl: IAUIUserService by lazy {
         val user = AUIUserServiceImpl(roomInfo.roomId, rtmManager)
         user.bindRespDelegate(this)
         user
     }
 
-    private val chatImpl:IAUIChatService by lazy { AUIChatServiceImpl(roomInfo.roomId, rtmManager) }
+    private val chatImpl: IAUIIMManagerService by lazy { AUIIMManagerServiceImpl(roomInfo.roomId, rtmManager, chatManager) }
 
     private val micSeatImpl: IAUIMicSeatService by lazy { AUIMicSeatServiceImpl(roomInfo.roomId, rtmManager) }
 
@@ -72,7 +75,7 @@ class AUIVoiceRoomService constructor(
 
     private val invitationImpl: IAUIInvitationService by lazy { AUIInvitationServiceImpl(roomInfo.roomId, rtmManager) }
 
-    private val giftImpl:IAUIGiftsService by lazy { AUIGiftServiceImpl(roomInfo.roomId, rtmManager,chatImpl) }
+    private val giftImpl:IAUIGiftsService by lazy { AUIGiftServiceImpl(roomInfo.roomId, rtmManager, chatManager) }
 
     private val mKtvApi: KTVApi = ktvApi ?: run {
         val config = KTVApiConfig(
@@ -93,10 +96,11 @@ class AUIVoiceRoomService constructor(
     fun getJukeboxService() = jukeboxImpl
     fun getChorusService() = chorusImpl
     fun getMusicPlayerService() = playerImpl
-    fun getChatService() = chatImpl
+    fun getIMManagerService() = chatImpl
     fun getInvitationService() = invitationImpl
     fun getRoomInfo() = roomInfo
     fun getGiftService() = giftImpl
+    fun getChatManager() = chatManager
 
     fun enterRoom(success: (AUIRoomInfo) -> Unit, failure: (AUIException) -> Unit) {
         roomManager.enterRoom(channelName, roomConfig.rtcToken007) { error ->
