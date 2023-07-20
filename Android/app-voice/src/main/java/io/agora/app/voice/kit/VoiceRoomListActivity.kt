@@ -2,9 +2,10 @@ package io.agora.app.voice.kit
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -67,10 +68,29 @@ class VoiceRoomListActivity: AppCompatActivity() {
         }
         setContentView(mViewBinding.root)
 
-        val out = TypedValue()
-        if (theme.resolveAttribute(android.R.attr.windowBackground, out, true)) {
-            window.setBackgroundDrawableResource(out.resourceId)
+        //val out = TypedValue()
+        //if (theme.resolveAttribute(android.R.attr.windowBackground, out, true)) {
+        //    window.setBackgroundDrawableResource(out.resourceId)
+        //}
+        val isDarkTheme = ThemeId != io.agora.asceneskit.R.style.Theme_VoiceRoom
+        var systemUiVisibility: Int = window.decorView.systemUiVisibility
+        if (isDarkTheme) {
+            systemUiVisibility = systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
+        }else{
+            systemUiVisibility = systemUiVisibility or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
         }
+        window.decorView.systemUiVisibility = systemUiVisibility
+        window.setBackgroundDrawable(ColorDrawable(if(isDarkTheme) Color.parseColor("#171A1C") else Color.parseColor("#F9FAFA")))
+        mViewBinding.tvEmptyList.setCompoundDrawables(
+            null,
+            getDrawable(
+                if (isDarkTheme) R.drawable.voice_icon_empty_dark else R.drawable.voice_icon_empty_light
+            ).apply {
+                this?.setBounds(0, 0, intrinsicWidth, intrinsicHeight)
+            },
+            null,
+            null
+        )
 
         mViewBinding.btnCreateRoom.setOnClickListener {
             AUIAlertDialog(this@VoiceRoomListActivity).apply {
@@ -167,6 +187,7 @@ class VoiceRoomListActivity: AppCompatActivity() {
                     runOnUiThread {
                         mViewBinding.swipeRefresh.isRefreshing = false
                         listAdapter.submitList(mList)
+                        mViewBinding.tvEmptyList.visibility = if (mList.isEmpty()) View.VISIBLE else View.GONE
                     }
         },
             failure = {

@@ -38,6 +38,24 @@ class AUIVoiceRoomView : FrameLayout,
     private var imManagerService:IAUIIMManagerService?=null
     private var invitationBinder:AUIInvitationBinder?=null
     private var auiGiftBarrageBinder :AUIGiftBarrageBinder?=null
+    private val mDestroyDialog by lazy {
+        AUIAlertDialog(context).apply {
+            setTitle("房间已销毁")
+            setMessage("请返回房间列表 ")
+            setPositiveButton("我知道了") {
+                mVoiceService?.let {
+                    it.getRoomManager().exitRoom(it.getRoomInfo().roomId){error ->
+                        if (error == null){
+                            Log.d("VoiceRoomView","exitRoom suc")
+                            mOnRoomDestroyEvent?.invoke()
+                        }
+                    }
+                }
+                dismiss()
+            }
+            setCancelable(false)
+        }
+    }
 
     constructor(context: Context) : this(context, null)
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
@@ -268,22 +286,7 @@ class AUIVoiceRoomView : FrameLayout,
 
     override fun onRoomDestroy(roomId: String) {
         if (roomId == mVoiceService?.getRoomInfo()?.roomId){
-            AUIAlertDialog(context).apply {
-                setTitle("房间已销毁")
-                setMessage("请返回房间列表 ")
-                setPositiveButton("我知道了") {
-                    mVoiceService?.getRoomManager()?.exitRoom(roomId
-                    ) {
-                        if (it == null){
-                            Log.d("VoiceRoomView","exitRoom suc")
-                            mOnRoomDestroyEvent?.invoke()
-                        }
-                    }
-                    dismiss()
-                }
-                setCancelable(false)
-                show()
-            }
+            mDestroyDialog.show()
         }
     }
 
