@@ -38,7 +38,7 @@ AUIKitKaraoke provides the following core features:
 
 | iOS                           | Android                                                                                  | Backend                                                                                  |
 |-------------------------------|------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------|
-| [VoiceRoom（iOS）](iOS/Example) | [Karaoke（Android）](https://github.com/AgoraIO-Community/AUIKitKaraoke/tree/main/Android) | [Karaoke（Backend）](https://github.com/AgoraIO-Community/AUIKitKaraoke/tree/main/backend) |
+| [VoiceRoom(iOS)](iOS/AUIKitVoiceRoom) | [VoiceRoom(Android)](Android) | [VoiceRoom(Backend)](backend) |
 |                               |                                                                                          |                                                                                          |
 
 
