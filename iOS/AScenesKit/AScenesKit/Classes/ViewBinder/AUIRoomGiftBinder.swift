@@ -13,7 +13,16 @@ import Alamofire
 
 public class AUIRoomGiftBinder: NSObject {
     
-
+    private lazy var effectView: AUIGiftEffectView = {
+        let pag = AUIGiftEffectView(frame:CGRect(x: 0, y: 0, width: AScreenWidth, height: AScreenHeight))
+        pag.isHidden = true
+        pag.isUserInteractionEnabled = false
+        pag.setScaleMode(PAGScaleModeZoom)
+        pag.setRepeatCount(1)
+        pag.add(self)
+        return pag
+    }()
+    
     private weak var send: IAUIRoomGiftDialog?
     
     private weak var receive: IAUIGiftBarrageView?
@@ -41,10 +50,11 @@ public class AUIRoomGiftBinder: NSObject {
             }
         })
         
-
+        getWindow()?.addSubview(self.effectView)
+    }
 
     deinit {
-       
+        effectView.removeFromSuperview()
     }
 }
 
@@ -58,7 +68,7 @@ extension String {
 
 extension AUIRoomGiftBinder: AUIGiftsManagerRespDelegate,PAGViewListener,AUIRoomGiftDialogEventsDelegate {
     public func sendGiftAction(gift: AUIKit.AUIGiftEntity) {
-        if !gift.effectMD5.isEmpty {
+        if !gift.giftEffect.isEmpty {
             AUICommonDialog.hidden()
             AUIToast.hidden()
         }
@@ -78,23 +88,27 @@ extension AUIRoomGiftBinder: AUIGiftsManagerRespDelegate,PAGViewListener,AUIRoom
             AUIToast.hidden()
             self.effectAnimation(gift: gift)
 //            self.notifyHorizontalTextCarousel(gift: gift)
+        } else {
+            self.effectView.isHidden = true
         }
         
     }
     
     public func onAnimationEnd(_ pagView: PAGView!) {
-        pagView.remove(self)
-        pagView.removeFromSuperview()
+        self.animationPaths.removeFirst()
+        if self.animationPaths.count <= 0 {
+            self.effectView.isHidden = true
+        } else {
+            self.playDelayAnimation()
+        }
     }
     
     public func onAnimationCancel(_ pagView: PAGView!) {
-        pagView.remove(self)
-        pagView.removeFromSuperview()
+        self.effectView.isHidden = true
     }
     
     public func onAnimationRepeat(_ pagView: PAGView!) {
-        pagView.remove(self)
-        pagView.removeFromSuperview()
+        self.effectView.isHidden = true
     }
     
 }
@@ -108,26 +122,29 @@ extension AUIRoomGiftBinder {
             aui_info("effectMD5 is empty!")
             return
         }
-        if let pag = getWindow()?.viewWithTag(999999) as? PAGView,pag.isPlaying() {
-            self.queue.addAnimation(animation: {
-                self.playAnimation(documentPath: documentPath)
-            }, delay: 3.0)
-        } else {
-            self.playAnimation(documentPath: documentPath)
+        self.effectView.isHidden = false
+        if !self.animationPaths.contains(documentPath) {
+            self.animationPaths.append(documentPath)
         }
-
+        if !self.effectView.isPlaying() {
+            self.playAnimation(path: documentPath)
+        }
     }
     
-    func playAnimation(documentPath: String) {
-        let file = PAGFile.load(documentPath)
-        let pagView = PAGView(frame:CGRect(x: 0, y: 0, width: AScreenWidth, height: AScreenHeight)).tag(999999)
-        pagView.isUserInteractionEnabled = false
-        getWindow()?.addSubview(pagView)
-        pagView.setComposition(file)
-        pagView.setRepeatCount(1)
-        pagView.setScaleMode(PAGScaleModeZoom)
-        pagView.add(self)
-        pagView.play()
+    private func playAnimation(path: String) {
+        aui_info("play effect animation")
+        let file = PAGFile.load(path)
+        self.effectView.setComposition(file)
+        self.effectView.play()
+    }
+    
+    private func playDelayAnimation() {
+        if let animationPath = self.animationPaths.first {
+            aui_info("playDelayAnimation animation")
+            let file = PAGFile.load(animationPath)
+            self.effectView.setComposition(file)
+            self.effectView.play()
+        }
     }
     
     func refreshGifts(tabs: [AUIGiftTabEntity]) {

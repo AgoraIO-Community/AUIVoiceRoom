@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.VoiceRoom" parent="Theme.AUIKit">
+        <item name="android:windowBackground">@drawable/voice_bg_app_def</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <!-- voiceRoom组件 -->
+        <item name="voice_room_appearance">@style/AVoiceRoomView</item>
+
+        <!--
+            voiceRoom 使用主题说明：如果想修改某个组件中的个别属性 可以在style中继承对应组件重新需要修改属性
+            如果无需修改 则可直接继承Theme.AUIKit 或 Theme.AUIKit.Dark 使用默认2套主题样式
+         -->
+<!--        &lt;!&ndash; voiceRoom头部组件 &ndash;&gt;-->
+<!--        <item name="aui_roomInfo_appearance">@style/AVoiceRoomInfoView</item>-->
+<!--        <item name="aui_memberInfo_appearance">@style/AVoiceRoomMemberInfoView</item>-->
+<!--        &lt;!&ndash; voiceRoom底部组件 &ndash;&gt;-->
+<!--        <item name="aui_chatBottomView_appearance">@style/AVoiceRoomChatBottomView</item>-->
+<!--        <item name="aui_emojiView_appearance">@style/AVoiceRoomEmojiView</item>-->
+<!--        &lt;!&ndash; voiceRoom聊天列表、礼物列表组件 &ndash;&gt;-->
+<!--        <item name="aui_chatListView_appearance">@style/AVoiceRoomChatListView</item>-->
+<!--        <item name="aui_giftBarrage_appearance">@style/AVoiceRoomGiftBarrageView</item>-->
+<!--        &lt;!&ndash; voiceRoom礼物Dialog &ndash;&gt;-->
+<!--        <item name="aui_giftBottomDialog_appearance">@style/AVoiceRoomGiftBottomDialog</item>-->
+<!--        &lt;!&ndash; voiceRoom邀请申请组件 &ndash;&gt;-->
+<!--        <item name="aui_action_appearance">@style/AVoiceRoomAction</item>-->
+
+    </style>
+
+</resources>

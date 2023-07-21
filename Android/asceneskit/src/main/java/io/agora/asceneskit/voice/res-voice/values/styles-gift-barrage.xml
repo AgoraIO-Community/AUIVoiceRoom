@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- 礼物区域样式 -->
+    <style name="aui_giftBarrage_appearance" parent="AUIGiftBarrageView.Appearance.Dark">
+
+    </style>
+
+
+</resources>
