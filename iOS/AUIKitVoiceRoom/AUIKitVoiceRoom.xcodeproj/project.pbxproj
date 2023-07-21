@@ -435,7 +435,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 3Y5B6D2XFS;
+				DEVELOPMENT_TEAM = YS397FG5PA;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = AUIKitVoiceRoom/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "UIKit needs to apply for camera access";
@@ -473,7 +473,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 3Y5B6D2XFS;
+				DEVELOPMENT_TEAM = YS397FG5PA;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = AUIKitVoiceRoom/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "UIKit needs to apply for camera access";
