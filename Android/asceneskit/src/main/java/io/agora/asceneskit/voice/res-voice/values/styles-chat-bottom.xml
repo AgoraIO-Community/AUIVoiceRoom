@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="aui_chatBottomView_appearance" parent="AUIChatBottomView.Appearance.Dark">
+
+    </style>
+
+    <style name="aui_emojiView_appearance" parent="AUIEmojiView.Appearance.Dark">
+
+    </style>
+</resources>

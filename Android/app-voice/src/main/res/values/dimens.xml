@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="voice_room_list_item_space_h">10dp</dimen>
+    <dimen name="voice_room_list_item_space_v">10dp</dimen>
+</resources>
