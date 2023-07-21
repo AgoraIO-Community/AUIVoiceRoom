@@ -38,7 +38,7 @@ AUIKitVoiceRoom 提供以下核心功能：
 
 | iOS                                           | Android                       | Backend                       |
 |-----------------------------------------------|-------------------------------|-------------------------------|
-| [VoiceRoom（iOS）](iOS/Example/AUIKitVoiceRoom) | [VoiceRoom（Android）](Android) | [VoiceRoom（Backend）](backend) |
+| [VoiceRoom(iOS)](iOS/AUIKitVoiceRoom) | [VoiceRoom(Android)](Android) | [VoiceRoom(Backend)](backend) |
 |                                               |                               |                               |
 |                                               |                               |                               |
 |                                               |                               |                               |
