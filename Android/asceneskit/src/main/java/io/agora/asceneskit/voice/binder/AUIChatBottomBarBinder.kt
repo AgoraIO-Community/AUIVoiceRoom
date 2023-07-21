@@ -93,10 +93,8 @@ class AUIChatBottomBarBinder constructor(
             R.id.voice_extend_item_mic -> {
                 //点击下方麦克风
                 Log.e("apex", "mic")
-                mVolumeMap[roomContext?.currentUserInfo?.userId]?.let {
-                    setLocalMute(it, mLocalMute)
-                }
                 mLocalMute = !mLocalMute
+                userService.muteUserAudio(mLocalMute, null)
                 event?.onClickMic(view)
             }
 
@@ -184,14 +182,13 @@ class AUIChatBottomBarBinder constructor(
         if (seatUserId.isNullOrEmpty()) {
             return
         }
-        val userInfo = userService.getUserInfo(seatUserId) ?: return
         val localUserId = roomContext?.currentUserInfo?.userId ?: ""
-        val mute = isMute || (userInfo.muteAudio == 1)
         if (seatUserId == localUserId) {
-            setLocalMute(seatIndex, mute)
+            userService.muteUserAudio(isMute, null)
         } else {
-            voiceService.setupRemoteAudioMute(seatUserId, mute)
+            voiceService.setupRemoteAudioMute(seatUserId, isMute)
         }
+        micSeatsView.stopRippleAnimation(seatIndex)
     }
 
 

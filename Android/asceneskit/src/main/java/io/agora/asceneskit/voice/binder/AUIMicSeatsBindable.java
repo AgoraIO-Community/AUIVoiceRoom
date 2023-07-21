@@ -436,7 +436,12 @@ public class AUIMicSeatsBindable extends IRtcEngineEventHandler implements
     /** IAUIUserService.AUIUserRespDelegate implements. */
     @Override
     public void onRoomUserSnapshot(@NonNull String roomId, @Nullable List<AUIUserInfo> userList) {
-
+        // update view
+        IMicSeatItemView[] seatViewList = micSeatsView.getMicSeatItemViewList();
+        for (int seatIndex = 0; seatIndex < seatViewList.length; seatIndex++) {
+            AUIMicSeatInfo micSeatInfo = micSeatService.getMicSeatInfo(seatIndex);
+            updateSeatView(seatIndex, micSeatInfo);
+        }
     }
 
     @Override
