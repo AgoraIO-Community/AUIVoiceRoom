@@ -1,3 +1,4 @@
 [submodule "AUIKit"]
 	path = AUIKit
 	url = https://github.com/AgoraIO-Community/AUIKit.git
+    tag = 0.2.0
