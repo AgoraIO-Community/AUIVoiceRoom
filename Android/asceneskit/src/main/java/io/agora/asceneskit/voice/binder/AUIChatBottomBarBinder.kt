@@ -147,8 +147,8 @@ class AUIChatBottomBarBinder constructor(
         }
         if (localUserSeat != null) {
             val userInfo = userService.getUserInfo(userId)
-            val mmute = (localUserSeat.muteAudio == 1) || (userInfo?.muteAudio == 1)
-            mVolumeMap[userId]?.let { setLocalMute(it, mmute) }
+            val mMute = (localUserSeat.muteAudio == 1) || (userInfo?.muteAudio == 1)
+            mVolumeMap[userId]?.let { setLocalMute(it, mMute) }
         }
     }
 
@@ -160,8 +160,8 @@ class AUIChatBottomBarBinder constructor(
             chatBottomBarView.setShowMic(true)
             voiceService.setupLocalStreamOn(true)
             val micSeatInfo = micSeatsService.getMicSeatInfo(seatIndex)
-            val uuserInfo = userService.getUserInfo(localUserId)
-            val isMute = (micSeatInfo?.muteAudio == 1) || (uuserInfo?.muteAudio == 1)
+            val mUserInfo = userService.getUserInfo(localUserId)
+            val isMute = (micSeatInfo?.muteAudio == 1) || (mUserInfo?.muteAudio == 1)
             setLocalMute(seatIndex, isMute)
         }
     }
