@@ -95,7 +95,7 @@ class VoiceRoomListActivity: AppCompatActivity() {
         mViewBinding.btnCreateRoom.setOnClickListener {
             AUIAlertDialog(this@VoiceRoomListActivity).apply {
                 setTitle("房间主题")
-                setInput("房间主题", "", true)
+                setInput("房间主题", "room${Random().nextInt(100000)}", true)
                 setPositiveButton("一起嗨") {
                     dismiss()
                     createRoom(inputText)
