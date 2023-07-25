@@ -5,7 +5,7 @@
 本文档主要介绍如何快速跑通 AUIKitVoiceRoom 示例工程，体验在线语聊房场景，包括麦位管理、用户管理、申请邀请管理、聊天管理、礼物管理等，更详细的介绍，请参考[AUIScenesKit](../AScenesKit/README_zh.md)和[AUIKit](https://github.com/AgoraIO-Community/AUIKit/blob/main/iOS/README_zh.md)
 
 ## 架构图
-![](https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/github_readme/uikit/uikit_structure_chart.png)
+![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/uikit_structure_chart_voicechat_0.2.0.png.png)
 
 
 ## 目录结构
@@ -13,7 +13,7 @@
 ┌─ Example                    // Demo代码集成目录
 │  ├─ VoiceRoomListActivity			// 主要提供 VoiceRoom 的房间列表页面
 │  └─ VoiceRoomSettingActivity  	// 主要提供 VoiceRoom 的房间设置页面
-├─ AUiScenesKit               	// 场景业务组装模块，目前只包含VoiceRoom
+├─ AUIScenesKit               	// 场景业务组装模块，目前只包含VoiceRoom
 │  ├─ AUIVoiceRoomView       		// VoiceRoom房间容器View，用于拼接各个基础组件以及基础组件与Service的绑定
 │  ├─ AUIVoiceRoomService    		// VoiceRoom房间Service，用于创建各个基础Service以及RTC/RTM/IM等的初始化
 │  └─ Binder                  		// 把UI Components和Service关联起来的业务绑定模块
