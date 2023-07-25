@@ -1,4 +1,4 @@
-# AUIKitKaraoke
+# AUIKitVoiceRoom
 
 *English | [中文](README.zh.md)*
 
@@ -17,7 +17,7 @@ AUIKitVoiceRoom is a modular solution that integrates features from Agora's RTC,
 | Co-host anchor | After the audience enters the voice chat room, they can become co-host anchors by applying or being invited, and engage in real-time audio conversations. |
 | Audience       | Audience members entering the voice chat room.                                                                                                            |
 
-AUIKitKaraoke provides the following core features:
+AUIKitVoiceRoom provides the following core features:
 - **Room management**：Create, destroy, and list rooms
 - **Microphone seat management:**：Manage anchors' microphone access, including granting access, revoking access, kicking off, banning/locking microphones, etc
 - **User management**：Kicking, user muting, user list, etc
