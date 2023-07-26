@@ -1,5 +1,5 @@
 //
-//  KaraokeUIKit.swift
+//  VoiceChatUIKit.swift
 //  AScenesKit_Example
 //
 //  Created by wushengtao on 2023/4/28.
