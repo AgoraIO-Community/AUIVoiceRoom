@@ -93,7 +93,7 @@ final class AUIRoomListViewController: UIViewController {
     
     
     private func initEngine() {
-        //设置基础信息到KaraokeUIKit里
+        //设置基础信息到VoiceChatUIKit里
         let commonConfig = AUICommonConfig()
         commonConfig.host = KeyCenter.HostUrl
         commonConfig.userId = userInfo.userId
