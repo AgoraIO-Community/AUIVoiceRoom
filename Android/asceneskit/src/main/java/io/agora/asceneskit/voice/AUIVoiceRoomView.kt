@@ -21,6 +21,7 @@ import io.agora.auikit.service.imp.AUIIMManagerServiceImpl
 import io.agora.auikit.ui.basic.AUIAlertDialog
 import io.agora.auikit.ui.chatBottomBar.impl.AUIKeyboardStatusWatcher
 import io.agora.auikit.ui.chatBottomBar.listener.AUISoftKeyboardHeightChangeListener
+import io.agora.auikit.utils.AUILogger
 import io.agora.auikit.utils.ThreadManager
 
 class AUIVoiceRoomView : FrameLayout,
@@ -46,7 +47,7 @@ class AUIVoiceRoomView : FrameLayout,
                 mVoiceService?.let {
                     it.getRoomManager().exitRoom(it.getRoomInfo().roomId){error ->
                         if (error == null){
-                            Log.d("VoiceRoomView","exitRoom suc")
+                            AUILogger.logger().d("AUIVoiceRoomView", "DestroyDialog exitRoom suc ...")
                             mOnRoomDestroyEvent?.invoke()
                         }
                     }
@@ -68,153 +69,158 @@ class AUIVoiceRoomView : FrameLayout,
     }
 
     fun bindService(service: AUIVoiceRoomService) {
-        val giftService = service.getGiftService()
-        val chatManager = service.getChatManager()
         mVoiceService = service
         imManagerService = service.getIMManagerService() as AUIIMManagerServiceImpl
-
-        setUpRoomStyle(service.getRoomInfo())
-
         service.getRoomManager().bindRespDelegate(this)
         service.getMicSeatsService().bindRespDelegate(this)
 
-        service.enterRoom({
+        setUpRoomStyle(service.getRoomInfo())
 
-            /** 获取礼物列表 初始化礼物Binder */
-            giftService.getGiftsFromService(object : AUIGiftListCallback{
-                override fun onResult(error: AUIException?, giftList: List<AUIGiftTabEntity>) {
-                    auiGiftBarrageBinder = AUIGiftBarrageBinder(
-                        activity,
-                        mRoomViewBinding.giftView,
-                        giftList,
-                        giftService,
-                        service.getChatManager()
-                    )
-                    auiGiftBarrageBinder?.let {
-                        it.bind()
-                        mBinders.add(it)
-                    }
-                }
-            })
-
-            val chatListBinder = AUIChatListBinder(
-                service.getRoomInfo(),
-                mRoomViewBinding.chatListView,
-                mRoomViewBinding.chatBottomBar,
-                service.getChatManager(),
-                service.getIMManagerService(),
-            )
-            chatListBinder.let {
-                it.bind()
-                mBinders.add(it)
-            }
-
-            chatManager.saveWelcomeMsg(context.getString(R.string.voice_room_welcome))
-            mRoomViewBinding.chatListView.refreshSelectLast(chatManager.getMsgList())
-
-            val roomInfoBinder = AUIRoomInfoBinder(
-                mRoomViewBinding.leftView,
-                service.getRoomInfo(),
-                listener = object : AUIRoomInfoBinder.AUIRoomInfoEvent {
-                    override fun onBackClickListener(view: View) {
-                        mOnClickShutDown?.invoke()
-                    }
-                })
-
-            roomInfoBinder.let {
-                it.bind()
-                mBinders.add(it)
-            }
-
-            val roomMemberBinder = AUIRoomMembersBinder(
-                context,
-                mRoomViewBinding.rightView,
-                service,
-                listener = object :AUIRoomMembersBinder.AUIRoomMemberEvent{
-                    override fun onCloseClickListener(view: View) {
-                        mOnClickShutDown?.invoke()
-                    }
-                }
-            )
-
-            roomMemberBinder.let {
-                it.bind()
-                mBinders.add(it)
-            }
-
-
-            val micSeatsBinder = AUIMicSeatsBindable(
-                context,
-                when (micType) {
-                    MicSeatType.EightTag -> {
-                        mRoomViewBinding.micSeatsView
-                    }
-                    MicSeatType.NineTag -> {
-                        mRoomViewBinding.micSeatsHostView
-                    }
-                    else -> {
-                        mRoomViewBinding.micSeatsCircleView
-                    }
-                },service
-            )
-
-            micSeatsBinder.let {
-                it.bind()
-                mBinders.add(it)
-            }
-
-            val chatBottomBarBinder = AUIChatBottomBarBinder(
-                service,
-                mRoomViewBinding.chatBottomBar,
-                mRoomViewBinding.chatListView,
-                when (micType) {
-                    MicSeatType.EightTag -> {
-                        mRoomViewBinding.micSeatsView
-                    }
-                    MicSeatType.NineTag -> {
-                        mRoomViewBinding.micSeatsHostView
-                    }
-                    else -> {
-                        mRoomViewBinding.micSeatsCircleView
-                    }
-                },
-                object : AUIChatBottomBarBinder.AUIChatBottomBarEventDelegate{
-                    override fun onClickGift(view: View?) {
-                        auiGiftBarrageBinder?.showBottomGiftDialog()
-                    }
-
-                    override fun onClickLike(view: View?) {
-                        mRoomViewBinding.likeView.addFavor()
-                    }
-
-                    override fun onClickMore(view: View?) {
-                        showMoreDialog()
-                    }
-
-                    override fun onClickMic(view: View?) {
-
-                    }
-                })
-
-            chatBottomBarBinder.let {
-                it.bind()
-                mBinders.add(it)
-                listener = it.getSoftKeyboardHeightChangeListener()
-            }
-
-            invitationBinder = AUIInvitationBinder(activity, service)
-            invitationBinder?.let {
-                it.bind()
-                mBinders.add(it)
-            }
-
-        },{
+        service.enterRoom {
             post {
                 Toast.makeText(context, "Enter room failed : ${it.code}", Toast.LENGTH_SHORT).show()
             }
+        }
+
+        service.joinRtcRoom {
+            post {
+                Toast.makeText(context, "joinRtcRoom failed : ${it.code}", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        viewBinderConnected(service)
+        getSoftKeyboardHeight()
+    }
+
+    private fun viewBinderConnected(service:AUIVoiceRoomService){
+        /** 获取礼物列表 初始化礼物Binder */
+        service.getGiftService().getGiftsFromService(object : AUIGiftListCallback{
+            override fun onResult(error: AUIException?, giftList: List<AUIGiftTabEntity>) {
+                auiGiftBarrageBinder = AUIGiftBarrageBinder(
+                    activity,
+                    mRoomViewBinding.giftView,
+                    giftList,
+                    service.getGiftService(),
+                    service.getChatManager()
+                )
+                auiGiftBarrageBinder?.let {
+                    it.bind()
+                    mBinders.add(it)
+                }
+            }
         })
 
-        getSoftKeyboardHeight()
+        val chatListBinder = AUIChatListBinder(
+            service.getRoomInfo(),
+            mRoomViewBinding.chatListView,
+            mRoomViewBinding.chatBottomBar,
+            service.getChatManager(),
+            service.getIMManagerService(),
+        )
+        chatListBinder.let {
+            it.bind()
+            mBinders.add(it)
+        }
+
+        service.getChatManager().saveWelcomeMsg(context.getString(R.string.voice_room_welcome))
+        mRoomViewBinding.chatListView.refreshSelectLast(service.getChatManager().getMsgList())
+
+        val roomInfoBinder = AUIRoomInfoBinder(
+            mRoomViewBinding.leftView,
+            service.getRoomInfo(),
+            listener = object : AUIRoomInfoBinder.AUIRoomInfoEvent {
+                override fun onBackClickListener(view: View) {
+                    AUILogger.logger().d("AUIVoiceRoomView", "AUIRoomInfoBinder onBackClick ...")
+                    mOnClickShutDown?.invoke()
+                }
+            })
+
+        roomInfoBinder.let {
+            it.bind()
+            mBinders.add(it)
+        }
+
+        val roomMemberBinder = AUIRoomMembersBinder(
+            context,
+            mRoomViewBinding.rightView,
+            service,
+            listener = object :AUIRoomMembersBinder.AUIRoomMemberEvent{
+                override fun onCloseClickListener(view: View) {
+                    AUILogger.logger().d("AUIVoiceRoomView", "AUIRoomMembersBinder onCloseClick ...")
+                    mOnClickShutDown?.invoke()
+                }
+            }
+        )
+
+        roomMemberBinder.let {
+            it.bind()
+            mBinders.add(it)
+        }
+
+        val micSeatsBinder = AUIMicSeatsBindable(
+            context,
+            when (micType) {
+                MicSeatType.EightTag -> {
+                    mRoomViewBinding.micSeatsView
+                }
+                MicSeatType.NineTag -> {
+                    mRoomViewBinding.micSeatsHostView
+                }
+                else -> {
+                    mRoomViewBinding.micSeatsCircleView
+                }
+            },service
+        )
+
+        micSeatsBinder.let {
+            it.bind()
+            mBinders.add(it)
+        }
+
+        val chatBottomBarBinder = AUIChatBottomBarBinder(
+            service,
+            mRoomViewBinding.chatBottomBar,
+            mRoomViewBinding.chatListView,
+            when (micType) {
+                MicSeatType.EightTag -> {
+                    mRoomViewBinding.micSeatsView
+                }
+                MicSeatType.NineTag -> {
+                    mRoomViewBinding.micSeatsHostView
+                }
+                else -> {
+                    mRoomViewBinding.micSeatsCircleView
+                }
+            },
+            object : AUIChatBottomBarBinder.AUIChatBottomBarEventDelegate{
+                override fun onClickGift(view: View?) {
+                    auiGiftBarrageBinder?.showBottomGiftDialog()
+                }
+
+                override fun onClickLike(view: View?) {
+                    mRoomViewBinding.likeView.addFavor()
+                }
+
+                override fun onClickMore(view: View?) {
+                    showMoreDialog()
+                }
+
+                override fun onClickMic(view: View?) {
+
+                }
+            })
+
+        chatBottomBarBinder.let {
+            it.bind()
+            mBinders.add(it)
+            listener = it.getSoftKeyboardHeightChangeListener()
+        }
+
+        invitationBinder = AUIInvitationBinder(activity, service)
+        invitationBinder?.let {
+            it.bind()
+            mBinders.add(it)
+        }
     }
 
 
@@ -224,6 +230,7 @@ class AUIVoiceRoomView : FrameLayout,
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
+        AUILogger.logger().d("AUIVoiceRoomView", "onDetachedFromWindow")
 
         mVoiceService?.getRoomManager()?.unbindRespDelegate(this)
         mVoiceService?.getMicSeatsService()?.unbindRespDelegate(this)
@@ -258,7 +265,7 @@ class AUIVoiceRoomView : FrameLayout,
     private fun showMoreDialog(){
         val bean = VoiceMoreItemBean()
         val list = mutableListOf<VoiceMoreItemBean>()
-        if (isRoomOwner() == true){ // 房主显示申请列表
+        if (isRoomOwner()){ // 房主显示申请列表
             bean.ItemIcon = context.getDrawable(R.drawable.voice_icon_more_hands)
             bean.ItemTitle = "Application list"
             list.add(bean)
@@ -267,14 +274,14 @@ class AUIVoiceRoomView : FrameLayout,
             VoiceRoomMoreDialog.GridViewItemClickListener{
                 override fun onItemClickListener(position: Int) {
                     if (position == 0){
-                        if (isRoomOwner() == true){
+                        if (isRoomOwner()){
                             // 显示申请列表
                             invitationBinder?.showApplyDialog()
                         }
                     }
                 }
             })
-        if (isRoomOwner() == true){
+        if (isRoomOwner()){
             activity?.supportFragmentManager?.let { moreDialog?.show(it,"more_dialog") }
         }
     }
@@ -285,12 +292,14 @@ class AUIVoiceRoomView : FrameLayout,
     }
 
     override fun onRoomDestroy(roomId: String) {
+        AUILogger.logger().d("AUIVoiceRoomView", "onRoomDestroy $roomId")
         if (roomId == mVoiceService?.getRoomInfo()?.roomId){
             mDestroyDialog.show()
         }
     }
 
     override fun onRoomUserBeKicked(roomId: String?, userId: String?) {
+        AUILogger.logger().d("AUIVoiceRoomView", "onRoomUserBeKicked $roomId $userId")
         if (roomId == mVoiceService?.getRoomInfo()?.roomId){
             AUIAlertDialog(context).apply {
                 setTitle("您已被踢出房间")
@@ -314,7 +323,6 @@ class AUIVoiceRoomView : FrameLayout,
     private fun setUpRoomStyle(roomInfo:AUIRoomInfo){
         val seatStyle = roomInfo.micSeatStyle
         micType = MicSeatType.fromString(seatStyle)
-        Log.e("apex","MicSeatType  Tag $seatStyle  ${micType?.ordinal}  ${roomInfo.micSeatCount}")
         when( micType ){
             MicSeatType.OneTag ->{
                 mRoomViewBinding.micSeatsView.visibility = View.GONE

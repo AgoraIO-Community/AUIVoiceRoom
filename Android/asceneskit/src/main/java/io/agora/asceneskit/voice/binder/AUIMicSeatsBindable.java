@@ -80,6 +80,13 @@ public class AUIMicSeatsBindable extends IRtcEngineEventHandler implements
         this.context = context;
         mSeatMap.put(0,roomContext.getRoomOwner(micSeatService.getChannelName()));
         mVolumeMap.put(roomContext.getRoomOwner(micSeatService.getChannelName()),0);
+
+        // update view
+        IMicSeatItemView[] seatViewList = micSeatsView.getMicSeatItemViewList();
+        for (int seatIndex = 0; seatIndex < seatViewList.length; seatIndex++) {
+            AUIMicSeatInfo micSeatInfo = micSeatService.getMicSeatInfo(seatIndex);
+            updateSeatView(seatIndex, micSeatInfo);
+        }
     }
 
     @Override
@@ -91,13 +98,6 @@ public class AUIMicSeatsBindable extends IRtcEngineEventHandler implements
         chorusService.bindRespDelegate(this);
         micSeatsView.setMicSeatActionDelegate(this);
         mRtcEngine.addHandler(this);
-
-        // update view
-        IMicSeatItemView[] seatViewList = micSeatsView.getMicSeatItemViewList();
-        for (int seatIndex = 0; seatIndex < seatViewList.length; seatIndex++) {
-            AUIMicSeatInfo micSeatInfo = micSeatService.getMicSeatInfo(seatIndex);
-            updateSeatView(seatIndex, micSeatInfo);
-        }
 
         jukeboxService.getAllChooseSongList(new AUIChooseSongListCallback() {
             @Override
