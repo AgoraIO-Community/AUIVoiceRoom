@@ -2,7 +2,6 @@ package io.agora.asceneskit.voice.dialog
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +14,7 @@ import io.agora.asceneskit.databinding.VoiceRoomMoreLayoutBinding
 import io.agora.auikit.ui.basic.AUISheetFragmentDialog
 import io.agora.auikit.ui.basic.AUIImageView
 import io.agora.auikit.utils.DeviceTools
+import io.agora.auikit.utils.FastClickTools
 
 class VoiceRoomMoreDialog(
     context: Context,
@@ -60,7 +60,9 @@ class VoiceRoomMoreDialog(
     private fun initListener(){
         binding?.gvGridview?.onItemClickListener =
             AdapterView.OnItemClickListener { parent, view, position, id ->
-                listener?.onItemClickListener(position)
+                if (!FastClickTools.isFastClick(view)){
+                    listener?.onItemClickListener(position)
+                }
             }
     }
 
@@ -105,7 +107,6 @@ class VoiceMoreDialogAdapter(
     }
 
     fun updateStatus(position:Int,enable:Boolean){
-        Log.e("apex","updateStatus $enable")
         selectPosition = position
         val item = getItem(position)
         item?.ItemStatus = enable

@@ -16,6 +16,7 @@ import io.agora.auikit.ui.chatBottomBar.listener.AUIMenuItemClickListener
 import io.agora.auikit.ui.chatBottomBar.listener.AUISoftKeyboardHeightChangeListener
 import io.agora.auikit.ui.chatList.IAUIChatListView
 import io.agora.auikit.ui.micseats.IMicSeatsView
+import io.agora.auikit.utils.FastClickTools
 
 class AUIChatBottomBarBinder constructor(
     private val voiceService: AUIVoiceRoomService,
@@ -85,20 +86,21 @@ class AUIChatBottomBarBinder constructor(
         when (itemId) {
             R.id.voice_extend_item_more -> {
                 //自定义预留
-                Log.e("apex", "more")
+                if (view?.let { FastClickTools.isFastClick(it) } == true) return
                 chatBottomBarView.setShowMoreStatus(isRoomOwner, false)
                 event?.onClickMore(view)
             }
 
             R.id.voice_extend_item_mic -> {
                 //点击下方麦克风
-                Log.e("apex", "mic")
+                if (view?.let { FastClickTools.isFastClick(it) } == true) return
                 mLocalMute = !mLocalMute
                 userService.muteUserAudio(mLocalMute, null)
                 event?.onClickMic(view)
             }
 
             R.id.voice_extend_item_gift -> {
+                if (view?.let { FastClickTools.isFastClick(it) } == true) return
                 //点击下方礼物按钮 弹出送礼菜单
                 event?.onClickGift(view)
             }
@@ -106,7 +108,6 @@ class AUIChatBottomBarBinder constructor(
             R.id.voice_extend_item_like -> {
                 //点击下方点赞按钮
                 event?.onClickLike(view)
-                Log.e("apex", "like")
             }
         }
     }
