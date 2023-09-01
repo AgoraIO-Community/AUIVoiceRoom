@@ -84,9 +84,11 @@ class AUIVoiceRoomService constructor(
             roomConfig.rtcChannelName,
             AUIRoomContext.shared().commonConfig.userId.toInt(),
             roomConfig.rtcChorusChannelName,
-            roomConfig.rtcChorusRtcToken007
+            roomConfig.rtcChorusRtcToken
         )
-        KTVApiImpl(config)
+        val impl = KTVApiImpl()
+        impl.initialize(config)
+        return@run impl
     }
 
     fun getRoomManager() = roomManager
@@ -103,7 +105,7 @@ class AUIVoiceRoomService constructor(
 
     fun enterRoom(failure: (AUIException) -> Unit) {
         AUILogger.logger().d(TAG, "enterRoom start ...")
-        roomManager.enterRoom(channelName, roomConfig.rtcToken007) { error ->
+        roomManager.enterRoom(channelName, roomConfig.rtcToken) { error ->
             AUILogger.logger().d(TAG, "enterRoom result : $error")
             if (error != null) {
                 // failure
@@ -171,7 +173,7 @@ class AUIVoiceRoomService constructor(
         mRtcEngine.enableAudioVolumeIndication(350, 2, true)
         mRtcEngine.setClientRole(if (AUIRoomContext.shared().isRoomOwner(channelName)) Constants.CLIENT_ROLE_BROADCASTER else Constants.CLIENT_ROLE_AUDIENCE)
 
-        AUILogger.logger().d("RtcEngineEx", "joinChannel uid:${AUIRoomContext.shared().currentUserInfo.userId.toInt()}  rtcChannelName=${roomConfig.rtcChannelName}  rtcRtcToken=${roomConfig.rtcToken007}")
+        AUILogger.logger().d("RtcEngineEx", "joinChannel uid:${AUIRoomContext.shared().currentUserInfo.userId.toInt()}  rtcChannelName=${roomConfig.rtcChannelName}  rtcRtcToken=${roomConfig.rtcToken}")
         val ret: Int = mRtcEngine.joinChannel(
             roomConfig.rtcRtcToken,
             roomConfig.rtcChannelName,
@@ -218,11 +220,11 @@ class AUIVoiceRoomService constructor(
         AUIRoomContext.shared().roomConfig = config
 
         //rtm renew
-        rtmManager.renew(config.rtmToken007)
-        rtmManager.renewChannel(config.channelName,config.rtcToken007)
+        rtmManager.renew(config.rtmToken)
+        rtmManager.renewChannel(config.channelName,config.rtcToken)
 
         //rtc renew
-        mRtcEngine.renewToken(config.rtcToken007)
+        mRtcEngine.renewToken(config.rtcToken)
         AUILogger.logger().d(TAG, "renew token ...")
     }
 

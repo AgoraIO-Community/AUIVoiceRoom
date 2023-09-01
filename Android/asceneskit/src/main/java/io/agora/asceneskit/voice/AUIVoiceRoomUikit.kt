@@ -11,7 +11,7 @@ import io.agora.auikit.service.ktv.KTVApi
 import io.agora.auikit.service.rtm.AUIRtmErrorProxyDelegate
 import io.agora.rtc2.RtcEngine
 import io.agora.rtc2.RtcEngineEx
-import io.agora.rtm.RtmClient
+import io.agora.rtm2.RtmClient
 
 object AUIVoiceRoomUikit {
     private val notInitException =

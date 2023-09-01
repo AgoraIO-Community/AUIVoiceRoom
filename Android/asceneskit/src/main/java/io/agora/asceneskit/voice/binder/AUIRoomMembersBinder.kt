@@ -13,6 +13,7 @@ import io.agora.auikit.service.IAUIRoomManager
 import io.agora.auikit.service.IAUIUserService
 import io.agora.auikit.ui.basic.AUIBottomDialog
 import io.agora.auikit.ui.member.IAUIRoomMembersView
+import io.agora.auikit.ui.member.MemberInfo
 import io.agora.auikit.ui.member.impl.AUIRoomMemberListView
 import io.agora.auikit.ui.member.listener.AUIRoomMembersActionListener
 
@@ -90,10 +91,12 @@ class AUIRoomMembersBinder constructor(
      */
     private fun showUserListDialog(context: Context) {
         dialogMemberView = AUIRoomMemberListView(context)
-        dialogMemberView?.setMembers(mMemberMap.values.toList(), mSeatMap)
+        dialogMemberView?.setMembers(mMemberMap.values.toList().map {
+            MemberInfo(it?.userId ?: "", it?.userName ?: "", it?.userAvatar ?: "")
+        }, mSeatMap)
         dialogMemberView?.setIsOwner(isOwner, roomInfo?.roomOwner?.userId)
         dialogMemberView?.setMemberActionListener(object : AUIRoomMemberListView.ActionListener{
-            override fun onKickClick(view: View, position: Int, user: AUIUserInfo?) {
+            override fun onKickClick(view: View, position: Int, user: MemberInfo?) {
                 try {
                     val userId = user?.userId?.toInt()
                     if (isOwner){
@@ -145,7 +148,9 @@ class AUIRoomMembersBinder constructor(
         userList?.forEach { userInfo ->
             mMemberMap[userInfo.userId] = userInfo
         }
-        memberView?.setMemberData(mMemberMap.values.toList())
+        memberView?.setMemberData(mMemberMap.values.toList().map {
+            MemberInfo(it?.userId ?: "", it?.userName ?: "", it?.userAvatar ?: "")
+        })
     }
 
 
@@ -164,8 +169,12 @@ class AUIRoomMembersBinder constructor(
     }
 
     private fun updateMemberView(){
-        memberView?.setMemberData(mMemberMap.values.toList())
-        dialogMemberView?.setMembers(mMemberMap.values.toList(), mSeatMap)
+        memberView?.setMemberData(mMemberMap.values.toList().map {
+            MemberInfo(it?.userId ?: "", it?.userName ?: "", it?.userAvatar ?: "")
+        })
+        dialogMemberView?.setMembers(mMemberMap.values.toList().map {
+            MemberInfo(it?.userId ?: "", it?.userName ?: "", it?.userAvatar ?: "")
+        }, mSeatMap)
     }
 
     override fun onRoomUserBeKicked(roomId: String?, userId: String?) {

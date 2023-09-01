@@ -10,7 +10,6 @@ import io.agora.auikit.model.AUIChooseMusicModel;
 import io.agora.auikit.model.AUIChoristerModel;
 import io.agora.auikit.model.AUILoadMusicConfiguration;
 import io.agora.auikit.model.AUIMicSeatInfo;
-import io.agora.auikit.model.AUIMusicSettingInfo;
 import io.agora.auikit.model.AUIPlayStatus;
 import io.agora.auikit.model.AUIUserThumbnailInfo;
 import io.agora.auikit.service.IAUIChorusService;
@@ -20,6 +19,7 @@ import io.agora.auikit.service.IAUIMusicPlayerService;
 import io.agora.auikit.service.callback.AUIMusicLoadStateCallback;
 import io.agora.auikit.service.callback.AUISwitchSingerRoleCallback;
 import io.agora.auikit.ui.musicplayer.IMusicPlayerView;
+import io.agora.auikit.ui.musicplayer.MusicSettingInfo;
 import io.agora.auikit.ui.musicplayer.impl.AUIMusicPlayerView;
 
 public class AUIMusicPlayerBindable implements IAUIBindable, IAUIMusicPlayerService.AUIPlayerRespDelegate, IAUIJukeboxService.AUIJukeboxRespDelegate, IAUIChorusService.AUIChorusRespDelegate, IAUIMicSeatService.AUIMicSeatRespDelegate, IMusicPlayerView.ActionDelegate {
@@ -68,7 +68,7 @@ public class AUIMusicPlayerBindable implements IAUIBindable, IAUIMusicPlayerServ
         musicPlayerView.setMusicPlayerActionDelegate(this);
         musicPlayerView.setEffectProperties(musicPlayerService.effectProperties());
         // 音效设置默认值
-        AUIMusicSettingInfo musicSettingInfo = new AUIMusicSettingInfo(false,100,50,0,0);
+        MusicSettingInfo musicSettingInfo = new MusicSettingInfo(false,100,50,0,0);
         musicPlayerView.setMusicSettingInfo(musicSettingInfo);
 
         if (musicPlayerService.getRoomContext().isRoomOwner(musicPlayerService.getChannelName())) {
@@ -114,7 +114,7 @@ public class AUIMusicPlayerBindable implements IAUIBindable, IAUIMusicPlayerServ
 
                 // 更新歌曲播放UI、播放歌曲
                 isOriginal = false;
-                musicPlayerView.onMusicPrepare(localSong, mRole == SingRole.AUDIENCE, isRoomOwner);
+                musicPlayerView.onMusicPrepare(localSong.songCode, mRole == SingRole.AUDIENCE, isRoomOwner);
                 musicStartPlay(localSong);
             }
         });
@@ -197,7 +197,7 @@ public class AUIMusicPlayerBindable implements IAUIBindable, IAUIMusicPlayerServ
 
         // 更新歌曲播放UI、播放歌曲
         isOriginal = false;
-        musicPlayerView.onMusicPrepare(newTopSong, mRole == SingRole.AUDIENCE, isRoomOwner);
+        musicPlayerView.onMusicPrepare(newTopSong.songCode, mRole == SingRole.AUDIENCE, isRoomOwner);
         musicStartPlay(newTopSong);
     }
 

@@ -11,6 +11,8 @@ import io.agora.auikit.model.AUIGiftTabEntity
 import io.agora.auikit.model.AUIRoomContext
 import io.agora.auikit.service.IAUIGiftsService
 import io.agora.auikit.service.im.AUIChatManager
+import io.agora.auikit.ui.gift.AUIGiftInfo
+import io.agora.auikit.ui.gift.AUIGiftTabInfo
 import io.agora.auikit.ui.gift.IAUIGiftBarrageView
 import io.agora.auikit.ui.gift.impl.dialog.AUiGiftListView
 import io.agora.auikit.utils.ThreadManager
@@ -47,22 +49,49 @@ class AUIGiftBarrageBinder constructor(
 
     fun showBottomGiftDialog(){
         activity?.let {
-            val dialog = AUiGiftListView(it, data)
+            val dialog = AUiGiftListView(it, data.map {tabEntity ->
+                AUIGiftTabInfo(
+                    tabEntity.tabId, tabEntity.displayName ?: "", tabEntity.gifts.map { entity ->
+                        AUIGiftInfo(
+                            entity?.giftId ?: "", entity?.giftName ?: "",
+                            entity?.giftIcon ?: "", entity?.giftCount ?: 0,
+                            entity?.giftPrice ?: "", entity?.giftEffect ?: "",
+                            entity?.effectMD5?:"", entity?.sendUser?.userId ?: "",
+                            entity?.sendUser?.userName?: "", entity?.sendUser?.userAvatar ?: "")
+                    }
+                )
+            })
             dialog.setDialogActionListener(object : AUiGiftListView.ActionListener{
-                override fun onGiftSend(bean: AUIGiftEntity?) {
+                override fun onGiftSend(bean: AUIGiftInfo?) {
                     bean?.let { it1 ->
-                        it1.sendUser = roomContext?.currentUserInfo
-                        it1.giftCount = 1
-                        giftService.sendGift(it1) { error ->
+                        val giftEntity = AUIGiftEntity(
+                            it1.giftId,
+                            it1.giftName,
+                            it1.giftPrice,
+                            it1.giftIcon,
+                            it1.giftEffect,
+                            it1.giftEffectMD5,
+                            roomContext?.currentUserInfo,
+                            false,
+                            1
+                        )
+                        giftService.sendGift(giftEntity) { error ->
                             if (error == null) {
                                 ThreadManager.getInstance().runOnMainThread{
-                                    effectAnimation(it1)
-                                    val path = filePath(it1.effectMD5 ?: "")
+                                    effectAnimation(giftEntity)
+                                    val path = filePath(giftEntity.effectMD5 ?: "")
                                     if (path != null && path.isNotEmpty() && File(path).exists()) {
                                         dialog.dismiss()
                                     }
-                                    chatManager.addGiftList(it1)
-                                    giftView.refresh(chatManager.getGiftList())
+                                    chatManager.addGiftList(giftEntity)
+                                    giftView.refresh(chatManager.getGiftList().map {entity ->
+                                        AUIGiftInfo(
+                                            entity.giftId ?: "", entity.giftName?: "", entity.giftIcon?: "",
+                                            entity.giftCount, entity.giftPrice?: "", entity.giftEffect?: "",
+                                            entity.effectMD5?: "", entity.sendUser?.userId?: "",
+                                            entity?.sendUser?.userName ?: "", entity?.sendUser?.userAvatar ?: ""
+                                        )
+                                    })
                                 }
                             } else {
                                 Log.e("AUIGiftViewBinder", "sendGift error ${error.code} ${error.message}")
@@ -171,7 +200,14 @@ class AUIGiftBarrageBinder constructor(
     override fun onReceiveGiftMsg(giftEntity:AUIGiftEntity?) {
         ThreadManager.getInstance().runOnMainThread{
             giftEntity?.let { effectAnimation(it) }
-            giftView.refresh(chatManager.getGiftList())
+            giftView.refresh(chatManager.getGiftList().map {entity ->
+                AUIGiftInfo(
+                    entity.giftId ?: "", entity.giftName?: "", entity.giftIcon?: "",
+                    entity.giftCount, entity.giftPrice?: "", entity.giftEffect?: "",
+                    entity.effectMD5?: "", entity.sendUser?.userId?: "",
+                    entity?.sendUser?.userName ?: "", entity?.sendUser?.userAvatar ?: ""
+                )
+            })
         }
     }
 
