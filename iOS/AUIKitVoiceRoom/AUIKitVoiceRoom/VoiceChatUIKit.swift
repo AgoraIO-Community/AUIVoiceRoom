@@ -8,7 +8,7 @@
 
 import Foundation
 import AScenesKit
-import AUIKit
+import AUIKitCore
 import AgoraRtcKit
 
 class VoiceChatUIKit: NSObject {

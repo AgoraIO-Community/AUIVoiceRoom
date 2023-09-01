@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import AUIKit
+import AUIKitCore
 import SwiftTheme
 
 @objc open class AUIVoiceChatRoomView: UIView {
@@ -293,15 +293,15 @@ extension AUIVoiceChatRoomView: AUIRoomMemberListViewEventsDelegate {
 }
 
 extension AUIVoiceChatRoomView: AUIMicSeatViewDelegate {
-    public func seatItems(view: AUIKit.AUIMicSeatView) -> [AUIKit.AUIMicSeatCellDataProtocol] {
+    public func seatItems(view: AUIMicSeatView) -> [AUIMicSeatCellDataProtocol] {
         self.micSeatBinder.micSeatArray
     }
     
-    public func onItemDidClick(view: AUIKit.AUIMicSeatView, seatIndex: Int) {
+    public func onItemDidClick(view: AUIMicSeatView, seatIndex: Int) {
         self.micSeatBinder.binderClickItem(seatIndex: seatIndex)
     }
     
-    public func onMuteVideo(view: AUIKit.AUIMicSeatView, seatIndex: Int, canvas: UIView, isMuteVideo: Bool) {
+    public func onMuteVideo(view: AUIMicSeatView, seatIndex: Int, canvas: UIView, isMuteVideo: Bool) {
         self.micSeatBinder.binderMuteVideo(seatIndex: seatIndex, canvas: canvas, isMuteVideo: isMuteVideo)
     }
     

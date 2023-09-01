@@ -8,7 +8,7 @@
 import UIKit
 
 import AgoraRtcKit
-import AUIKit
+import AUIKitCore
 
 @objc public protocol AUIMicSeatViewEventsDelegate: NSObjectProtocol {
     func micSeatDidSelectedItem(index: Int)

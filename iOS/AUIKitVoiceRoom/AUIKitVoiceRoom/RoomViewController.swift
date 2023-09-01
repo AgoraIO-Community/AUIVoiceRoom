@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 import AScenesKit
-import AUIKit
+import AUIKitCore
 
 class RoomViewController: UIViewController {
     var roomInfo: AUIRoomInfo?

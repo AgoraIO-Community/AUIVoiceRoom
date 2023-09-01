@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import AUIKit
+import AUIKitCore
 #if DEBUG
     import DoraemonKit
 #endif
