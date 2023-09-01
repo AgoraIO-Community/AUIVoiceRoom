@@ -103,16 +103,16 @@ import SwiftTheme
         
         //设置皮肤路径
         if let folderPath = Bundle.main.path(forResource: "auiVoiceChatTheme", ofType: "bundle") {
-            AUIRoomContext.shared.addThemeFolderPath(path: URL(fileURLWithPath: folderPath) )
+            AUIThemeManager.shared.addThemeFolderPath(path: URL(fileURLWithPath: folderPath) )
         }
         if let folderPath = Bundle.main.path(forResource: "Gift", ofType: "bundle") {
-            AUIRoomContext.shared.addThemeFolderPath(path: URL(fileURLWithPath: folderPath) )
+            AUIThemeManager.shared.addThemeFolderPath(path: URL(fileURLWithPath: folderPath) )
         }
         if let folderPath = Bundle.main.path(forResource: "ChatResource", ofType: "bundle") {
-            AUIRoomContext.shared.addThemeFolderPath(path: URL(fileURLWithPath: folderPath) )
+            AUIThemeManager.shared.addThemeFolderPath(path: URL(fileURLWithPath: folderPath) )
         }
         if let folderPath = Bundle.main.path(forResource: "Invitation", ofType: "bundle") {
-            AUIRoomContext.shared.addThemeFolderPath(path: URL(fileURLWithPath: folderPath) )
+            AUIThemeManager.shared.addThemeFolderPath(path: URL(fileURLWithPath: folderPath) )
         }
     }
     

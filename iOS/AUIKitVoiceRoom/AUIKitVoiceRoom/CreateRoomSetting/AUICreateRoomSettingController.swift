@@ -113,7 +113,7 @@ final class AUICreateRoomSettingController: UIViewController,UITextFieldDelegate
                 self.background.image = UIImage(named: "bg_img_of_dark_mode")
                 themeName = "Dark"
             }
-            AUIRoomContext.shared.switchTheme(themeName: themeName)
+            AUIThemeManager.shared.switchTheme(themeName: themeName)
         }
     }
     
