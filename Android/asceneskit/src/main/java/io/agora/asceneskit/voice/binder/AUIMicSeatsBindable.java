@@ -36,6 +36,7 @@ import io.agora.auikit.ui.basic.AUIAlertDialog;
 import io.agora.auikit.ui.micseats.IMicSeatDialogView;
 import io.agora.auikit.ui.micseats.IMicSeatItemView;
 import io.agora.auikit.ui.micseats.IMicSeatsView;
+import io.agora.auikit.ui.micseats.MicSeatStatus;
 import io.agora.rtc2.IRtcEngineEventHandler;
 import io.agora.rtc2.RtcEngine;
 
@@ -191,7 +192,14 @@ public class AUIMicSeatsBindable extends IRtcEngineEventHandler implements
     public void onSeatClose(int seatIndex, boolean isClose) {
         AUIMicSeatInfo seatInfo = micSeatService.getMicSeatInfo(seatIndex);
         IMicSeatItemView seatView = micSeatsView.getMicSeatItemViewList()[seatIndex];
-        seatView.setMicSeatState(seatInfo.seatStatus);
+        if (seatInfo.seatStatus == AUIMicSeatStatus.idle) {
+            seatView.setMicSeatState(MicSeatStatus.idle);
+        } else if (seatInfo.seatStatus == AUIMicSeatStatus.locked) {
+            seatView.setMicSeatState(MicSeatStatus.locked);
+        } else {
+            seatView.setMicSeatState(MicSeatStatus.used);
+        }
+
         micSeatsView.stopRippleAnimation(seatIndex);
     }
 
@@ -217,7 +225,7 @@ public class AUIMicSeatsBindable extends IRtcEngineEventHandler implements
         seatView.setRoomOwnerVisibility((seatIndex == 0) ? View.VISIBLE : View.GONE);
 
         if (micSeatInfo.seatStatus == AUIMicSeatStatus.locked){
-            seatView.setMicSeatState(AUIMicSeatStatus.locked);
+            seatView.setMicSeatState(MicSeatStatus.locked);
         }
 
         boolean isAudioMute = (micSeatInfo.muteAudio != 0);
@@ -276,7 +284,9 @@ public class AUIMicSeatsBindable extends IRtcEngineEventHandler implements
         AUIMicSeatInfo seatInfo = micSeatService.getMicSeatInfo(index);
         if (seatInfo == null ||  seatInfo.user == null){ return true;}
         AUIUserInfo userInfo = userService.getUserInfo(seatInfo.user.userId);
-        dialogView.setUserInfo(userInfo);
+        if (userInfo != null) {
+            dialogView.setUserInfo(userInfo.userName);
+        }
         boolean isEmptySeat = (seatInfo.user == null || seatInfo.user.userId.length() == 0);
         boolean isCurrentUser = seatInfo.user != null && seatInfo.user.userId.equals(micSeatService.getRoomContext().currentUserInfo.userId);
         boolean isRoomOwner = micSeatService.getRoomContext().isRoomOwner(micSeatService.getChannelName());

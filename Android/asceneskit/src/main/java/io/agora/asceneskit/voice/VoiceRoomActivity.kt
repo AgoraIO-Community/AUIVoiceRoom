@@ -130,7 +130,6 @@ class VoiceRoomActivity : AppCompatActivity(), AUIRtmErrorProxyDelegate,
 
     private fun generateToken(roomId:String?,onSuccess: (AUIRoomConfig) -> Unit) {
         val config = AUIRoomConfig( roomId ?: "")
-        config.themeId = themeId
         var response = 3
         val trySuccess = {
             response -= 1;
@@ -147,8 +146,8 @@ class VoiceRoomActivity : AppCompatActivity(), AUIRtmErrorProxyDelegate,
                 override fun onResponse(call: retrofit2.Call<CommonResp<TokenGenerateResp>>, response: Response<CommonResp<TokenGenerateResp>>) {
                     val rspObj = response.body()?.data
                     if (rspObj != null) {
-                        config.rtcToken007 = rspObj.rtcToken
-                        config.rtmToken007 = rspObj.rtmToken
+                        config.rtcToken = rspObj.rtcToken
+                        config.rtmToken = rspObj.rtmToken
                         AUIRoomContext.shared()?.commonConfig?.appId = rspObj.appId
                         AUILogger.logger().d("VoiceRoomActivity", "generateToken update rtcToken/rtmToken...")
                     }
@@ -184,7 +183,7 @@ class VoiceRoomActivity : AppCompatActivity(), AUIRtmErrorProxyDelegate,
                     val rspObj = response.body()?.data
                     if (rspObj != null) {
                         // rtcChorusRtcToken007
-                        config.rtcChorusRtcToken007 = rspObj.rtcToken
+                        config.rtcChorusRtcToken = rspObj.rtcToken
                     }
                     trySuccess.invoke()
                 }

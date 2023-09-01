@@ -14,6 +14,7 @@ import io.agora.auikit.ui.R
 import io.agora.auikit.ui.chatBottomBar.IAUIChatBottomBarView
 import io.agora.auikit.ui.chatBottomBar.listener.AUIMenuItemClickListener
 import io.agora.auikit.ui.chatBottomBar.listener.AUISoftKeyboardHeightChangeListener
+import io.agora.auikit.ui.chatList.AUIChatInfo
 import io.agora.auikit.ui.chatList.IAUIChatListView
 import io.agora.auikit.ui.micseats.IMicSeatsView
 import io.agora.auikit.utils.FastClickTools
@@ -119,7 +120,12 @@ class AUIChatBottomBarBinder constructor(
             content
         ) { _, error ->
             if(error == null){
-                chatList.refreshSelectLast(chatManager.getMsgList())
+                chatList.refreshSelectLast(chatManager.getMsgList().map {
+                    AUIChatInfo(
+                        it.user?.userId ?: "", it.user?.userName ?: "",
+                        it.content, false
+                    )
+                })
             }
         }
     }
