@@ -10,8 +10,8 @@ android {
         applicationId "io.agora.voicechat.uikit"
         minSdk 24
         targetSdk 32
-        versionCode 1
-        versionName "0.1.0"
+        versionCode 2
+        versionName "0.2.0"
 
         def properties = new Properties()
         properties.load(rootProject.file("local.properties").newDataInputStream())
@@ -94,6 +94,16 @@ android {
         main {
             res.srcDirs += "src/main/java/io/agora/app/voice/kit/res"
         }
+    }
+
+    applicationVariants.all {
+        variant ->
+            variant.outputs.all { output ->
+                outputFileName = new File(rootProject.name + "_" +
+                        "v" + defaultConfig.versionName + "_" +
+                        new Date().format("yyyyMMddHHmm") + "_" +
+                        buildType.name + ".apk")
+            }
     }
 }
 
