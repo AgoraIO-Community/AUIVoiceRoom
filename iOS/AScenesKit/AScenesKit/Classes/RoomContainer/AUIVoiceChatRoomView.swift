@@ -418,24 +418,26 @@ extension AUIVoiceChatRoomView: AUIChatBottomBarViewEventsDelegate {
         guard let entity = self.chatView.bottomBar.datas[safe: 1] else {
             return
         }
-        if AUIRoomContext.shared.isRoomOwner(channelName: self.service?.channelName ?? "") {
-            entity.selected = !entity.selected
-            self.service?.rtcEngine.muteLocalAudioStream(entity.selected)
-            self.chatView.updateBottomBarSelected(index: 1, selected: entity.selected)
-        } else {
+//        if AUIRoomContext.shared.isRoomOwner(channelName: self.service?.channelName ?? "") {
+//            entity.selected = !entity.selected
+//            self.service?.rtcEngine.muteLocalAudioStream(entity.selected)
+//            self.chatView.updateBottomBarSelected(index: 1, selected: entity.selected)
+//        } else {
             let seat = self.micSeatBinder.micSeatArray.first(where: {
                 $0.user?.userId ?? "" == AUIRoomContext.shared.currentUserInfo.userId
             })
-            if let muteSeat = seat?.isMuteAudio,!muteSeat {
-                entity.selected = !entity.selected
+            if let _ = seat {
                 self.service?.userImpl.muteUserAudio(isMute: entity.selected, callback: { [weak self] error in
                     if error == nil {
                         self?.service?.rtcEngine.muteLocalAudioStream(entity.selected)
                         self?.chatView.updateBottomBarSelected(index: 1, selected: entity.selected)
                     }
                 })
+            } else {
+                service?.rtcEngine.muteLocalAudioStream(entity.selected)
+                chatView.updateBottomBarSelected(index: 1, selected: entity.selected)
             }
-        }
+//        }
         
         
     }
