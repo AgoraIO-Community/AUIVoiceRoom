@@ -418,6 +418,7 @@ extension AUIVoiceChatRoomView: AUIChatBottomBarViewEventsDelegate {
         guard let entity = self.chatView.bottomBar.datas[safe: 1] else {
             return
         }
+        let isOwner = AUIRoomContext.shared.isRoomOwner(channelName: self.service?.channelName ?? "")
 //        if AUIRoomContext.shared.isRoomOwner(channelName: self.service?.channelName ?? "") {
 //            entity.selected = !entity.selected
 //            self.service?.rtcEngine.muteLocalAudioStream(entity.selected)
@@ -426,7 +427,12 @@ extension AUIVoiceChatRoomView: AUIChatBottomBarViewEventsDelegate {
             let seat = self.micSeatBinder.micSeatArray.first(where: {
                 $0.user?.userId ?? "" == AUIRoomContext.shared.currentUserInfo.userId
             })
-            if let _ = seat {
+            if let seat = seat {
+                if seat.muteAudio, !isOwner {
+                    entity.selected = true
+                    AUIToast.show(text: "当前麦位已被房主静麦")
+                    return
+                }
                 self.service?.userImpl.muteUserAudio(isMute: entity.selected, callback: { [weak self] error in
                     if error == nil {
                         self?.service?.rtcEngine.muteLocalAudioStream(entity.selected)

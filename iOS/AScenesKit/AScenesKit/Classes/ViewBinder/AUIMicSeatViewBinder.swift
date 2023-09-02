@@ -331,6 +331,10 @@ extension AUIMicSeatViewBinder: AUIMicSeatRespDelegate {
         let micSeat = micSeatArray[seatIndex]
         micSeat.muteAudio = isMute
         micSeatArray[seatIndex] = micSeat
+        if let fullUser = micSeat.user as? AUIUserInfo {
+            fullUser.muteAudio = isMute
+            micSeatView?.refresh(index: seatIndex)
+        }
         micSeatView?.refresh(index: seatIndex)
         
         if micSeat.user?.userId == micSeatDelegate?.getRoomContext().currentUserInfo.userId {
@@ -352,7 +356,10 @@ extension AUIMicSeatViewBinder: AUIMicSeatRespDelegate {
         let micSeat = micSeatArray[seatIndex]
         micSeat.muteVideo = isMute
         micSeatArray[seatIndex] = micSeat
-        micSeatView?.refresh(index: seatIndex)
+        if let fullUser = micSeat.user as? AUIUserInfo {
+            fullUser.muteVideo = isMute
+            micSeatView?.refresh(index: seatIndex)
+        }
         
         guard let uid = UInt(micSeat.user?.userId ?? ""),
               micSeat.user?.userId != micSeatDelegate?.getRoomContext().currentUserInfo.userId else {
