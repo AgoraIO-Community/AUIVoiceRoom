@@ -309,10 +309,10 @@ extension AUIMicSeatViewBinder: AUIMicSeatRespDelegate {
  
         //current user enter seat
         guard user.userId == micSeatDelegate?.getRoomContext().commonConfig?.userId else {
-            self.currentUserMicState?(false,false)
             return
         }
         
+        self.currentUserMicState?(false,false)
         let mediaOption = AgoraRtcChannelMediaOptions()
         mediaOption.clientRoleType = .audience
         rtcEngine.updateChannel(with: mediaOption)
