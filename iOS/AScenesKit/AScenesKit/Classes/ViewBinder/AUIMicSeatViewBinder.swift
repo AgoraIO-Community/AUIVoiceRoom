@@ -97,9 +97,11 @@ public class AUIMicSeatViewBinder: NSObject {
         self.chorusDelegate = chorusService
     }
     
-    public func bindVoiceChat(micSeatView: IAUIMicSeatView,eventsDelegate: AUIMicSeatViewEventsDelegate,
-                     micSeatService: AUIMicSeatServiceDelegate,
-                              userService: AUIUserServiceDelegate,currenUserMicStateClosure: @escaping (Bool,Bool) -> ()) {
+    public func bindVoiceChat(micSeatView: IAUIMicSeatView,
+                              eventsDelegate: AUIMicSeatViewEventsDelegate,
+                              micSeatService: AUIMicSeatServiceDelegate,
+                              userService: AUIUserServiceDelegate,
+                              currenUserMicStateClosure: @escaping (Bool,Bool) -> ()) {
         self.micSeatView = micSeatView
         self.eventsDelegate = eventsDelegate
         self.micSeatDelegate = micSeatService
@@ -294,14 +296,6 @@ extension AUIMicSeatViewBinder: AUIMicSeatRespDelegate {
             self.currentUserMicState?(true,micSeat.isMuteAudio)
             return
         }
-        
-        guard let uid = UInt(micSeat.user?.userId ?? "") else {
-            return
-        }
-        aui_info("mute audio uid: \(uid) isMute: \(micSeat.muteAudio)", tag: "AUIMicSeatViewBinder")
-        self.rtcEngine.muteRemoteAudioStream(uid, mute: micSeat.muteAudio)
-        aui_info("mute video uid: \(uid) isMute: \(micSeat.muteVideo)", tag: "AUIMicSeatViewBinder")
-        self.rtcEngine.muteRemoteVideoStream(uid, mute: micSeat.muteVideo)
     }
     
     public func onAnchorLeaveSeat(seatIndex: Int, user: AUIUserThumbnailInfo) {
@@ -339,16 +333,9 @@ extension AUIMicSeatViewBinder: AUIMicSeatRespDelegate {
         
         if micSeat.user?.userId == micSeatDelegate?.getRoomContext().currentUserInfo.userId {
             self.currentUserMicState?(true,isMute)
+            userDelegate?.muteUserAudio(isMute: isMute, callback: { err in
+            })
         }
-        //TODO: 麦位静音表示不听远端用户的声音，目前是mute remote audio
-        
-        
-        guard let uid = UInt(micSeat.user?.userId ?? ""),
-              micSeat.user?.userId != micSeatDelegate?.getRoomContext().currentUserInfo.userId else {
-            return
-        }
-        aui_info("mute audio uid: \(uid) isMute: \(isMute)", tag: "AUIMicSeatViewBinder")
-        self.rtcEngine.muteRemoteAudioStream(uid, mute: isMute)
     }
     
     public func onSeatVideoMute(seatIndex: Int, isMute: Bool) {
@@ -361,12 +348,9 @@ extension AUIMicSeatViewBinder: AUIMicSeatRespDelegate {
             micSeatView?.refresh(index: seatIndex)
         }
         
-        guard let uid = UInt(micSeat.user?.userId ?? ""),
-              micSeat.user?.userId != micSeatDelegate?.getRoomContext().currentUserInfo.userId else {
-            return
+        if micSeat.user?.userId == micSeatDelegate?.getRoomContext().currentUserInfo.userId {
+            self.currentUserMicState?(true,isMute)
         }
-        aui_info("mute video uid: \(uid) isMute: \(isMute)", tag: "AUIMicSeatViewBinder")
-        self.rtcEngine.muteRemoteVideoStream(UInt(micSeat.user?.userId ?? "") ?? 0, mute: isMute)
     }
     
     public func onSeatClose(seatIndex: Int, isClose: Bool) {
@@ -490,10 +474,7 @@ extension AUIMicSeatViewBinder: AUIUserRespDelegate {
             } else {
                 self.rtcEngine.muteLocalAudioStream(mute)
             }
-        
         }
-        
-        
         
         for (seatIndex, micSeat) in micSeatArray.enumerated() {
             if let user = userMap[userId], user.userId == micSeat.user?.userId {
