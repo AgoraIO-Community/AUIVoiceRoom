@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import AUIKit
+import AUIKitCore
 
 @objcMembers open class AUIIMViewBinder: NSObject {
     

@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import AUIKit
+import AUIKitCore
 
 @objc public protocol AUIChatBottomBarViewEventsDelegate: NSObjectProtocol {
     

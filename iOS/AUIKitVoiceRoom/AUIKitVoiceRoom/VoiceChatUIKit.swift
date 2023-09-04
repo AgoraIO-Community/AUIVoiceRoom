@@ -8,8 +8,9 @@
 
 import Foundation
 import AScenesKit
-import AUIKit
+import AUIKitCore
 import AgoraRtcKit
+import AgoraRtmKit
 
 class VoiceChatUIKit: NSObject {
     static let shared: VoiceChatUIKit = VoiceChatUIKit()

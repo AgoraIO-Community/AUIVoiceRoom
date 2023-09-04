@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import AUIKit
+import AUIKitCore
 import SwiftTheme
 
 @objc open class AUIVoiceChatRoomView: UIView {
@@ -103,16 +103,16 @@ import SwiftTheme
         
         //设置皮肤路径
         if let folderPath = Bundle.main.path(forResource: "auiVoiceChatTheme", ofType: "bundle") {
-            AUIRoomContext.shared.addThemeFolderPath(path: URL(fileURLWithPath: folderPath) )
+            AUIThemeManager.shared.addThemeFolderPath(path: URL(fileURLWithPath: folderPath) )
         }
         if let folderPath = Bundle.main.path(forResource: "Gift", ofType: "bundle") {
-            AUIRoomContext.shared.addThemeFolderPath(path: URL(fileURLWithPath: folderPath) )
+            AUIThemeManager.shared.addThemeFolderPath(path: URL(fileURLWithPath: folderPath) )
         }
         if let folderPath = Bundle.main.path(forResource: "ChatResource", ofType: "bundle") {
-            AUIRoomContext.shared.addThemeFolderPath(path: URL(fileURLWithPath: folderPath) )
+            AUIThemeManager.shared.addThemeFolderPath(path: URL(fileURLWithPath: folderPath) )
         }
         if let folderPath = Bundle.main.path(forResource: "Invitation", ofType: "bundle") {
-            AUIRoomContext.shared.addThemeFolderPath(path: URL(fileURLWithPath: folderPath) )
+            AUIThemeManager.shared.addThemeFolderPath(path: URL(fileURLWithPath: folderPath) )
         }
     }
     
@@ -293,15 +293,15 @@ extension AUIVoiceChatRoomView: AUIRoomMemberListViewEventsDelegate {
 }
 
 extension AUIVoiceChatRoomView: AUIMicSeatViewDelegate {
-    public func seatItems(view: AUIKit.AUIMicSeatView) -> [AUIKit.AUIMicSeatCellDataProtocol] {
+    public func seatItems(view: AUIMicSeatView) -> [AUIMicSeatCellDataProtocol] {
         self.micSeatBinder.micSeatArray
     }
     
-    public func onItemDidClick(view: AUIKit.AUIMicSeatView, seatIndex: Int) {
+    public func onItemDidClick(view: AUIMicSeatView, seatIndex: Int) {
         self.micSeatBinder.binderClickItem(seatIndex: seatIndex)
     }
     
-    public func onMuteVideo(view: AUIKit.AUIMicSeatView, seatIndex: Int, canvas: UIView, isMuteVideo: Bool) {
+    public func onMuteVideo(view: AUIMicSeatView, seatIndex: Int, canvas: UIView, isMuteVideo: Bool) {
         self.micSeatBinder.binderMuteVideo(seatIndex: seatIndex, canvas: canvas, isMuteVideo: isMuteVideo)
     }
     
@@ -418,24 +418,32 @@ extension AUIVoiceChatRoomView: AUIChatBottomBarViewEventsDelegate {
         guard let entity = self.chatView.bottomBar.datas[safe: 1] else {
             return
         }
-        if AUIRoomContext.shared.isRoomOwner(channelName: self.service?.channelName ?? "") {
-            entity.selected = !entity.selected
-            self.service?.rtcEngine.muteLocalAudioStream(entity.selected)
-            self.chatView.updateBottomBarSelected(index: 1, selected: entity.selected)
-        } else {
+        let isOwner = AUIRoomContext.shared.isRoomOwner(channelName: self.service?.channelName ?? "")
+//        if AUIRoomContext.shared.isRoomOwner(channelName: self.service?.channelName ?? "") {
+//            entity.selected = !entity.selected
+//            self.service?.rtcEngine.muteLocalAudioStream(entity.selected)
+//            self.chatView.updateBottomBarSelected(index: 1, selected: entity.selected)
+//        } else {
             let seat = self.micSeatBinder.micSeatArray.first(where: {
                 $0.user?.userId ?? "" == AUIRoomContext.shared.currentUserInfo.userId
             })
-            if let muteSeat = seat?.isMuteAudio,!muteSeat {
-                entity.selected = !entity.selected
+            if let seat = seat {
+                if seat.muteAudio, !isOwner {
+                    entity.selected = true
+                    AUIToast.show(text: "当前麦位已被房主静麦")
+                    return
+                }
                 self.service?.userImpl.muteUserAudio(isMute: entity.selected, callback: { [weak self] error in
                     if error == nil {
                         self?.service?.rtcEngine.muteLocalAudioStream(entity.selected)
                         self?.chatView.updateBottomBarSelected(index: 1, selected: entity.selected)
                     }
                 })
+            } else {
+                service?.rtcEngine.muteLocalAudioStream(entity.selected)
+                chatView.updateBottomBarSelected(index: 1, selected: entity.selected)
             }
-        }
+//        }
         
         
     }

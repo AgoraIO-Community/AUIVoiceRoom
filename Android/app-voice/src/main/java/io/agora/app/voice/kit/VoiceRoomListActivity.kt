@@ -23,9 +23,11 @@ import io.agora.app.voice.databinding.VoiceRoomListActivityBinding
 import io.agora.app.voice.databinding.VoiceRoomListItemBinding
 import io.agora.asceneskit.voice.AUIVoiceRoomUikit
 import io.agora.asceneskit.voice.VoiceRoomActivity
-import io.agora.auikit.model.*
+import io.agora.auikit.model.AUICreateRoomInfo
+import io.agora.auikit.model.AUIRoomInfo
 import io.agora.auikit.ui.basic.AUIAlertDialog
 import io.agora.auikit.ui.basic.AUISpaceItemDecoration
+import io.agora.auikit.ui.micseats.MicSeatType
 import io.agora.auikit.utils.BindingViewHolder
 import java.util.Random
 
@@ -195,8 +197,6 @@ class VoiceRoomListActivity: AppCompatActivity() {
     }
 
     private fun gotoRoomDetailPage(roomInfo: AUIRoomInfo) {
-        val config = AUIRoomConfig(roomInfo.roomId)
-        config.themeId = ThemeId
         VoiceRoomActivity.launch(this, roomInfo, ThemeId)
     }
 

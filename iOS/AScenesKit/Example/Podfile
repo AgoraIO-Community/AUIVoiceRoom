@@ -4,7 +4,7 @@ platform :ios, '13.0'
 
 target 'AScenesKit_Example' do
   pod 'AScenesKit', :path => '../'
-  pod 'AUiKit', :path => '../../../../AUiKit/iOS'
+  pod 'AUIKitCore', '~> 0.5.0'
   target 'AScenesKit_Tests' do
     inherit! :search_paths
 
