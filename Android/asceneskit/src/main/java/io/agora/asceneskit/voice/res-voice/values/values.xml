@@ -14,4 +14,5 @@
     <string name="voice_room_confirm">confirm</string>
     <string name="voice_room_reject">reject</string>
     <string name="voice_room_apply_micSeat">Apply for the number %d micSeat</string>
+    <string name="voice_room_owner_mute_seat">The current Seat is quiet by the homeowner</string>
 </resources>

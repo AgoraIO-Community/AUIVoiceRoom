@@ -14,5 +14,6 @@
     <string name="voice_room_confirm">确定</string>
     <string name="voice_room_reject">拒绝</string>
     <string name="voice_room_apply_micSeat">申请上%d号麦</string>
+    <string name="voice_room_owner_mute_seat">当前麦位被房主静麦</string>
 
 </resources>
