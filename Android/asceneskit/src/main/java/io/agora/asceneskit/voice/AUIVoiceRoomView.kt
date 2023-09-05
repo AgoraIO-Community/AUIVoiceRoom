@@ -21,7 +21,6 @@ import io.agora.auikit.service.imp.AUIIMManagerServiceImpl
 import io.agora.auikit.ui.basic.AUIAlertDialog
 import io.agora.auikit.ui.chatBottomBar.impl.AUIKeyboardStatusWatcher
 import io.agora.auikit.ui.chatBottomBar.listener.AUISoftKeyboardHeightChangeListener
-import io.agora.auikit.ui.chatList.AUIChatInfo
 import io.agora.auikit.ui.micseats.MicSeatOption
 import io.agora.auikit.ui.micseats.MicSeatType
 import io.agora.auikit.utils.AUILogger
@@ -113,6 +112,8 @@ class AUIVoiceRoomView : FrameLayout,
             }
         })
 
+        service.getChatManager().saveWelcomeMsg(context.getString(R.string.voice_room_welcome))
+
         val chatListBinder = AUIChatListBinder(
             service.getRoomInfo(),
             mRoomViewBinding.chatListView,
@@ -124,11 +125,6 @@ class AUIVoiceRoomView : FrameLayout,
             it.bind()
             mBinders.add(it)
         }
-
-        service.getChatManager().saveWelcomeMsg(context.getString(R.string.voice_room_welcome))
-        mRoomViewBinding.chatListView.refreshSelectLast(service.getChatManager().getMsgList().map {
-            AUIChatInfo(it.user?.userId ?: "", it.user?.userName ?: "", it.content, true)
-        })
 
         val roomInfoBinder = AUIRoomInfoBinder(
             mRoomViewBinding.leftView,
