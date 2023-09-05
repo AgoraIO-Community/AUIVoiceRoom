@@ -44,7 +44,7 @@ class AUIGiftBarrageBinder constructor(
     }
 
     override fun unBind() {
-        giftService.unbindRespDelegate(null)
+        giftService.unbindRespDelegate(this)
     }
 
     fun showBottomGiftDialog(){
