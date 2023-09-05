@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import AUIKit
+import AUIKitCore
 import SwiftTheme
 
 @objc open class AUIVoiceChatRoomView: UIView {
@@ -103,16 +103,16 @@ import SwiftTheme
         
         //设置皮肤路径
         if let folderPath = Bundle.main.path(forResource: "auiVoiceChatTheme", ofType: "bundle") {
-            AUIRoomContext.shared.addThemeFolderPath(path: URL(fileURLWithPath: folderPath) )
+            AUIThemeManager.shared.addThemeFolderPath(path: URL(fileURLWithPath: folderPath) )
         }
         if let folderPath = Bundle.main.path(forResource: "Gift", ofType: "bundle") {
-            AUIRoomContext.shared.addThemeFolderPath(path: URL(fileURLWithPath: folderPath) )
+            AUIThemeManager.shared.addThemeFolderPath(path: URL(fileURLWithPath: folderPath) )
         }
         if let folderPath = Bundle.main.path(forResource: "ChatResource", ofType: "bundle") {
-            AUIRoomContext.shared.addThemeFolderPath(path: URL(fileURLWithPath: folderPath) )
+            AUIThemeManager.shared.addThemeFolderPath(path: URL(fileURLWithPath: folderPath) )
         }
         if let folderPath = Bundle.main.path(forResource: "Invitation", ofType: "bundle") {
-            AUIRoomContext.shared.addThemeFolderPath(path: URL(fileURLWithPath: folderPath) )
+            AUIThemeManager.shared.addThemeFolderPath(path: URL(fileURLWithPath: folderPath) )
         }
     }
     
@@ -166,8 +166,9 @@ import SwiftTheme
 
         micSeatBinder.bindVoiceChat(micSeatView: micSeatView, eventsDelegate: self,
                            micSeatService: service.micSeatImpl,
-                                    userService: service.userImpl) { [weak self] onMic in
+                                    userService: service.userImpl) { [weak self] onMic,mute in
             self?.chatView.updateBottomBarState(onMic: onMic)
+            self?.chatView.updateBottomBarSelected(index: 1, selected: mute)
         }
         micSeatView.uiDelegate = self
         service.reportAudioVolumeIndicationOfSpeakers = { [weak self] speckers, totalVolumes in
@@ -292,15 +293,15 @@ extension AUIVoiceChatRoomView: AUIRoomMemberListViewEventsDelegate {
 }
 
 extension AUIVoiceChatRoomView: AUIMicSeatViewDelegate {
-    public func seatItems(view: AUIKit.AUIMicSeatView) -> [AUIKit.AUIMicSeatCellDataProtocol] {
+    public func seatItems(view: AUIMicSeatView) -> [AUIMicSeatCellDataProtocol] {
         self.micSeatBinder.micSeatArray
     }
     
-    public func onItemDidClick(view: AUIKit.AUIMicSeatView, seatIndex: Int) {
+    public func onItemDidClick(view: AUIMicSeatView, seatIndex: Int) {
         self.micSeatBinder.binderClickItem(seatIndex: seatIndex)
     }
     
-    public func onMuteVideo(view: AUIKit.AUIMicSeatView, seatIndex: Int, canvas: UIView, isMuteVideo: Bool) {
+    public func onMuteVideo(view: AUIMicSeatView, seatIndex: Int, canvas: UIView, isMuteVideo: Bool) {
         self.micSeatBinder.binderMuteVideo(seatIndex: seatIndex, canvas: canvas, isMuteVideo: isMuteVideo)
     }
     
@@ -417,32 +418,47 @@ extension AUIVoiceChatRoomView: AUIChatBottomBarViewEventsDelegate {
         guard let entity = self.chatView.bottomBar.datas[safe: 1] else {
             return
         }
-        entity.showRedDot = false
-        self.service?.userImpl.muteUserAudio(isMute: entity.selected, callback: { [weak self] error in
-            if error == nil {
-                self?.chatView.updateBottomBarRedDot(index: 1, show: false)
-            }
+        let isOwner = AUIRoomContext.shared.isRoomOwner(channelName: self.service?.channelName ?? "")
+        let seat = self.micSeatBinder.micSeatArray.first(where: {
+            $0.user?.userId ?? "" == AUIRoomContext.shared.currentUserInfo.userId
         })
-        
+        if let seat = seat {
+            if seat.muteAudio, !isOwner {
+                entity.selected = true
+                AUIToast.show(text: "当前麦位已被房主静麦")
+                return
+            }
+            self.service?.userImpl.muteUserAudio(isMute: entity.selected, callback: { [weak self] error in
+                if error == nil {
+                    self?.service?.rtcEngine.muteLocalAudioStream(entity.selected)
+                    self?.chatView.updateBottomBarSelected(index: 1, selected: entity.selected)
+                }
+            })
+        } else {
+            service?.rtcEngine.muteLocalAudioStream(entity.selected)
+            chatView.updateBottomBarSelected(index: 1, selected: entity.selected)
+        }
     }
     
 }
 
 extension AUIVoiceChatRoomView: AUIMicSeatRespDelegate {
     public func onAnchorEnterSeat(seatIndex: Int, user: AUIUserThumbnailInfo) {
-        if user.userId == service?.userImpl.getRoomContext().currentUserInfo.userId {
-//            microphoneButton.isHidden = false
+        if user.userId == AUIRoomContext.shared.currentUserInfo.userId {
+            AUIRoomContext.shared.currentUserInfo.seatIndex = seatIndex
         }
     }
     
     public func onAnchorLeaveSeat(seatIndex: Int, user: AUIUserThumbnailInfo) {
         if user.userId == service?.userImpl.getRoomContext().currentUserInfo.userId {
-//            microphoneButton.isHidden = true
+            AUIRoomContext.shared.currentUserInfo.seatIndex = -1
         }
     }
     
     public func onSeatAudioMute(seatIndex: Int, isMute: Bool) {
-        
+        if seatIndex == AUIRoomContext.shared.currentUserInfo.seatIndex {
+            //refresh tool bar mic icon
+        }
     }
     
     public func onSeatVideoMute(seatIndex: Int, isMute: Bool) {

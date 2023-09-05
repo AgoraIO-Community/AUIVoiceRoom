@@ -21,6 +21,8 @@ import io.agora.auikit.service.imp.AUIIMManagerServiceImpl
 import io.agora.auikit.ui.basic.AUIAlertDialog
 import io.agora.auikit.ui.chatBottomBar.impl.AUIKeyboardStatusWatcher
 import io.agora.auikit.ui.chatBottomBar.listener.AUISoftKeyboardHeightChangeListener
+import io.agora.auikit.ui.micseats.MicSeatOption
+import io.agora.auikit.ui.micseats.MicSeatType
 import io.agora.auikit.utils.AUILogger
 import io.agora.auikit.utils.ThreadManager
 
@@ -33,7 +35,7 @@ class AUIVoiceRoomView : FrameLayout,
     private var listener: AUISoftKeyboardHeightChangeListener? = null
     private var activity:FragmentActivity?= null
     private var moreDialog:VoiceRoomMoreDialog?=null
-    private var micType:MicSeatType?=null
+    private var micType: MicSeatType?=null
     private var mOnClickShutDown: (() -> Unit)? = null
     private var mOnRoomDestroyEvent: (() -> Unit)? = null
     private var imManagerService:IAUIIMManagerService?=null
@@ -110,6 +112,8 @@ class AUIVoiceRoomView : FrameLayout,
             }
         })
 
+        service.getChatManager().saveWelcomeMsg(context.getString(R.string.voice_room_welcome))
+
         val chatListBinder = AUIChatListBinder(
             service.getRoomInfo(),
             mRoomViewBinding.chatListView,
@@ -121,9 +125,6 @@ class AUIVoiceRoomView : FrameLayout,
             it.bind()
             mBinders.add(it)
         }
-
-        service.getChatManager().saveWelcomeMsg(context.getString(R.string.voice_room_welcome))
-        mRoomViewBinding.chatListView.refreshSelectLast(service.getChatManager().getMsgList())
 
         val roomInfoBinder = AUIRoomInfoBinder(
             mRoomViewBinding.leftView,
@@ -336,10 +337,12 @@ class AUIVoiceRoomView : FrameLayout,
                 mRoomViewBinding.micSeatsView.visibility = View.GONE
                 mRoomViewBinding.micSeatsHostView.visibility = View.GONE
                 mRoomViewBinding.micSeatsCircleView.visibility = View.VISIBLE
-                mRoomViewBinding.micSeatsCircleView.setOptions(MicSeatOption(
+                mRoomViewBinding.micSeatsCircleView.setOptions(
+                    MicSeatOption(
                     roomInfo.micSeatCount,MicSeatType.SixTag,if (
                     roomInfo.micSeatCount == 3 || roomInfo.micSeatCount == 5) 90 else 0
-                ))
+                )
+                )
             }
             MicSeatType.EightTag ->{
                 mRoomViewBinding.micSeatsView.visibility = View.VISIBLE

@@ -7,7 +7,7 @@
 
 import UIKit
 import AScenesKit
-import AUIKit
+import AUIKitCore
 import SDWebImage
 
 class AUIRoomListCell: UICollectionViewCell {
