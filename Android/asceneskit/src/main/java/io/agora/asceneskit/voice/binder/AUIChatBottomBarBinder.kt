@@ -2,6 +2,7 @@ package io.agora.asceneskit.voice.binder
 
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import io.agora.asceneskit.voice.AUIVoiceRoomService
 import io.agora.auikit.model.AUIMicSeatInfo
 import io.agora.auikit.model.AUIRoomContext
@@ -94,7 +95,6 @@ class AUIChatBottomBarBinder constructor(
 
             R.id.voice_extend_item_mic -> {
                 //点击下方麦克风
-                if (view?.let { FastClickTools.isFastClick(it) } == true) return
                 mLocalMute = !mLocalMute
                 userService.muteUserAudio(mLocalMute, null)
                 event?.onClickMic(view)
@@ -123,7 +123,7 @@ class AUIChatBottomBarBinder constructor(
                 chatList.refreshSelectLast(chatManager.getMsgList().map {
                     AUIChatInfo(
                         it.user?.userId ?: "", it.user?.userName ?: "",
-                        it.content, false
+                        it.content, it.joined
                     )
                 })
             }
@@ -151,6 +151,13 @@ class AUIChatBottomBarBinder constructor(
             }
         }
         if (localUserSeat != null) {
+            if (localUserSeat.muteAudio == 1){
+                Toast.makeText(
+                    roomContext.commonConfig.context,
+                    roomContext.commonConfig.context.getString(io.agora.asceneskit.R.string.voice_room_owner_mute_seat)
+                    ,Toast.LENGTH_SHORT
+                ).show()
+            }
             val userInfo = userService.getUserInfo(userId)
             val mMute = (localUserSeat.muteAudio == 1) || (userInfo?.muteAudio == 1)
             mVolumeMap[userId]?.let { setLocalMute(it, mMute) }

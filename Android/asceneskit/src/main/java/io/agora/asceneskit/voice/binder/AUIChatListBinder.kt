@@ -45,7 +45,7 @@ class AUIChatListBinder constructor(
             chatList.refreshSelectLast(chatManager.getMsgList().map {
                 AUIChatInfo(
                     it.user?.userId ?: "", it.user?.userName ?: "",
-                    it.content, false
+                    it.content, it.joined
                 )
             })
         }
@@ -59,7 +59,7 @@ class AUIChatListBinder constructor(
             chatList.refreshSelectLast(chatManager.getMsgList().map {
                 AUIChatInfo(
                     it.user?.userId ?: "", it.user?.userName ?: "",
-                    it.content, false
+                    it.content, it.joined
                 )
             })
         }
