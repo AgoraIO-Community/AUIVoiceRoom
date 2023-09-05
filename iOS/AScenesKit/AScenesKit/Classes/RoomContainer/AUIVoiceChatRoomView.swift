@@ -419,33 +419,25 @@ extension AUIVoiceChatRoomView: AUIChatBottomBarViewEventsDelegate {
             return
         }
         let isOwner = AUIRoomContext.shared.isRoomOwner(channelName: self.service?.channelName ?? "")
-//        if AUIRoomContext.shared.isRoomOwner(channelName: self.service?.channelName ?? "") {
-//            entity.selected = !entity.selected
-//            self.service?.rtcEngine.muteLocalAudioStream(entity.selected)
-//            self.chatView.updateBottomBarSelected(index: 1, selected: entity.selected)
-//        } else {
-            let seat = self.micSeatBinder.micSeatArray.first(where: {
-                $0.user?.userId ?? "" == AUIRoomContext.shared.currentUserInfo.userId
-            })
-            if let seat = seat {
-                if seat.muteAudio, !isOwner {
-                    entity.selected = true
-                    AUIToast.show(text: "当前麦位已被房主静麦")
-                    return
-                }
-                self.service?.userImpl.muteUserAudio(isMute: entity.selected, callback: { [weak self] error in
-                    if error == nil {
-                        self?.service?.rtcEngine.muteLocalAudioStream(entity.selected)
-                        self?.chatView.updateBottomBarSelected(index: 1, selected: entity.selected)
-                    }
-                })
-            } else {
-                service?.rtcEngine.muteLocalAudioStream(entity.selected)
-                chatView.updateBottomBarSelected(index: 1, selected: entity.selected)
+        let seat = self.micSeatBinder.micSeatArray.first(where: {
+            $0.user?.userId ?? "" == AUIRoomContext.shared.currentUserInfo.userId
+        })
+        if let seat = seat {
+            if seat.muteAudio, !isOwner {
+                entity.selected = true
+                AUIToast.show(text: "当前麦位已被房主静麦")
+                return
             }
-//        }
-        
-        
+            self.service?.userImpl.muteUserAudio(isMute: entity.selected, callback: { [weak self] error in
+                if error == nil {
+                    self?.service?.rtcEngine.muteLocalAudioStream(entity.selected)
+                    self?.chatView.updateBottomBarSelected(index: 1, selected: entity.selected)
+                }
+            })
+        } else {
+            service?.rtcEngine.muteLocalAudioStream(entity.selected)
+            chatView.updateBottomBarSelected(index: 1, selected: entity.selected)
+        }
     }
     
 }
