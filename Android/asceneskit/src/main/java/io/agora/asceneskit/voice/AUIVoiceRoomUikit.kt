@@ -1,20 +1,17 @@
 package io.agora.asceneskit.voice
 
-import io.agora.auikit.model.AUICommonConfig
 import io.agora.auikit.model.AUICreateRoomInfo
 import io.agora.auikit.model.AUIRoomConfig
 import io.agora.auikit.model.AUIRoomContext
 import io.agora.auikit.model.AUIRoomInfo
 import io.agora.auikit.service.IAUIRoomManager
 import io.agora.auikit.service.callback.AUIException
-import io.agora.auikit.service.http.HttpManager
 import io.agora.auikit.service.imp.AUIRoomManagerImpl
 import io.agora.auikit.service.ktv.KTVApi
 import io.agora.auikit.service.rtm.AUIRtmErrorProxyDelegate
-import io.agora.auikit.utils.AUILogger
 import io.agora.rtc2.RtcEngine
 import io.agora.rtc2.RtcEngineEx
-import io.agora.rtm.RtmClient
+import io.agora.rtm2.RtmClient
 
 object AUIVoiceRoomUikit {
     private val notInitException =
@@ -35,8 +32,6 @@ object AUIVoiceRoomUikit {
      *      当外部传入时在release时不会销毁
      */
     fun init(
-        config: AUICommonConfig,
-        serverHost: String,
         ktvApi: KTVApi? = null,
         rtcEngineEx: RtcEngineEx? = null,
         rtmClient: RtmClient? = null
@@ -45,8 +40,6 @@ object AUIVoiceRoomUikit {
             throw initedException
         }
 
-        HttpManager.setBaseURL(serverHost)
-        AUIRoomContext.shared().commonConfig = config
         mKTVApi = ktvApi
 
         if (rtcEngineEx != null) { // 用户塞进来的engine由用户自己管理生命周期
@@ -54,9 +47,8 @@ object AUIVoiceRoomUikit {
             shouldReleaseRtc = false
         }
 
-        mRoomManager = AUIRoomManagerImpl(config, rtmClient)
+        mRoomManager = AUIRoomManagerImpl(AUIRoomContext.shared().commonConfig, rtmClient)
 
-        AUILogger.initLogger(AUILogger.Config(AUIRoomContext.shared().commonConfig.context, "Voice"))
     }
 
     /**
@@ -121,7 +113,7 @@ object AUIVoiceRoomUikit {
         success: (AUIRoomInfo) -> Unit,
         failure: (AUIException) -> Unit
     ) {
-        val roomManager = mRoomManager ?: throw notInitException
+        val roomManager = mRoomManager ?: AUIRoomManagerImpl(AUIRoomContext.shared().commonConfig, null)
         roomManager.createRoom(
             createRoomInfo
         ) { error, roomInfo ->
@@ -143,8 +135,9 @@ object AUIVoiceRoomUikit {
         voiceRoom:AUIVoiceRoomView,
         eventHandler: RoomEventHandler? = null,
     ) {
+        RtcEngine.destroy()
         AUIRoomContext.shared().roomConfig = config
-        val roomManager = mRoomManager ?: throw notInitException
+        val roomManager = mRoomManager ?: AUIRoomManagerImpl(AUIRoomContext.shared().commonConfig, null)
         val roomService = AUIVoiceRoomService(
             mRtcEngineEx,
             mKTVApi,
@@ -155,7 +148,7 @@ object AUIVoiceRoomUikit {
 
         mService = roomService
         voiceRoom.bindService(roomService)
-        eventHandler?.onRoomLaunchSuccess?.invoke()
+        eventHandler?.onRoomLaunchSuccess?.invoke(roomService)
     }
 
     enum class ErrorCode(val value: Int, val message: String) {
@@ -165,7 +158,7 @@ object AUIVoiceRoomUikit {
     }
 
     data class RoomEventHandler(
-        val onRoomLaunchSuccess: (() -> Unit)? = null,
+        val onRoomLaunchSuccess: ((AUIVoiceRoomService) -> Unit)? = null,
         val onRoomLaunchFailure: ((ErrorCode) -> Unit)? = null,
     )
 

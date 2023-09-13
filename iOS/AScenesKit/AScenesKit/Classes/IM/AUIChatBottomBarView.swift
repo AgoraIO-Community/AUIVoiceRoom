@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import AUIKit
+import AUIKitCore
 
 @objc public protocol AUIChatBottomBarViewEventsDelegate: NSObjectProtocol {
     
@@ -133,6 +133,15 @@ import AUIKit
     
     @objc public func updateBottomBarState(onMic: Bool) {
         self.bottomBar.refreshToolBar(datas: self.updateBottomBarDatas(onMic: onMic))
+    }
+    
+    /// Description 更新底部选中状态图片
+    /// - Parameters:
+    ///   - index: index从左到右 0~
+    ///   - selected: 'true' or 'false'
+    @objc public func updateBottomBarSelected(index: Int,selected: Bool) {
+        self.bottomBar.datas[safe: index]?.selected = selected
+        self.bottomBar.toolBar.reloadItems(at: [IndexPath(item: index, section: 0)])
     }
     
     @objc func updateBottomBarDatas(onMic: Bool) -> [AUIChatFunctionBottomEntity] {

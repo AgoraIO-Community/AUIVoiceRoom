@@ -1,5 +1,5 @@
 //
-//  KaraokeUIKit.swift
+//  VoiceChatUIKit.swift
 //  AScenesKit_Example
 //
 //  Created by wushengtao on 2023/4/28.
@@ -8,8 +8,9 @@
 
 import Foundation
 import AScenesKit
-import AUIKit
+import AUIKitCore
 import AgoraRtcKit
+import AgoraRtmKit
 
 class VoiceChatUIKit: NSObject {
     static let shared: VoiceChatUIKit = VoiceChatUIKit()

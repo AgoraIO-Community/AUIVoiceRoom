@@ -1,12 +1,12 @@
 package io.agora.asceneskit.voice.binder
 
-import android.util.Log
-import io.agora.auikit.model.AUIChatEntity
 import io.agora.auikit.model.AUIRoomInfo
 import io.agora.auikit.service.IAUIIMManagerService
 import io.agora.auikit.service.im.AUIChatManager
 import io.agora.auikit.ui.chatBottomBar.IAUIChatBottomBarView
+import io.agora.auikit.ui.chatList.AUIChatInfo
 import io.agora.auikit.ui.chatList.IAUIChatListView
+import io.agora.auikit.ui.chatList.impl.AUIChatListView
 import io.agora.auikit.ui.chatList.listener.AUIChatListItemClickListener
 import io.agora.auikit.utils.ThreadManager
 
@@ -19,7 +19,7 @@ class AUIChatListBinder constructor(
 ): IAUIBindable, AUIChatListItemClickListener, IAUIIMManagerService.AUIIMManagerRespDelegate {
 
     init {
-        chatList.initView(roomInfo.roomOwner?.userId)
+        (chatList as? AUIChatListView)?.setOwnerId(roomInfo.roomOwner?.userId ?: "")
     }
 
     override fun bind() {
@@ -36,16 +36,18 @@ class AUIChatListBinder constructor(
         chatBottomBar.hideKeyboard()
     }
 
-    override fun onItemClickListener(message: AUIChatEntity?) {
-        Log.d("AUIChatListBinder","onItemClickListener")
-    }
 
     override fun messageDidReceive(
         roomId: String,
         message: IAUIIMManagerService.AgoraChatTextMessage
     ) {
         ThreadManager.getInstance().runOnMainThread{
-            chatList.refreshSelectLast(chatManager.getMsgList())
+            chatList.refreshSelectLast(chatManager.getMsgList().map {
+                AUIChatInfo(
+                    it.user?.userId ?: "", it.user?.userName ?: "",
+                    it.content, it.joined
+                )
+            })
         }
     }
 
@@ -54,7 +56,12 @@ class AUIChatListBinder constructor(
         message: IAUIIMManagerService.AgoraChatTextMessage
     ) {
         ThreadManager.getInstance().runOnMainThread{
-            chatList.refreshSelectLast(chatManager.getMsgList())
+            chatList.refreshSelectLast(chatManager.getMsgList().map {
+                AUIChatInfo(
+                    it.user?.userId ?: "", it.user?.userName ?: "",
+                    it.content, it.joined
+                )
+            })
         }
     }
 

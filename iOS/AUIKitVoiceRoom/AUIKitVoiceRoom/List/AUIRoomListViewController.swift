@@ -7,7 +7,7 @@
 
 import UIKit
 import AScenesKit
-import AUIKit
+import AUIKitCore
 import MJRefresh
 import SwiftTheme
 
@@ -60,8 +60,8 @@ final class AUIRoomListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 //        view.addSubview(empty)
-        AUIRoomContext.shared.themeNames = ["Light", "Dark"]
-        AUIRoomContext.shared.resetTheme()
+        AUIThemeManager.shared.themeNames = ["Light", "Dark"]
+        AUIThemeManager.shared.resetTheme()
         UIScrollView.appearance().contentInsetAdjustmentBehavior = .never
        
 
@@ -93,7 +93,7 @@ final class AUIRoomListViewController: UIViewController {
     
     
     private func initEngine() {
-        //设置基础信息到KaraokeUIKit里
+        //设置基础信息到VoiceChatUIKit里
         let commonConfig = AUICommonConfig()
         commonConfig.host = KeyCenter.HostUrl
         commonConfig.userId = userInfo.userId
@@ -200,7 +200,7 @@ final class AUIRoomListViewController: UIViewController {
     }
     
     @objc func onThemeChangeAction() {
-        AUIRoomContext.shared.switchThemeToNext()
+        AUIThemeManager.shared.switchThemeToNext()
     }
     
     @objc func changeSetting() {

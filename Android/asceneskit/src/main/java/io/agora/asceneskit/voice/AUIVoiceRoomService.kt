@@ -30,7 +30,6 @@ import io.agora.auikit.service.ktv.KTVApiImpl
 import io.agora.auikit.service.rtm.AUIRtmManager
 import io.agora.auikit.utils.AUILogger
 import io.agora.auikit.utils.AgoraEngineCreator
-import io.agora.auikit.utils.ThreadManager
 import io.agora.rtc2.ChannelMediaOptions
 import io.agora.rtc2.Constants
 import io.agora.rtc2.RtcEngine
@@ -85,9 +84,11 @@ class AUIVoiceRoomService constructor(
             roomConfig.rtcChannelName,
             AUIRoomContext.shared().commonConfig.userId.toInt(),
             roomConfig.rtcChorusChannelName,
-            roomConfig.rtcChorusRtcToken007
+            roomConfig.rtcChorusRtcToken
         )
-        KTVApiImpl(config)
+        val impl = KTVApiImpl()
+        impl.initialize(config)
+        return@run impl
     }
 
     fun getRoomManager() = roomManager
@@ -102,19 +103,17 @@ class AUIVoiceRoomService constructor(
     fun getGiftService() = giftImpl
     fun getChatManager() = chatManager
 
-    fun enterRoom(success: (AUIRoomInfo) -> Unit, failure: (AUIException) -> Unit) {
-        roomManager.enterRoom(channelName, roomConfig.rtcToken007) { error ->
+    fun enterRoom(failure: (AUIException) -> Unit) {
+        AUILogger.logger().d(TAG, "enterRoom start ...")
+        roomManager.enterRoom(channelName, roomConfig.rtcToken) { error ->
             AUILogger.logger().d(TAG, "enterRoom result : $error")
             if (error != null) {
                 // failure
                 failure.invoke(error)
+                AUILogger.logger().e(TAG, "roomManager enterRoom failure $error")
             } else {
                 // success
-                ThreadManager.getInstance().runOnMainThread {
-                    success.invoke(roomInfo)
-                }
-                // TODO Workaround: 在rtm加入成功之后才能加入rtc频道，且频道名不同，rtc频道为roomName+_rtc
-                joinRtcRoom()
+                AUILogger.logger().d(TAG, "roomManager enterRoom success ...")
             }
             AUILogger.logger().d(TAG, "enterRoom end ...")
         }
@@ -161,7 +160,8 @@ class AUIVoiceRoomService constructor(
         mRtcEngine.muteRemoteAudioStream(userId.toInt(), isMute)
     }
 
-    private fun joinRtcRoom() {
+    fun joinRtcRoom(failure: (AUIException) -> Unit) {
+        AUILogger.logger().d(TAG, "joinRtcRoom start ...")
         mRtcEngine.setChannelProfile(Constants.CHANNEL_PROFILE_LIVE_BROADCASTING)
         mRtcEngine.enableVideo()
         mRtcEngine.enableLocalVideo(false)
@@ -173,7 +173,7 @@ class AUIVoiceRoomService constructor(
         mRtcEngine.enableAudioVolumeIndication(350, 2, true)
         mRtcEngine.setClientRole(if (AUIRoomContext.shared().isRoomOwner(channelName)) Constants.CLIENT_ROLE_BROADCASTER else Constants.CLIENT_ROLE_AUDIENCE)
 
-        Log.e("apex-pp", "joinChannel uid:${AUIRoomContext.shared().currentUserInfo.userId.toInt()}")
+        AUILogger.logger().d("RtcEngineEx", "joinChannel uid:${AUIRoomContext.shared().currentUserInfo.userId.toInt()}  rtcChannelName=${roomConfig.rtcChannelName}  rtcRtcToken=${roomConfig.rtcToken}")
         val ret: Int = mRtcEngine.joinChannel(
             roomConfig.rtcRtcToken,
             roomConfig.rtcChannelName,
@@ -184,8 +184,10 @@ class AUIVoiceRoomService constructor(
         if (ret == Constants.ERR_OK) {
             AUILogger.logger().d(TAG, "join rtc room success")
         }else{
-            AUILogger.logger().d(TAG, "join rtc room failed")
+            AUILogger.logger().e(TAG, "join rtc room failed $ret")
+            failure.invoke(AUIException(ret,"join rtc room failed"))
         }
+        AUILogger.logger().d(TAG, "joinRtcRoom end ...")
     }
 
     /** AUIUserRespDelegate */
@@ -211,6 +213,19 @@ class AUIVoiceRoomService constructor(
         val option = ChannelMediaOptions()
         option.publishCameraTrack = !mute
         rtcEngine?.updateChannelMediaOptions(option)
+    }
+
+    //token过期之后调用该方法更新所有token
+    fun renew(config: AUIRoomConfig){
+        AUIRoomContext.shared().roomConfig = config
+
+        //rtm renew
+        rtmManager.renew(config.rtmToken)
+        rtmManager.renewChannel(config.channelName,config.rtcToken)
+
+        //rtc renew
+        mRtcEngine.renewToken(config.rtcToken)
+        AUILogger.logger().d(TAG, "renew token ...")
     }
 
 }

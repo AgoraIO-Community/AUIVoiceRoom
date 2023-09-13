@@ -2,6 +2,7 @@ package io.agora.asceneskit.voice.binder
 
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import io.agora.asceneskit.voice.AUIVoiceRoomService
 import io.agora.auikit.model.AUIMicSeatInfo
 import io.agora.auikit.model.AUIRoomContext
@@ -14,8 +15,10 @@ import io.agora.auikit.ui.R
 import io.agora.auikit.ui.chatBottomBar.IAUIChatBottomBarView
 import io.agora.auikit.ui.chatBottomBar.listener.AUIMenuItemClickListener
 import io.agora.auikit.ui.chatBottomBar.listener.AUISoftKeyboardHeightChangeListener
+import io.agora.auikit.ui.chatList.AUIChatInfo
 import io.agora.auikit.ui.chatList.IAUIChatListView
 import io.agora.auikit.ui.micseats.IMicSeatsView
+import io.agora.auikit.utils.FastClickTools
 
 class AUIChatBottomBarBinder constructor(
     private val voiceService: AUIVoiceRoomService,
@@ -85,20 +88,20 @@ class AUIChatBottomBarBinder constructor(
         when (itemId) {
             R.id.voice_extend_item_more -> {
                 //自定义预留
-                Log.e("apex", "more")
+                if (view?.let { FastClickTools.isFastClick(it) } == true) return
                 chatBottomBarView.setShowMoreStatus(isRoomOwner, false)
                 event?.onClickMore(view)
             }
 
             R.id.voice_extend_item_mic -> {
                 //点击下方麦克风
-                Log.e("apex", "mic")
                 mLocalMute = !mLocalMute
                 userService.muteUserAudio(mLocalMute, null)
                 event?.onClickMic(view)
             }
 
             R.id.voice_extend_item_gift -> {
+                if (view?.let { FastClickTools.isFastClick(it) } == true) return
                 //点击下方礼物按钮 弹出送礼菜单
                 event?.onClickGift(view)
             }
@@ -106,7 +109,6 @@ class AUIChatBottomBarBinder constructor(
             R.id.voice_extend_item_like -> {
                 //点击下方点赞按钮
                 event?.onClickLike(view)
-                Log.e("apex", "like")
             }
         }
     }
@@ -118,7 +120,12 @@ class AUIChatBottomBarBinder constructor(
             content
         ) { _, error ->
             if(error == null){
-                chatList.refreshSelectLast(chatManager.getMsgList())
+                chatList.refreshSelectLast(chatManager.getMsgList().map {
+                    AUIChatInfo(
+                        it.user?.userId ?: "", it.user?.userName ?: "",
+                        it.content, it.joined
+                    )
+                })
             }
         }
     }
@@ -144,6 +151,13 @@ class AUIChatBottomBarBinder constructor(
             }
         }
         if (localUserSeat != null) {
+            if (localUserSeat.muteAudio == 1){
+                Toast.makeText(
+                    roomContext.commonConfig.context,
+                    roomContext.commonConfig.context.getString(io.agora.asceneskit.R.string.voice_room_owner_mute_seat)
+                    ,Toast.LENGTH_SHORT
+                ).show()
+            }
             val userInfo = userService.getUserInfo(userId)
             val mMute = (localUserSeat.muteAudio == 1) || (userInfo?.muteAudio == 1)
             mVolumeMap[userId]?.let { setLocalMute(it, mMute) }

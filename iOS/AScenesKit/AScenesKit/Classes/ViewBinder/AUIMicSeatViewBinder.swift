@@ -8,7 +8,7 @@
 import UIKit
 
 import AgoraRtcKit
-import AUIKit
+import AUIKitCore
 
 @objc public protocol AUIMicSeatViewEventsDelegate: NSObjectProtocol {
     func micSeatDidSelectedItem(index: Int)
@@ -16,8 +16,8 @@ import AUIKit
 
 public class AUIMicSeatViewBinder: NSObject {
     
-    /// Description true为上麦  false下麦
-    private var currentUserMicState: ((Bool) -> ())?
+    /// Description 第一个bool值true为上麦  false下麦，第二个bool值更新底部麦位状态 true为选中状态图片，false为未选中状态图片
+    private var currentUserMicState: ((Bool,Bool) -> ())?
     
     var speakers: [AgoraRtcAudioVolumeInfo] = [] {
         didSet {
@@ -97,9 +97,11 @@ public class AUIMicSeatViewBinder: NSObject {
         self.chorusDelegate = chorusService
     }
     
-    public func bindVoiceChat(micSeatView: IAUIMicSeatView,eventsDelegate: AUIMicSeatViewEventsDelegate,
-                     micSeatService: AUIMicSeatServiceDelegate,
-                              userService: AUIUserServiceDelegate,currenUserMicStateClosure: @escaping (Bool) -> ()) {
+    public func bindVoiceChat(micSeatView: IAUIMicSeatView,
+                              eventsDelegate: AUIMicSeatViewEventsDelegate,
+                              micSeatService: AUIMicSeatServiceDelegate,
+                              userService: AUIUserServiceDelegate,
+                              currenUserMicStateClosure: @escaping (Bool,Bool) -> ()) {
         self.micSeatView = micSeatView
         self.eventsDelegate = eventsDelegate
         self.micSeatDelegate = micSeatService
@@ -291,17 +293,9 @@ extension AUIMicSeatViewBinder: AUIMicSeatRespDelegate {
             mediaOption.publishMicrophoneTrack = true
             rtcEngine.updateChannel(with: mediaOption)
             aui_info("update clientRoleType: \(mediaOption.clientRoleType.rawValue)", tag: "AUIMicSeatViewBinder")
-            self.currentUserMicState?(true)
+            self.currentUserMicState?(true,micSeat.isMuteAudio)
             return
         }
-        
-        guard let uid = UInt(micSeat.user?.userId ?? "") else {
-            return
-        }
-        aui_info("mute audio uid: \(uid) isMute: \(micSeat.muteAudio)", tag: "AUIMicSeatViewBinder")
-        self.rtcEngine.muteRemoteAudioStream(uid, mute: micSeat.muteAudio)
-        aui_info("mute video uid: \(uid) isMute: \(micSeat.muteVideo)", tag: "AUIMicSeatViewBinder")
-        self.rtcEngine.muteRemoteVideoStream(uid, mute: micSeat.muteVideo)
     }
     
     public func onAnchorLeaveSeat(seatIndex: Int, user: AUIUserThumbnailInfo) {
@@ -315,10 +309,10 @@ extension AUIMicSeatViewBinder: AUIMicSeatRespDelegate {
  
         //current user enter seat
         guard user.userId == micSeatDelegate?.getRoomContext().commonConfig?.userId else {
-            self.currentUserMicState?(false)
             return
         }
         
+        self.currentUserMicState?(false,false)
         let mediaOption = AgoraRtcChannelMediaOptions()
         mediaOption.clientRoleType = .audience
         rtcEngine.updateChannel(with: mediaOption)
@@ -331,15 +325,17 @@ extension AUIMicSeatViewBinder: AUIMicSeatRespDelegate {
         let micSeat = micSeatArray[seatIndex]
         micSeat.muteAudio = isMute
         micSeatArray[seatIndex] = micSeat
+        if let fullUser = micSeat.user as? AUIUserInfo {
+            fullUser.muteAudio = isMute
+            micSeatView?.refresh(index: seatIndex)
+        }
         micSeatView?.refresh(index: seatIndex)
         
-        //TODO: 麦位静音表示不听远端用户的声音，目前是mute remote audio
-        guard let uid = UInt(micSeat.user?.userId ?? ""),
-              micSeat.user?.userId != micSeatDelegate?.getRoomContext().currentUserInfo.userId else {
-            return
+        if micSeat.user?.userId == micSeatDelegate?.getRoomContext().currentUserInfo.userId {
+            self.currentUserMicState?(true,isMute)
+            userDelegate?.muteUserAudio(isMute: isMute, callback: { err in
+            })
         }
-        aui_info("mute audio uid: \(uid) isMute: \(isMute)", tag: "AUIMicSeatViewBinder")
-        self.rtcEngine.muteRemoteAudioStream(uid, mute: isMute)
     }
     
     public func onSeatVideoMute(seatIndex: Int, isMute: Bool) {
@@ -347,14 +343,14 @@ extension AUIMicSeatViewBinder: AUIMicSeatRespDelegate {
         let micSeat = micSeatArray[seatIndex]
         micSeat.muteVideo = isMute
         micSeatArray[seatIndex] = micSeat
-        micSeatView?.refresh(index: seatIndex)
-        
-        guard let uid = UInt(micSeat.user?.userId ?? ""),
-              micSeat.user?.userId != micSeatDelegate?.getRoomContext().currentUserInfo.userId else {
-            return
+        if let fullUser = micSeat.user as? AUIUserInfo {
+            fullUser.muteVideo = isMute
+            micSeatView?.refresh(index: seatIndex)
         }
-        aui_info("mute video uid: \(uid) isMute: \(isMute)", tag: "AUIMicSeatViewBinder")
-        self.rtcEngine.muteRemoteVideoStream(UInt(micSeat.user?.userId ?? "") ?? 0, mute: isMute)
+        
+        if micSeat.user?.userId == micSeatDelegate?.getRoomContext().currentUserInfo.userId {
+            self.currentUserMicState?(true,isMute)
+        }
     }
     
     public func onSeatClose(seatIndex: Int, isClose: Bool) {
@@ -470,6 +466,15 @@ extension AUIMicSeatViewBinder: AUIUserRespDelegate {
     public func onUserAudioMute(userId: String, mute: Bool) {
         aui_info("onUserAudioMute userId: \(userId) mute: \(mute)", tag: "AUIMicSeatViewBinder")
         userMap[userId]?.muteAudio = mute
+        let micSeat = micSeatArray.first { $0.user?.userId ?? "" == userId
+        }
+        if userId == self.micSeatDelegate?.getRoomContext().commonConfig?.userId {
+            if let micSeatMute = micSeat?.muteAudio,micSeatMute {
+                self.rtcEngine.muteLocalAudioStream(true)
+            } else {
+                self.rtcEngine.muteLocalAudioStream(mute)
+            }
+        }
         
         for (seatIndex, micSeat) in micSeatArray.enumerated() {
             if let user = userMap[userId], user.userId == micSeat.user?.userId {

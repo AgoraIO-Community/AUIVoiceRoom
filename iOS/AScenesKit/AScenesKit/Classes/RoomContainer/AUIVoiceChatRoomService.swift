@@ -8,8 +8,9 @@
 import UIKit
 
 import AgoraRtcKit
-import AUIKit
+import AUIKitCore
 import AVFAudio
+import AgoraRtmKit
 
 /// 语聊房房间Service，内部负责初始化房间内需要的Service组件，包括房间Service，邀请Service，麦位Service，...
 ///  初始化时候需要注意先初始化rtc 然后rtm 先加入rtc后加入rtm，避免发生加入channel用户uid不一致问题
