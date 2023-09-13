@@ -1,4 +1,4 @@
-# AUIKitVoiceRoom
+# AUIVoiceRoom
 
 *English | [中文](README.zh.md)*
 
@@ -8,7 +8,7 @@
 
 ## Scenario Description
 
-AUIKitVoiceRoom is a modular solution that integrates features from Agora's RTC, RTM, and AgoraChat products, aiming to facilitate the rapid development of online voice chat rooms. In this solution, in a multi-person voice interaction scenario, audience members can freely join the voice chat and communicate with each other.
+AUIVoiceRoom is a modular solution that integrates features from Agora's RTC, RTM, and AgoraChat products, aiming to facilitate the rapid development of online voice chat rooms. In this solution, in a multi-person voice interaction scenario, audience members can freely join the voice chat and communicate with each other.
 
 
 | Role           | Description                                                                                                                                               |
@@ -17,7 +17,7 @@ AUIKitVoiceRoom is a modular solution that integrates features from Agora's RTC,
 | Co-host anchor | After the audience enters the voice chat room, they can become co-host anchors by applying or being invited, and engage in real-time audio conversations. |
 | Audience       | Audience members entering the voice chat room.                                                                                                            |
 
-AUIKitVoiceRoom provides the following core features:
+AUIVoiceRoom provides the following core features:
 - **Room management**：Create, destroy, and list rooms
 - **Microphone seat management:**：Manage anchors' microphone access, including granting access, revoking access, kicking off, banning/locking microphones, etc
 - **User management**：Kicking, user muting, user list, etc
@@ -38,7 +38,7 @@ AUIKitVoiceRoom provides the following core features:
 
 | iOS                           | Android                                                                                  | Backend                                                                                  |
 |-------------------------------|------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------|
-| [VoiceRoom(iOS)](iOS/AUIKitVoiceRoom) | [VoiceRoom(Android)](Android) | [VoiceRoom(Backend)](backend) |
+| [VoiceRoom(iOS)](iOS/AUIVoiceRoom) | [VoiceRoom(Android)](Android) | [VoiceRoom(Backend)](backend) |
 |                               |                                                                                          |                                                                                          |
 
 

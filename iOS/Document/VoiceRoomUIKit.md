@@ -6,7 +6,7 @@ VoiceRoomUIKit is a voice chat room scene component, which provides room managem
 
 
 ## Quick Started
-> Please make sure you have successfully run the project according to this [tutorial](../Example/AUIKitVoiceRoom/README.md) before integrating.。
+> Please make sure you have successfully run the project according to this [tutorial](../Example/AUIVoiceRoom/README.md) before integrating.。
 
 ### 1. Add Source Code
 
@@ -14,8 +14,8 @@ VoiceRoomUIKit is a voice chat room scene component, which provides room managem
 
 - [AUIKit](../AUIKit)
 - [AScenesKit](../AScenesKit)
-- [VoiceRoomUIKit.swift](../AUIKitVoiceRoom/iOS/AUIKitVoiceRoom/VoiceRoomUIKit.swift)
-- [KeyCenter.swift](../AUIKitVoiceRoom/AUIKitVoiceRoom/KeyCenter.swift)
+- [VoiceRoomUIKit.swift](../AUIVoiceRoom/iOS/AUIVoiceRoom/VoiceRoomUIKit.swift)
+- [KeyCenter.swift](../AUIVoiceRoom/AUIVoiceRoom/KeyCenter.swift)
 
 **Add dependencies on AScenesKit and AUIKit in the Podfile file (for example, when AUIKit and AScenesKit are placed in the same level directory as the Podfile)**
 

@@ -1,4 +1,4 @@
-# AUIKitVoiceRoom
+# AUIVoiceRoom
 
 *[English](README.md) | 中文*
 
@@ -8,7 +8,7 @@
 
 ## 场景描述
 
-AUIKitVoiceRoom 是一款集成了声网 RTC、RTM、AgoraChat等产品的功能组件化方案，帮助您快速开发在线语聊房。在此方案中，多人语音互动场景，观众可以自由上麦进行语音交流。
+AUIVoiceRoom 是一款集成了声网 RTC、RTM、AgoraChat等产品的功能组件化方案，帮助您快速开发在线语聊房。在此方案中，多人语音互动场景，观众可以自由上麦进行语音交流。
 
 
 | 角色   | 描述                                    |
@@ -17,7 +17,7 @@ AUIKitVoiceRoom 是一款集成了声网 RTC、RTM、AgoraChat等产品的功能
 | 上麦主播 | 观众进入语聊房后，通过申请上麦或邀请上麦成为上麦主播，可以进行实时音频通话 |
 | 观众   | 进入语聊房的观众                              |
 
-AUIKitVoiceRoom 提供以下核心功能：
+AUIVoiceRoom 提供以下核心功能：
 - **房间管理**：创建、销毁房间，房间列表等
 - **麦位管理**：上麦、下麦、踢人下麦、封禁/锁麦等
 - **用户管理**：踢人、用户静音、用户列表等
@@ -38,7 +38,7 @@ AUIKitVoiceRoom 提供以下核心功能：
 
 | iOS                                           | Android                       | Backend                       |
 |-----------------------------------------------|-------------------------------|-------------------------------|
-| [VoiceRoom(iOS)](iOS/AUIKitVoiceRoom) | [VoiceRoom(Android)](Android) | [VoiceRoom(Backend)](backend) |
+| [VoiceRoom(iOS)](iOS/AUIVoiceRoom) | [VoiceRoom(Android)](Android) | [VoiceRoom(Backend)](backend) |
 |                                               |                               |                               |
 |                                               |                               |                               |
 |                                               |                               |                               |
