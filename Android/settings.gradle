@@ -17,7 +17,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "AUIKitVoiceRoom"
+rootProject.name = "AUIVoiceRoom"
 def uiKitPath = new File(settingsDir, '../AUIKit/Android/auikit')
 if(uiKitPath.exists()){
     include ':auikit'

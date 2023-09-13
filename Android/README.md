@@ -1,8 +1,8 @@
-# AUIKitVoiceRoom-Android Quick Start
+# AUIVoiceRoom-Android Quick Start
 
 *English | [中文](README_zh.md)
 
-This document mainly introduces how to quickly run through the AUIKitVoiceRoom example  and experience online VoiceRoom scenarios, including micseat service, invite&apply service, user service, chat service, gift service, etc. For a more detailed introduction, please refer to [AUIScenesKit](../AScenesKit/README.md) and [AUIKit](https://github.com/AgoraIO-Community/AUIKit/tree/main/Android)
+This document mainly introduces how to quickly run through the AUIVoiceRoom example  and experience online VoiceRoom scenarios, including micseat service, invite&apply service, user service, chat service, gift service, etc. For a more detailed introduction, please refer to [AUIScenesKit](../AScenesKit/README.md) and [AUIKit](https://github.com/AgoraIO-Community/AUIKit/tree/main/Android)
 
 ## Architecture
 ![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/uikit_structure_chart_voicechat_0.2.0.png.png)
