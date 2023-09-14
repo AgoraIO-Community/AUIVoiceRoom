@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "05FFD8B62A26D89800CA2B5B"
-               BuildableName = "AUIKitVoiceRoom.app"
-               BlueprintName = "AUIKitVoiceRoom"
-               ReferencedContainer = "container:AUIKitVoiceRoom.xcodeproj">
+               BuildableName = "AUIVoiceRoom.app"
+               BlueprintName = "AUIVoiceRoom"
+               ReferencedContainer = "container:AUIVoiceRoom.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -45,9 +45,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "05FFD8B62A26D89800CA2B5B"
-            BuildableName = "AUIKitVoiceRoom.app"
-            BlueprintName = "AUIKitVoiceRoom"
-            ReferencedContainer = "container:AUIKitVoiceRoom.xcodeproj">
+            BuildableName = "AUIVoiceRoom.app"
+            BlueprintName = "AUIVoiceRoom"
+            ReferencedContainer = "container:AUIVoiceRoom.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -62,9 +62,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "05FFD8B62A26D89800CA2B5B"
-            BuildableName = "AUIKitVoiceRoom.app"
-            BlueprintName = "AUIKitVoiceRoom"
-            ReferencedContainer = "container:AUIKitVoiceRoom.xcodeproj">
+            BuildableName = "AUIVoiceRoom.app"
+            BlueprintName = "AUIVoiceRoom"
+            ReferencedContainer = "container:AUIVoiceRoom.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

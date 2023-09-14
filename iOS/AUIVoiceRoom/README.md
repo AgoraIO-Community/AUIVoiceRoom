@@ -1,16 +1,16 @@
-# AUIKitVoiceRoom-iOS Quick Start
+# AUIVoiceRoom-iOS Quick Start
 
 *English | [中文](README_zh.md)
 
-This document mainly introduces how to quickly run through the AUIKitVoiceRoom example  and experience online VoiceRoom scenarios, including micseat service, invite&apply service, user service, chat service, gift service, etc. For a more detailed introduction, please refer to [AUIScenesKit](../AScenesKit/README.md) and [AUIKit](https://github.com/AgoraIO-Community/AUIKit/tree/main/iOS)
+This document mainly introduces how to quickly run through the AUIVoiceRoom example  and experience online VoiceRoom scenarios, including micseat service, invite&apply service, user service, chat service, gift service, etc. For a more detailed introduction, please refer to [AUIScenesKit](../AScenesKit/README.md) and [AUIKit](https://github.com/AgoraIO-Community/AUIKit/tree/main/iOS)
 
 ## Architecture
-![](https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/github_readme/uikit/uikit_structure_chart.png)
+![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/uikit_structure_chart_voicechat_0.3.0.png)
 
 ## Directory
 ```
 ┌─ Example                     // Demo Code Integration Catalog
-│  └─ AUIKitVoiceRoom            // Provide VoiceRoom's integrated page
+│  └─ AUIVoiceRoom            // Provide VoiceRoom's integrated page
 ├─ AUIScenesKit                // Scenario business assembly module, currently only including VoiceRoom
 │  ├─ AUIVoiceRoomRoomView       // VoiceRoom room container view, used to splice various basic components and bind them to services
 │  ├─ AUIVoiceRoomRoomService    // VoiceRoom Room Service, used to create various basic services and initialize RTC/RTM/IM, etc
@@ -44,7 +44,7 @@ This document mainly introduces how to quickly run through the AUIKitVoiceRoom e
 git submodule init
 git submodule update
 ```
-- Fill in the HostUrl for step 1 in the [KeyCenter. swift] (AUIKitVoiceRoom/KeyCenter. swift) of the project
+- Fill in the HostUrl for step 1 in the [KeyCenter. swift] (AUIVoiceRoom/KeyCenter. swift) of the project
 ```
 static var HostUrl: String = <#Your HostUrl#>
 ```
@@ -55,7 +55,7 @@ If you do not intend to deploy backend services temporarily, you can use the def
 
 - Open the terminal and enter the [Podfile](Podfile) directory, run `pod install`
 
-- Finally, open AUIKitVoiceRoom. xcworkspace and run it to start your experience
+- Finally, open AUIVoiceRoom. xcworkspace and run it to start your experience
 
 
 ## FAQ

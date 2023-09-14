@@ -1,6 +1,6 @@
 //
 //  ViewController.swift
-//  AUIKitVoiceRoom
+//  AUIVoiceRoom
 //
 //  Created by 朱继超 on 2023/5/31.
 //
