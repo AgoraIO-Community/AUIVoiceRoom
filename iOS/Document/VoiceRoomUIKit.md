@@ -6,7 +6,7 @@ VoiceRoomUIKit is a voice chat room scene component, which provides room managem
 
 
 ## Quick Started
-> Please make sure you have successfully run the project according to this [tutorial](../Example/AUIVoiceRoom/README.md) before integrating.。
+> Please make sure you have successfully run the project according to this.After successful operation, the AUIKit folder will appear in the iOS folder level directory. [tutorial](../AUIVoiceRoom/README.md) before integrating.。
 
 ### 1. Add Source Code
 
@@ -26,11 +26,11 @@ VoiceRoomUIKit is a voice chat room scene component, which provides room managem
 
 **Drag VoiceRoomUIKit.swift into the project**
 
-![](https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/github_readme/uikit/config_keycenter_ios.png)
+![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/WeChatWorkScreenshot_f875a12d-58f4-4f0d-830d-1160514f2927.png)
 
 **Configure microphone and camera permissions**
 
-![](https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/github_readme/uikit/config_app_privacy_ios.png)
+![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/WeChatWorkScreenshot_c9c309c0-731c-4964-8ef3-1e60ab6b9241.png)
 
 
 ### 2. Initialize VoiceRoomUIKit

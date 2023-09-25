@@ -5,7 +5,7 @@
 VoiceRoomUIKit 是一个语聊房场景组件，提供房间管理和拉起语聊房场景页面的能力。 开发者可以使用该组件快速构建一个语聊房应用。
 
 ## Quick Started
-> 在集成之前，请确保您已根据此[教程](../Example/AUIVoiceRoom/README.md) 成功运行项目。
+> 在集成之前，请确保您已根据此[教程](../AUIVoiceRoom/README.md) 成功运行项目。成功运行后会在iOS文件夹平级目录下出现AUIKit文件夹。
 
 ### 1. Add Source Code
 
@@ -13,7 +13,7 @@ VoiceRoomUIKit 是一个语聊房场景组件，提供房间管理和拉起语�
 
 - [AUIKit](../AUIKit)
 - [AScenesKit](../AScenesKit)
-- [VoiceRoomUIKit.swift](../AUIVoiceRoom/iOS/AUIVoiceRoom/VoiceRoomUIKit.swift)
+- [VoiceRoomUIKit.swift](../AUIVoiceRoom/iOS/AUIVoiceRoom/VoiceChatUIKit.swift)
 - [KeyCenter.swift](../AUIVoiceRoom/AUIVoiceRoom/KeyCenter.swift)
 
 **在Podfile文件中添加对AScenesKit和AUIKit的依赖（比如AUIKit和AScenesKit与Podfile放在同级目录下）**
@@ -25,11 +25,11 @@ VoiceRoomUIKit 是一个语聊房场景组件，提供房间管理和拉起语�
 
 **将 VoiceRoomUIKit.swift 拖到项目中**
 
-![](https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/github_readme/uikit/config_keycenter_ios.png)
+![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/WeChatWorkScreenshot_f875a12d-58f4-4f0d-830d-1160514f2927.png)
 
 **配置iOS系统麦克风权限**
 
-![](https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/github_readme/uikit/config_app_privacy_ios.png)
+![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/WeChatWorkScreenshot_c9c309c0-731c-4964-8ef3-1e60ab6b9241.png)
 
 
 ### 2. Initialize VoiceRoomUIKit
