@@ -15,7 +15,7 @@ English | [中文](README_zh.md)
 
 ### Quick Experience
 
-- The service installation environment needs to have Docker environment installed, and the [docker-compose](https://docs.docker.com/compose/) deployment tool installed.
+- The service installation environment needs to have the latest Docker environment installed, and the [docker-compose](https://docs.docker.com/compose/) deployment tool installed.
 - You can download and install [Docker Desktop](https://www.docker.com/products/docker-desktop/), which has already installed docker-compose.
 - For local deployment, before starting the service, you need to create a `.env` file in the root directory of the project and fill in the following fields:
   - TOKEN_APPID= <Your TOKEN_APPID>
@@ -41,10 +41,10 @@ English | [中文](README_zh.md)
 | EM_AUTH_CLIENTSECRET | Easemob IM Client Secret, used to create Easemob chat rooms             |https://docs-im-beta.easemob.com/document/server-side/enable_and_configure_IM.html |
 
 
-- Execute docker-compose up in the current project root directory, which will pull related images and start Redis/MongoDB/Web service.
-- After the service is started, you can use curl http://localhost:8080/health/check to test.
+- Execute `docker compose up -d --build` in the current project root directory, which will pull related images and start Redis/MongoDB/Web service.
+- After the service is started, you can use `curl http://localhost:8080/health/check` to test.
 - To debug local services using the app, you need to replace the corresponding backend service domain with http://service_machine_IP:8080 on the app. After replacing the domain, you can experience the related services on the app.
-- To stop the service, execute docker-compose down.
+- To stop the service, execute `docker compose down`.
 - Note! NCS message notification is not turned on, and personnel entering and leaving and room destruction logic cannot be automatically processed. If you need to enable this feature, NCS service needs to be enabled.
 - RTM and Easemob IM are not activated, so the functionality may be limited. If you need the complete experience, please refer to the deployment permissions activation instructions.
 

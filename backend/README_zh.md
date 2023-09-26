@@ -15,7 +15,7 @@
 
 ### 快速体验
 
-- > 采用Docker部署服务, 服务安装环境需要提前安装好Docker环境, 并安装[docker-compose](https://docs.docker.com/compose/)部署工具
+- > 采用Docker部署服务, 服务安装环境需要提前安装好Docker环境, 并安装最新版[docker-compose](https://docs.docker.com/compose/)部署工具
     - 可以下载安装[Docker Desktop](https://www.docker.com/products/docker-desktop/), 并已默认安装docker-compose
 - 本地部署
     - > 本地启动服务前, 需要在项目根目录创建`.env`文件, 并且填入以下字段：
@@ -41,10 +41,10 @@
 | EM_AUTH_CLIENTID | 环信 IM ClientID，用于创建环信 IM 聊天室             |https://docs-im-beta.easemob.com/document/server-side/enable_and_configure_IM.html |
 | EM_AUTH_CLIENTSECRET | 环信 IM ClientSecret，用于创建环信聊天室             |https://docs-im-beta.easemob.com/document/server-side/enable_and_configure_IM.html | 
 
-    - 在当前项目根目录下执行 docker-compose up, 会拉取相关镜像并启动Redis/MongoDB/Web服务. 如镜像拉取失败, 可配置国内镜像源解决
-    - 服务启动后, 可使用 curl http://localhost:8080/health/check 测试
+    - 在当前项目根目录下执行 `docker compose up -d --build`, 会拉取相关镜像并启动Redis/MongoDB/Web服务. 如镜像拉取失败, 可配置国内镜像源解决
+    - 服务启动后, 可使用 `curl http://localhost:8080/health/check` 测试
     - 如果使用App调试本地服务, 需要在App上替换对应后端服务域名为http://服务机器IP:8080, 替换域名后可以使用App体验相关服务
-    - 停止服务, 执行 docker-compose down
+    - 停止服务, 执行 `docker compose down`
 
   > 注意! 未开启NCS消息通知, 不能自动处理人员进出和房间销毁逻辑, 如果需要开启此功能, 需开通NCS服务.
 
