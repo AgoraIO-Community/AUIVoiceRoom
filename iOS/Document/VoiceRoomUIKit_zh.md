@@ -2,7 +2,7 @@
 
 *English | [英文](VoiceRoomUIKit.md)*
 
-VoiceRoomUIKit 是一个语聊房场景组件，提供房间管理和拉起语聊房场景页面的能力。 开发者可以使用该组件快速构建一个语聊房应用。
+VoiceChatUIKit 是一个语聊房场景组件，提供房间管理和拉起语聊房场景页面的能力。 开发者可以使用该组件快速构建一个语聊房应用。
 
 ## Quick Started
 > 在集成之前，请确保您已根据此[教程](../AUIVoiceRoom/README.md) 成功运行项目。成功运行后会在iOS文件夹平级目录下出现AUIKit文件夹。
@@ -23,7 +23,7 @@ VoiceRoomUIKit 是一个语聊房场景组件，提供房间管理和拉起语�
   pod 'AUIKit', :path => './AUIKit'
 ```
 
-**将 VoiceRoomUIKit.swift 拖到项目中**
+**将 VoiceChatUIKit.swift 拖到项目中**
 
 ![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/WeChatWorkScreenshot_f875a12d-58f4-4f0d-830d-1160514f2927.png)
 
@@ -41,7 +41,6 @@ commonConfig.userId = userInfo.userId
 commonConfig.userName = userInfo.userName
 commonConfig.userAvatar = userInfo.userAvatar
 VoiceRoomUIKit.shared.setup(roomConfig: commonConfig,
-                          ktvApi: nil,      //If there is an externally initialized KTV API
                           rtcEngine: nil,   //If there is an externally initialized rtc engine
                           rtmClient: nil)   //If there is an externally initialized rtm client
 ```

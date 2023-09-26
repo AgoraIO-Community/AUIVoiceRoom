@@ -14,7 +14,7 @@ VoiceRoomUIKit is a voice chat room scene component, which provides room managem
 
 - [AUIKit](../AUIKit)
 - [AScenesKit](../AScenesKit)
-- [VoiceRoomUIKit.swift](../AUIVoiceRoom/iOS/AUIVoiceRoom/VoiceRoomUIKit.swift)
+- [VoiceRoomUIKit.swift](../AUIVoiceRoom/AUIVoiceRoom/VoiceChatUIKit.swift)
 - [KeyCenter.swift](../AUIVoiceRoom/AUIVoiceRoom/KeyCenter.swift)
 
 **Add dependencies on AScenesKit and AUIKit in the Podfile file (for example, when AUIKit and AScenesKit are placed in the same level directory as the Podfile)**
@@ -24,7 +24,7 @@ VoiceRoomUIKit is a voice chat room scene component, which provides room managem
   pod 'AUIKit', :path => './AUIKit'
 ```
 
-**Drag VoiceRoomUIKit.swift into the project**
+**Drag VoiceChatUIKit.swift into the project**
 
 ![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/WeChatWorkScreenshot_f875a12d-58f4-4f0d-830d-1160514f2927.png)
 
@@ -42,7 +42,6 @@ commonConfig.userId = userInfo.userId
 commonConfig.userName = userInfo.userName
 commonConfig.userAvatar = userInfo.userAvatar
 VoiceRoomUIKit.shared.setup(roomConfig: commonConfig,
-                          ktvApi: nil,      //If there is an externally initialized KTV API
                           rtcEngine: nil,   //If there is an externally initialized rtc engine
                           rtmClient: nil)   //If there is an externally initialized rtm client
 ```
