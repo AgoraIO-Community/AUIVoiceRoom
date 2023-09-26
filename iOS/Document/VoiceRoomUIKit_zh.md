@@ -13,7 +13,7 @@ VoiceRoomUIKit 是一个语聊房场景组件，提供房间管理和拉起语�
 
 - [AUIKit](../AUIKit)
 - [AScenesKit](../AScenesKit)
-- [VoiceRoomUIKit.swift](../AUIVoiceRoom/iOS/AUIVoiceRoom/VoiceChatUIKit.swift)
+- [VoiceRoomUIKit.swift](../AUIVoiceRoom/AUIVoiceRoom/VoiceChatUIKit.swift)
 - [KeyCenter.swift](../AUIVoiceRoom/AUIVoiceRoom/KeyCenter.swift)
 
 **在Podfile文件中添加对AScenesKit和AUIKit的依赖（比如AUIKit和AScenesKit与Podfile放在同级目录下）**
