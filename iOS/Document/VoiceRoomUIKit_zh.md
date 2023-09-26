@@ -160,6 +160,132 @@ AUIRoomContext.shared.switchTheme(themeName: "UIKit")
 - 您还可以通过修改 [configuration file](../AUIKit/AUIKit/Resource/auiTheme.bundle/UIKit/theme) or replacing the [resource file](../AUIKit/AUIKit/Resource/auiTheme.bundle/UIKit/resource)
 - 更多换皮问题请参考 [Skin Settings](./VoiceRoomTheme.md)
 
+# API参考
+## setup
+初始化
+```swift
+func setup(roomConfig: AUICommonConfig,
+           rtcEngine: AgoraRtcEngineKit? = nil,
+           rtmClient: AgoraRtmClientKit? = nil) 
+```
+
+| 参数        | 类型            | 含义                                                         |
+| ----------- | --------------- | ------------------------------------------------------------ |
+| config      | AUICommonConfig | 通用配置，包含用户信息和appId等                              |
+| rtcEngineEx | AgoraRtcEngineKit     | （可选）声网RTC引擎。当项目里已集成Agora RTC可以传入，否则传空由内部自动创建。 |
+| rtmClient   | AgoraRtmClientKit       | （可选）声网RTM引擎。当项目里已集成Agora RTM可以传入，否则传空由内部自动创建。 |
+
+## createRoom
+创建房间
+
+```swift
+func createRoom(roomInfo: AUICreateRoomInfo,
+                success: ((AUIRoomInfo?)->())?,
+                failure: ((Error)->())?)
+```
+
+
+参数如下表所示：
+
+| 参数           | 类型              | 含义                             |
+| -------------- | ----------------- | -------------------------------- |
+| roomInfo | AUICreateRoomInfo | 创建房间所需的信息               |
+| success        | Closure          | 成功回调，成功会返回一个房间信息 |
+| failure        | Closure          | 失败回调                         |
+
+
+
+### getRoomInfoList
+
+获取房间列表
+
+```swift
+func getRoomInfoList(lastCreateTime: Int64?, 
+                     pageSize: Int, 
+                     callback: @escaping AUIRoomListCallback)
+```
+
+参数如下表所示：
+
+| 参数      | 类型     | 含义                                 |
+| --------- | -------- | ------------------------------------ |
+| lastCreateTime | Int64     | 起始时间                         |
+| pageSize  | Int      | 页数                                 |
+| callback   | Closure | 完成回调 |
+
+### launchRoom
+
+```swift
+func launchRoom(roomInfo: AUIRoomInfo,
+                appId: String? = nil,
+                config: AUIRoomConfig,
+                voiceChatView: AUIVoiceChatRoomView) 
+```
+
+参数如下表所示：
+
+| 参数        | 类型            | 含义                                  |
+| ----------- | --------------- | ------------------------------------- |
+| roomInfo    | AUIRoomInfo     | 房间信息                              |
+| appId    | String     | (可选)设置当前AppId，如果初始化时未设置，这里必须要设置否则可以忽略                              |
+| config      | AUIRoomConfig   | 房间里相关的配置，包含子频道名和token |
+| voiceChatView | AUIVoiceChatRoomView | 房间UI View                           |
+
+### destroyRoom
+
+销毁房间
+
+```swift
+func destoryRoom(roomId: String)
+```
+
+参数如下表所示：
+
+| 参数   | 类型   | 含义           |
+| ------ | ------ | -------------- |
+| roomId | String | 要销毁的房间ID |
+
+
+## 数据模型
+
+### AUICommonConfig
+
+| 参数       | 类型    | 含义                 |
+| ---------- | ------- | -------------------- |
+| appId      | String  | 声网AppID            |
+| host       | String  | 后端服务域名          |
+| userId     | String  | 用户ID               |
+| userName   | String  | 用户名               |
+| userAvatar | String  | 用户头像             |
+
+### AUIRoomInfo
+
+| 参数        | 类型                 | 含义         |
+| ----------- | -------------------- | ------------ |
+| roomId      | String               | 房间id       |
+| roomOwner   | AUIUserThumbnailInfo | 房主信息     |
+| memberCount | Int                  | 房间人数     |
+| createTime  | Int64                 | 房间创建时间 |
+
+### AUIUserThumbnailInfo
+
+| 参数       | 类型   | 含义     |
+| ---------- | ------ | -------- |
+| userId     | String | 用户Id   |
+| userName   | String | 用户名   |
+| userAvatar | String | 用户头像 |
+
+### AUIRoomConfig
+
+| 参数                 | 类型   | 含义                                                         |
+| -------------------- | ------ | ------------------------------------------------------------ |
+| channelName          | String | 主频道名，一般为roomId                                       |
+| rtmToken007             | String | 主频道的rtm token，uid为setup时AUICommonConfig里的userId     |
+| rtcToken007             | String | 主频道的rtc token，uid为setup时AUICommonConfig里的userId     |
+| rtcChannelName       | String | 音视频频道名，一般为{roomId}_rtc                             |
+| rtcRtcToken          | String | 音视频频道的rtc token，uid为setup时AUICommonConfig里的userId |
+| rtcRtmToken          | String | 音视频频道的rtm token，uid为setup时AUICommonConfig里的userId |
+
 ## License
 版权所有 © Agora Corporation。 版权所有。
 根据 [MIT 许可证](../LICENSE) 获得许可。
