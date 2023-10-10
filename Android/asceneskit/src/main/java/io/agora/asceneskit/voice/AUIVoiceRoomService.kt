@@ -217,7 +217,7 @@ class AUIVoiceRoomService constructor(
 
     //token过期之后调用该方法更新所有token
     fun renew(config: AUIRoomConfig){
-        AUIRoomContext.shared().roomConfig = config
+        AUIRoomContext.shared().roomConfigMap[config.channelName] = config
 
         //rtm renew
         rtmManager.renew(config.rtmToken)

@@ -136,7 +136,7 @@ object AUIVoiceRoomUikit {
         eventHandler: RoomEventHandler? = null,
     ) {
         RtcEngine.destroy()
-        AUIRoomContext.shared().roomConfig = config
+        AUIRoomContext.shared().roomConfigMap[roomInfo.roomId] = config
         val roomManager = mRoomManager ?: AUIRoomManagerImpl(AUIRoomContext.shared().commonConfig, null)
         val roomService = AUIVoiceRoomService(
             mRtcEngineEx,
