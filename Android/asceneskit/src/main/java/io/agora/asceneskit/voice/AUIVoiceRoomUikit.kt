@@ -65,6 +65,7 @@ object AUIVoiceRoomUikit {
 
     fun destroyRoom(roomId: String?) {
         mService?.destroyRoom()
+        AUIRoomContext.shared().cleanRoom(roomId)
         mService = null
     }
 
