@@ -15,7 +15,7 @@ class AUIRoomListCell: UICollectionViewCell {
         didSet {
             titleLabel.text = roomInfo?.roomName
             statusLabel.text = "\(roomInfo?.memberCount ?? 0)人正在嗨歌"
-            avatarImageView.sd_setImage(with: URL(string:roomInfo?.owner?.userAvatar ?? ""), placeholderImage: UIImage(systemName: "person.circle"), context: nil)
+            avatarImageView.sd_setImage(with: URL(string:roomInfo?.owner?.userAvatar ?? ""), placeholderImage: UIImage(systemName: "person.circle"))
             ownerLabel.text = "\(roomInfo?.owner?.userName ?? "")的房间"
         }
     }

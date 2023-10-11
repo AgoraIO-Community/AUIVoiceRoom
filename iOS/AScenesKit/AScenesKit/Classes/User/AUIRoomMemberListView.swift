@@ -92,7 +92,7 @@ public class AUIRoomMemberUserCell: UITableViewCell {
     
     public func setUserInfo(user: AUIUserCellUserDataProtocol?,ownerPreview: Bool) {
         self.user = user
-        avatarImageView.sd_setImage(with: URL(string: user?.userAvatar ?? ""), placeholderImage: UIImage.aui_Image(named: "aui_micseat_dialog_avatar_idle"), context: nil)
+        avatarImageView.sd_setImage(with: URL(string: user?.userAvatar ?? ""), placeholderImage: UIImage.aui_Image(named: "aui_micseat_dialog_avatar_idle"))
         userNameLabel.text = user?.userName
         if let index = user?.seatIndex ,index >= 0 {
             seatNoLabel.text = "\(index)号麦"
