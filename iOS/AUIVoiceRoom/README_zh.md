@@ -48,10 +48,6 @@ static var HostUrl: String = <#Your HostUrl#>
 ```
 如果暂无意部署后端服务，可以使用KeyCenter.swift里默认的域名
 
-
-- 下载[包含RTM 2.0的RTC SDK最新版本](https://download.agora.io/sdk/release/Agora_Native_SDK_for_iOS_hyf_63842_FULL_20230428_1607_263060.zip) , 解压之后把libs里的文件拷贝到[libs](libs) 里
-  ![](https://download.agora.io/null/3.jpg)
-
 - 打开终端，进入到[Podfile](Podfile)目录下，执行`pod install`命令
 
 - 最后打开AUIVoiceRoom.xcworkspace，运行即可开始您的体验
