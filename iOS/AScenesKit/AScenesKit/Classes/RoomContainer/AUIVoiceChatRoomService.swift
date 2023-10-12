@@ -75,9 +75,6 @@ open class AUIVoiceChatRoomService: NSObject {
         roomConfig = config
         AUIRoomContext.shared.roomConfigMap[channelName] = roomConfig
         
-
-        //TODO: 2nd chorus token renew
-        
         //rtm renew
         rtmManager.renew(token: roomConfig.rtmToken007)
         rtmManager.renewChannel(channelName: channelName, token: roomConfig.rtcToken007)
