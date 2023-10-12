@@ -1,6 +1,10 @@
 
 English | [中文](CHANGELOG.zh.md)
 
+## [0.3.1](https://github.com/AgoraIO-Community/AUIVoiceRoom/releases/tag/0.3.1)
+- Upgrade AUIKit to 0.5.1
+- [Android]Fix room destroy abnormality
+
 ## [0.3.0](https://github.com/AgoraIO-Community/AUIVoiceRoom/releases/tag/0.3.0)
 - AUIKitVoiceRoom renamed to AUIVoiceRoom
 
