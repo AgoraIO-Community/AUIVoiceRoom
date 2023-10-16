@@ -12,7 +12,6 @@ VoiceRoomUIKit is a voice chat room scene component, which provides room managem
 
 **Copy the following source code into your own project：**
 
-- [AUIKit](../AUIKit)
 - [AScenesKit](../AScenesKit)
 - [VoiceRoomUIKit.swift](../AUIVoiceRoom/AUIVoiceRoom/VoiceChatUIKit.swift)
 - [KeyCenter.swift](../AUIVoiceRoom/AUIVoiceRoom/KeyCenter.swift)
@@ -21,7 +20,7 @@ VoiceRoomUIKit is a voice chat room scene component, which provides room managem
 
 ```
   pod 'AScenesKit', :path => './AScenesKit'
-  pod 'AUIKit', :path => './AUIKit'
+  pod 'AUIKitCore'
 ```
 
 **Drag VoiceChatUIKit.swift into the project**
@@ -57,39 +56,34 @@ VoiceRoomUIKit.shared.getRoomInfoList(lastCreateTime: nil,
 
 ### 4. Create room
 ```swift
-                let room = AUICreateRoomInfo()
-                room.roomName = text
-                room.thumbnail = self.userInfo.userAvatar
-                room.micSeatCount = UInt(AUIRoomContext.shared.seatCount)
-                room.micSeatStyle = UInt(AUIRoomContext.shared.seatType.rawValue)
-                VoiceChatUIKit.shared.createRoom(roomInfo: room) { roomInfo in
-                    let vc = RoomViewController()
-                    roomInfo?.micSeatCount = UInt(AUIRoomContext.shared.seatCount)
-                    roomInfo?.micSeatStyle = UInt(AUIRoomContext.shared.seatType.rawValue)
-                    vc.roomInfo = roomInfo
-                    self.navigationController?.pushViewController(vc, animated: true)
-                } failure: { error in
-                    AUIToast.show(text: error.localizedDescription)
-                }
+  let room = AUICreateRoomInfo()
+  room.roomName = "room name"
+  room.thumbnail = self.userInfo.userAvatar
+  room.micSeatCount = UInt(AUIRoomContext.shared.seatCount)
+  room.micSeatStyle = UInt(AUIRoomContext.shared.seatType.rawValue)
+  VoiceChatUIKit.shared.createRoom(roomInfo: room) { roomInfo in
+      let vc = RoomViewController()
+      vc.roomInfo = roomInfo
+      self.navigationController?.pushViewController(vc, animated: true)
+  } failure: { error in
+      //error handler
+  }
 ```
 
 ### 5. Launch room
 ```swift
-let uid = VoiceRoomUIKit.shared.roomConfig?.userId ?? ""
 //Creating Room Containers
 let voiceRoomView = AUIVoiceChatRoomView(frame: self.view.bounds,roomInfo: info)
-//Obtain the necessary token and appid through the generateToken method
-generateToken {[weak self] roomConfig, appId in
-        guard let self = self else {return}
-        VoiceChatUIKit.shared.launchRoom(roomInfo: self.roomInfo!,
-                                           appId: appId,
-                                           config: roomConfig,
-                                           roomView: voiceRoomView) {_ in
-        }
-        //订阅Token过期回调
-        VoiceChatUIKit.shared.subscribeError(roomId: self.roomInfo?.roomId ?? "", delegate: self)
-        //订阅房间被销毁回调
-        VoiceChatUIKit.shared.bindRespDelegate(delegate: self)
+voiceRoomView.onClickOffButton = { [weak self] in
+  //exit room callback
+}
+
+VoiceChatUIKit.shared.launchRoom(roomInfo: self.roomInfo!,
+                                 roomView: voiceRoomView) {[weak self] error in
+    guard let self = self else {return}
+    if let _ = error { return }
+    //subscription room destroyed callback
+    VoiceChatUIKit.shared.bindRespDelegate(delegate: self)
 }
 ```
 
@@ -104,27 +98,12 @@ voiceRoomView.onClickOffButton = { [weak self] in
 ```
 
 #### 6.2 Room destruction passive exit
-Please refer to [Room Destruction] (# 7.2-Room-Destruction)
+Please refer to [Room Destruction] (#%207.1-Room-Destruction)
 
 
 ### 7. Exception handling
-#### 7.1 Token expiration processing
-```swift
-//Subscribe to the callback for AUIRtmErrorProxyDelegate after VoiceRoomUIKit.shared.launchRoom
-VoiceRoomUIKit.shared.subscribeError(roomId: self.roomInfo?.roomId ?? "", delegate: self)
 
-//Unsubscribe when exiting the room
-VoiceRoomUIKit.shared.unsubscribeError(roomId: self.roomInfo?.roomId ?? "", delegate: self)
-
-//Then use the onTokenPrivilegeWillExpire callback method in the AUIRtmErrorProxyDelegate callback to renew all tokens
-@objc func onTokenPrivilegeWillExpire(channelName: String?) {
-    generatorToken { config, _ in
-        VoiceRoomUIKit.shared.renew(config: config)
-    }
-}
-```
-
-#### 7.2 Room destruction
+#### 7.1 Room destruction
 ```swift
 //Subscribe to the callback for AUIRoomManagerRespDelegate after VoiceRoomUIKit. shared. launchRoom
 VoiceRoomUIKit.shared.bindRespDelegate(delegate: self)
@@ -137,13 +116,14 @@ func onRoomDestroy(roomId: String) {
     //Processing room was destroyed
 }
 
- func onRoomUserBeKicked(roomId: String, userId: String) {
+//exit room callback
+func onRoomUserBeKicked(roomId: String, userId: String) {
         AUIToast.show(text: "You were kicked out!")
-        self.navigationController?.popViewController(animated: true)
- }
+    self.navigationController?.popViewController(animated: true)
+}
 ```
 
-### 8 Skin changing
+### 8. Skin changing
 - AUIKit supports one click skin changing, and you can set the skin using the following methods
 ```swift
 //Reset to default theme
@@ -156,7 +136,7 @@ AUIRoomContext.shared.switchThemeToNext()
 
 ```swift
 //Specify a theme
-AUIRoomContext.shared.switchTheme(themeName: "UIKit")
+AUIRoomContext.shared.switchTheme(themeName: "Light")
 ```
 - You can also change the skin of the component by modifying the [theme](../AUIKit/AUIKit/Resource/auiTheme.bundle/UIKit/theme) or replacing the [resource file](../AUIKit/AUIKit/Resource/auiTheme.bundle/UIKit/resource)
 - For more skin changing issues, please refer to [Skin Settings](./VoiceRoomTheme.md)
@@ -206,8 +186,7 @@ func getRoomInfoList(lastCreateTime: Int64?,
 The parameters are shown in the table below:
 | parameter   | type            | meaning     |
 | --------- | -------- | ------------------------------------ |
-| lastCreateTime | Int64     | The page start time
-                         |
+| lastCreateTime | Int64     | The page start time,difference from 1970-01-01:00:00:00, in milliseconds, For example: 1681879844085   |
 | pageSize  | Int      | The page size                                 |
 | callback   | Closure | Completion callback|
 
@@ -249,7 +228,6 @@ The parameters are shown in the table below:
 
 | parameter   | type            | meaning     |
 | ---------- | ------- | -------------------- |
-| appId      | String  | Agora AppID          |
 | host       | String  | Backend service domain name     |
 | userId     | String  | User ID              |
 | userName   | String  | User name            |
@@ -261,7 +239,7 @@ The parameters are shown in the table below:
 | roomId      | String               | Room id       |
 | roomOwner   | AUIUserThumbnailInfo | Room information   |
 | memberCount | Int                  | Online user count  |
-| createTime  | Int64                | Room create time |
+| createTime  | Int64                | Room create time,difference from 1970-01-01:00:00:00, in milliseconds, For example: 1681879844085 |
 
 ### AUIUserThumbnailInfo
 
@@ -271,16 +249,33 @@ The parameters are shown in the table below:
 | userName   | String | User name   |
 | userAvatar | String | User avatar url |
 
-### AUIRoomConfig
-| parameter   | type            | meaning     |
-| -------------------- | ------ | ------------------------------------------------------------ |
-| channelName          | String | Main channel name, usually roomId                                       |
-| rtmToken007             | String | The rtm token of the main channel whose uid is setup in AUICommonConfig     |
-| rtcToken007             | String | The rtc token of the main channel whose uid is setup in AUICommonConfig     |
-| rtcChannelName       | String | Video channel name, usually {roomId}_rtc                             |
-| rtcRtcToken          | String | The rtc token of the video channel whose uid is setup in AUICommonConfig |
-| rtcRtmToken          | String | The rtm token of the video channel whose uid is setup in AUICommonConfig |
 
+### AUIRoomManagerRespDelegate
+```AUIRoomManagerRespDelegate``` protocol is used to handle various response events related to room operations. It provides the following methods that can be implemented by classes following this protocol to respond to specific events.
+
+#### Method
+  - ```func onRoomDestroy(roomId: String)```
+    The callback method called when the room is destroyed.
+    - Parameter:
+      - ```roomId```: Room ID.
+    >
+  - ```func onRoomInfoChange(roomId: String, roomInfo: AUIRoomInfo)```
+    The callback method called when room information changes.
+    - Parameter:
+      - ```roomId```: Room ID.
+      - ```roomInfo```: Room information.
+    >
+  - ```func onRoomAnnouncementChange(roomId: String, announcement: String)```
+    The method called when a room announcement changes.
+    - Parameter:
+      - ```roomId```: Room ID.
+      - ```announcement```: Announcement of changes.
+    >
+- ```func onRoomUserBeKicked(roomId: String, userId: String)```
+    The method called when a room user is kicked out of the room.
+    - Parameter:
+      - ```roomId```: Room ID.
+      - ```userId```: User ID.
 
 ## License
 Copyright © Agora Corporation. All rights reserved.

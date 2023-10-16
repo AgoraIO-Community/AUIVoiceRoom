@@ -4,10 +4,10 @@
 
 VoiceChatUIKit 是一个语聊房场景组件，提供房间管理和拉起语聊房场景页面的能力。 开发者可以使用该组件快速构建一个语聊房应用。
 
-## Quick Started
+## 快速集成
 > 在集成之前，请确保您已根据此[教程](../AUIVoiceRoom/README.md) 成功运行项目。成功运行后会在iOS文件夹平级目录下出现AUIKit文件夹。
 
-### 1. Add Source Code
+### 1. 添加源码
 
 **将以下源码复制到自己的项目中：**
 
@@ -20,7 +20,7 @@ VoiceChatUIKit 是一个语聊房场景组件，提供房间管理和拉起语�
 
 ```
   pod 'AScenesKit', :path => './AScenesKit'
-  pod 'AUIKit', :path => './AUIKit'
+  pod 'AUIKit'
 ```
 
 **将 VoiceChatUIKit.swift 拖到项目中**
@@ -32,7 +32,7 @@ VoiceChatUIKit 是一个语聊房场景组件，提供房间管理和拉起语�
 ![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/WeChatWorkScreenshot_c9c309c0-731c-4964-8ef3-1e60ab6b9241.png)
 
 
-### 2. Initialize VoiceRoomUIKit
+### 2. 初始化VoiceRoomUIKit
 ```swift
 //为VoiceRoomUIKit设置基本信息
 let commonConfig = AUICommonConfig()
@@ -56,44 +56,39 @@ VoiceRoomUIKit.shared.getRoomInfoList(lastCreateTime: nil,
 
 ### 4.创建房间
 ```swift
-                let room = AUICreateRoomInfo()
-                room.roomName = text
-                room.thumbnail = self.userInfo.userAvatar
-                room.micSeatCount = UInt(AUIRoomContext.shared.seatCount)
-                room.micSeatStyle = UInt(AUIRoomContext.shared.seatType.rawValue)
-                VoiceChatUIKit.shared.createRoom(roomInfo: room) { roomInfo in
-                    let vc = RoomViewController()
-                    roomInfo?.micSeatCount = UInt(AUIRoomContext.shared.seatCount)
-                    roomInfo?.micSeatStyle = UInt(AUIRoomContext.shared.seatType.rawValue)
-                    vc.roomInfo = roomInfo
-                    self.navigationController?.pushViewController(vc, animated: true)
-                } failure: { error in
-                    AUIToast.show(text: error.localizedDescription)
-                }
+    let room = AUICreateRoomInfo()
+    room.roomName = "room name"
+    room.thumbnail = self.userInfo.userAvatar
+    room.micSeatCount = UInt(AUIRoomContext.shared.seatCount)
+    room.micSeatStyle = UInt(AUIRoomContext.shared.seatType.rawValue)
+    VoiceChatUIKit.shared.createRoom(roomInfo: room) { roomInfo in
+        let vc = RoomViewController()
+        vc.roomInfo = roomInfo
+        self.navigationController?.pushViewController(vc, animated: true)
+    } failure: { error in
+        //错误提示
+    }
 ```
 
 ### 5. 加载房间
 ```swift
-let uid = VoiceRoomUIKit.shared.roomConfig?.userId ?? ""
 //创建房间容器视图
 let voiceRoomView = AUIVoiceChatRoomView(frame: self.view.bounds,roomInfo: info)
-//通过generateToken方法获取必要的token和appid
-generateToken {[weak self] roomConfig, appId in
+voiceRoomView.onClickOffButton = { [weak self] in
+  //退出房间的回调
+}
+
+VoiceChatUIKit.shared.launchRoom(roomInfo: self.roomInfo!,
+                                 roomView: voiceRoomView) {[weak self] error in
     guard let self = self else {return}
-    VoiceChatUIKit.shared.launchRoom(roomInfo: self.roomInfo!,
-                                     appId: appId,
-                                     config: roomConfig,
-                                     roomView: voiceRoomView) {_ in
-    }
-    //订阅Token过期回调
-    VoiceChatUIKit.shared.subscribeError(roomId: self.roomInfo?.roomId ?? "", delegate: self)
+    if let _ = error { return }
     //订阅房间被销毁回调
     VoiceChatUIKit.shared.bindRespDelegate(delegate: self)
 }
 ```
 
 ### 6. 退出房间
-#### 6.1 Proactively exiting
+#### 6.1 主动退出
 ```swift
 //AUIVoiceChatRoomView 提供一个关闭的闭包
 voiceRoomView.onClickOffButton = { [weak self] in
@@ -103,7 +98,7 @@ voiceRoomView.onClickOffButton = { [weak self] in
 ```
 
 #### 6.2 房间销毁与自动退出
-Please refer to [Room Destruction] (# 7.2-Room-Destruction)
+详见[房间销毁](#7.1%20房间销毁)
 
 ### 7. 异常处理
 
@@ -193,7 +188,7 @@ func getRoomInfoList(lastCreateTime: Int64?,
 
 | 参数      | 类型     | 含义                                 |
 | --------- | -------- | ------------------------------------ |
-| lastCreateTime | Int64     | 起始时间                         |
+| lastCreateTime | Int64     | 起始时间，与1970-01-01:00:00:00的差值，单位：毫秒，例如:1681879844085                         |
 | pageSize  | Int      | 页数                                 |
 | callback   | Closure | 完成回调 |
 
@@ -211,9 +206,8 @@ func launchRoom(roomInfo: AUIRoomInfo,
 | 参数        | 类型            | 含义                                  |
 | ----------- | --------------- | ------------------------------------- |
 | roomInfo    | AUIRoomInfo     | 房间信息                              |
-| appId    | String     | (可选)设置当前AppId，如果初始化时未设置，这里必须要设置否则可以忽略                              |
-| config      | AUIRoomConfig   | 房间里相关的配置，包含子频道名和token |
 | voiceChatView | AUIVoiceChatRoomView | 房间UI View                           |
+| completion | Closure | 加入房间完成回调                           |
 
 ### destroyRoom
 
@@ -236,7 +230,6 @@ func destoryRoom(roomId: String)
 
 | 参数       | 类型    | 含义                 |
 | ---------- | ------- | -------------------- |
-| appId      | String  | 声网AppID            |
 | host       | String  | 后端服务域名          |
 | userId     | String  | 用户ID               |
 | userName   | String  | 用户名               |
@@ -249,7 +242,7 @@ func destoryRoom(roomId: String)
 | roomId      | String               | 房间id       |
 | roomOwner   | AUIUserThumbnailInfo | 房主信息     |
 | memberCount | Int                  | 房间人数     |
-| createTime  | Int64                 | 房间创建时间 |
+| createTime  | Int64                 | 房间创建时间，与1970-01-01:00:00:00的差值，单位：毫秒，例如:1681879844085 |
 
 ### AUIUserThumbnailInfo
 
@@ -259,16 +252,32 @@ func destoryRoom(roomId: String)
 | userName   | String | 用户名   |
 | userAvatar | String | 用户头像 |
 
-### AUIRoomConfig
+### AUIRoomManagerRespDelegate
+```AUIRoomManagerRespDelegate``` 协议用于处理与房间操作相关的各种响应事件。它提供了以下方法，可以由遵循此协议的类来实现，以响应特定的事件。
 
-| 参数                 | 类型   | 含义                                                         |
-| -------------------- | ------ | ------------------------------------------------------------ |
-| channelName          | String | 主频道名，一般为roomId                                       |
-| rtmToken007             | String | 主频道的rtm token，uid为setup时AUICommonConfig里的userId     |
-| rtcToken007             | String | 主频道的rtc token，uid为setup时AUICommonConfig里的userId     |
-| rtcChannelName       | String | 音视频频道名，一般为{roomId}_rtc                             |
-| rtcRtcToken          | String | 音视频频道的rtc token，uid为setup时AUICommonConfig里的userId |
-| rtcRtmToken          | String | 音视频频道的rtm token，uid为setup时AUICommonConfig里的userId |
+#### 方法
+  - ```func onRoomDestroy(roomId: String)```
+    房间被销毁时调用的回调方法。
+    - 参数：
+      - ```roomId```: 房间ID。
+    >
+  - ```func onRoomInfoChange(roomId: String, roomInfo: AUIRoomInfo)```
+    房间信息发生变更时调用的回调方法。
+    - 参数：
+      - ```roomId```:房间ID。
+      - ```roomInfo```:房间信息。
+    >
+  - ```func onRoomAnnouncementChange(roomId: String, announcement: String)```
+    房间公告发生变更时调用的方法。
+    - 参数：
+      - ```roomId```: 房间ID。
+      - ```announcement```: 公告变更内容。
+    >
+- ```func onRoomUserBeKicked(roomId: String, userId: String)```
+    房间用户被踢出房间时调用的方法。
+    - 参数：
+      - ```roomId```: 房间ID。
+      - ```userId```: 用户ID。
 
 ## License
 版权所有 © Agora Corporation。 版权所有。
