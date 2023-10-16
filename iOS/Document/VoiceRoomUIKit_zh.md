@@ -80,16 +80,16 @@ let uid = VoiceRoomUIKit.shared.roomConfig?.userId ?? ""
 let voiceRoomView = AUIVoiceChatRoomView(frame: self.view.bounds,roomInfo: info)
 //通过generateToken方法获取必要的token和appid
 generateToken {[weak self] roomConfig, appId in
-        guard let self = self else {return}
-        VoiceChatUIKit.shared.launchRoom(roomInfo: self.roomInfo!,
-                                           appId: appId,
-                                           config: roomConfig,
-                                           roomView: voiceRoomView) {_ in
-        }
-        //订阅Token过期回调
-        VoiceChatUIKit.shared.subscribeError(roomId: self.roomInfo?.roomId ?? "", delegate: self)
-        //订阅房间被销毁回调
-        VoiceChatUIKit.shared.bindRespDelegate(delegate: self)
+    guard let self = self else {return}
+    VoiceChatUIKit.shared.launchRoom(roomInfo: self.roomInfo!,
+                                     appId: appId,
+                                     config: roomConfig,
+                                     roomView: voiceRoomView) {_ in
+    }
+    //订阅Token过期回调
+    VoiceChatUIKit.shared.subscribeError(roomId: self.roomInfo?.roomId ?? "", delegate: self)
+    //订阅房间被销毁回调
+    VoiceChatUIKit.shared.bindRespDelegate(delegate: self)
 }
 ```
 
@@ -106,25 +106,9 @@ voiceRoomView.onClickOffButton = { [weak self] in
 #### 6.2 房间销毁与自动退出
 Please refer to [Room Destruction] (# 7.2-Room-Destruction)
 
-
 ### 7. 异常处理
-#### 7.1 Token过期处理
-```swift
-//订阅 VoiceRoomUIKit.shared.launchRoom 后 AUIRtmErrorProxyDelegate 的回调
-VoiceRoomUIKit.shared.subscribeError(roomId: self.roomInfo?.roomId ?? "", delegate: self)
 
-//退出房间时取消订阅
-VoiceRoomUIKit.shared.unsubscribeError(roomId: self.roomInfo?.roomId ?? "", delegate: self)
-
-//然后使用AUIRtmErrorProxyDelegate回调中的onTokenPrivilegeWillExpire回调方法更新所有token
-@objc func onTokenPrivilegeWillExpire(channelName: String?) {
-    generatorToken { config, _ in
-        VoiceRoomUIKit.shared.renew(config: config)
-    }
-}
-```
-
-#### 7.2 Room destruction
+#### 7.1 房间销毁
 ```swift
 //订阅 VoiceRoomUIKit 后 AUIRoomManagerRespDelegate 的回调。 共享。 发射室
 VoiceRoomUIKit.shared.bindRespDelegate(delegate: self)
@@ -137,29 +121,29 @@ func onRoomDestroy(roomId: String) {
     //Processing room was destroyed
 }
 //用户被踢出房间的回调
- func onRoomUserBeKicked(roomId: String, userId: String) {
-        AUIToast.show(text: "You were kicked out!")
-        self.navigationController?.popViewController(animated: true)
- }
+func onRoomUserBeKicked(roomId: String, userId: String) {
+    AUIToast.show(text: "You were kicked out!")
+    self.navigationController?.popViewController(animated: true)
+}
 ```
 
 ### 8.更换皮肤
 - AUIKit支持一键换肤，可以通过以下方法设置皮肤
-```swift
-//重新设置默认皮肤
-AUIRoomContext.shared.resetTheme()
-```
-```swift
-//切换到下一个主题皮肤
-AUIRoomContext.shared.switchThemeToNext()
-```
+  ```swift
+  //重新设置默认皮肤
+  AUIRoomContext.shared.resetTheme()
+  ```
+  ```swift
+  //切换到下一个主题皮肤
+  AUIRoomContext.shared.switchThemeToNext()
+  ```
 
-```swift
-//指定特殊皮肤
-AUIRoomContext.shared.switchTheme(themeName: "UIKit")
-```
-- 您还可以通过修改 [configuration file](../AUIKit/AUIKit/Resource/auiTheme.bundle/UIKit/theme) or replacing the [resource file](../AUIKit/AUIKit/Resource/auiTheme.bundle/UIKit/resource)
-- 更多换皮问题请参考 [Skin Settings](./VoiceRoomTheme.md)
+  ```swift
+  //指定特殊皮肤
+  AUIRoomContext.shared.switchTheme(themeName: "UIKit")
+  ```
+- 您还可以通过修改 [theme](../AUIKit/AUIKit/Resource/auiTheme.bundle/UIKit/theme)或替换[resource](../AUIKit/AUIKit/Resource/auiTheme.bundle/UIKit/resource)更新皮肤资源
+- 更多换皮问题请参考 [皮肤设置](./VoiceRoomTheme_zh.md)
 
 ## License
 版权所有 © Agora Corporation。 版权所有。

@@ -159,7 +159,7 @@ AUIRoomContext.shared.switchThemeToNext()
 //Specify a theme
 AUIRoomContext.shared.switchTheme(themeName: "UIKit")
 ```
-- You can also change the skin of the component by modifying the [configuration file](../AUIKit/AUIKit/Resource/auiTheme.bundle/UIKit/theme) or replacing the [resource file](../AUIKit/AUIKit/Resource/auiTheme.bundle/UIKit/resource)
+- You can also change the skin of the component by modifying the [theme](../AUIKit/AUIKit/Resource/auiTheme.bundle/UIKit/theme) or replacing the [resource file](../AUIKit/AUIKit/Resource/auiTheme.bundle/UIKit/resource)
 - For more skin changing issues, please refer to [Skin Settings](./VoiceRoomTheme.md)
 
 ## License

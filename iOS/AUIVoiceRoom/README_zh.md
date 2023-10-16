@@ -37,16 +37,11 @@
 
 ### 2. 项目运行
 - 克隆或者直接下载项目源码
-- 打开终端，在根目录执行以下命令
-```
-git submodule init
-git submodule update
-```
 - 在项目的[KeyCenter.swift](AUIVoiceRoom/KeyCenter.swift) 中填入步骤1部署的HostUrl
-```
-static var HostUrl: String = <#Your HostUrl#>
-```
-如果暂无意部署后端服务，可以使用KeyCenter.swift里默认的域名
+  ```
+  static var HostUrl: String = <#Your HostUrl#>
+  ```
+  如果暂无意部署后端服务，可以使用KeyCenter.swift里默认的域名
 
 - 打开终端，进入到[Podfile](Podfile)目录下，执行`pod install`命令
 

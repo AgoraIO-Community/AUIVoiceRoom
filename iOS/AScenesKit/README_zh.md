@@ -11,7 +11,7 @@ AScenesKit
 ├─ Binder                       // Binder
 │  ├─ AUIUserViewBinder         // 用户管理Binder
 │  ├─ AUIMicSeatViewBinder      // 麦位管理Binder  
-│  ├─ AUIInvitationViewBinder   // 邀请管理Binder
+│  ├─ AUIInvitationViewBinder   // 邀请管理Binder  
 │  ├─ AUIIMViewBinder           // 聊天管理Binder
 |  └─ AUIRoomGiftBinder         // 礼物管理Binder
 │
@@ -20,7 +20,7 @@ AScenesKit
    └─ AUIVoiceChatRoomService     // K歌容器Service，负责基础service的创建
 ```
 ###  组件和Service依赖的关系
-![](https://fullapp.oss-cn-beijing.aliyuncs.com/pic/KaraokeRoom.png)
+![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/VoiceRoom_zh.png)
 
 ### Binder与View和Service之间调度流程
 

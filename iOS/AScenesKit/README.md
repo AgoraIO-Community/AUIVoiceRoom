@@ -9,17 +9,17 @@ AScenesKit is a container component for karaoke rooms that integrates UI and ser
 AScenesKit  
 ├─ Binder                          // Binder
 │  ├─ AUIUserViewBinder            // Binder for user management
-│  ├─ AUIJukeBoxViewBinder         // Binder for jukebox
-│  ├─ AUIInvitationViewBinder      // Binder for invitation management
-│  ├─ AUIMicSeatViewBinder         // Binder for mic seat management
-│  └─ AUiPlayerViewBinder          // Binder for player management
+│  ├─ AUIMicSeatViewBinder         // Binder  for mic seat management
+│  ├─ AUIInvitationViewBinder      // Binder for invitation management 
+│  ├─ AUIIMViewBinder              // Binder for chat management
+|  └─ AUIRoomGiftBinder            // Binder for gift management
 │
 └─ RoomContainer                   // Karaoke integration container
    ├─ AUIVoiceChatRoomView           // VoiceRoom View, responsible for creating, assembling, and binding components 
    └─ AUIVoiceChatRoomService        // VoiceRoom Service, responsible for creating basic services
 ```
 ###  Relationship between component and service dependencies
-![](https://fullapp.oss-cn-beijing.aliyuncs.com/pic/KaraokeRoom_en.png)
+![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/VoiceRoom_en.png)
 
 ### Scheduling process between Binder and View and Service
 
