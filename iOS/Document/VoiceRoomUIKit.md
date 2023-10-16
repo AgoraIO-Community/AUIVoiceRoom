@@ -152,7 +152,7 @@ func setup(roomConfig: AUICommonConfig,
 The parameters are shown in the table below:
 | parameter   | type            | meaning     |
 | ----------- | --------------- | ------------------------------------------------------------ |
-| config      | AUICommonConfig | General configuration, including user information and appId, etc.                              |
+| config      | AUICommonConfig | General configuration, including user information and domain name, etc.                             |
 | rtcEngine | AgoraRtcEngineKit     | (Optional) Agora RTC engine. When Agora RTC has been integrated in the project, it can be passed in, otherwise it will be automatically created internally. |
 | rtmClient   | AgoraRtmClientKit       | (Optional) Agora RTM engine. When Agora RTM has been integrated in the project, it can be passed in, otherwise it will be automatically created internally.|
 
@@ -194,8 +194,6 @@ The parameters are shown in the table below:
 Launch Room
 ```swift
 func launchRoom(roomInfo: AUIRoomInfo,
-                appId: String? = nil,
-                config: AUIRoomConfig,
                 voiceChatView: AUIVoiceChatRoomView) 
 ```
 
@@ -204,9 +202,8 @@ The parameters are shown in the table below:
 | parameter   | type            | meaning     |
 | ----------- | --------------- | ------------------------------------- |
 | roomInfo    | AUIRoomInfo     | Room information                     |
-| appId    | String     | (Optional) Set the current AppId. If it is not set during initialization, it must be set here, otherwise it can be ignored  |
-| config      | AUIRoomConfig   | Related configuration in the room, including sub-channel name and token |
 | voiceChatView | AUIVoiceChatRoomView | Room UI View                    |
+| completion | Closure | Join the room to complete the callback                          |
 
 ### destroyRoom
 Destroy Room

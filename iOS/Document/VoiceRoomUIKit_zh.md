@@ -150,7 +150,7 @@ func setup(roomConfig: AUICommonConfig,
 
 | 参数        | 类型            | 含义                                                         |
 | ----------- | --------------- | ------------------------------------------------------------ |
-| config      | AUICommonConfig | 通用配置，包含用户信息和appId等                              |
+| config      | AUICommonConfig | 通用配置，包含用户信息和域名等                              |
 | rtcEngineEx | AgoraRtcEngineKit     | （可选）声网RTC引擎。当项目里已集成Agora RTC可以传入，否则传空由内部自动创建。 |
 | rtmClient   | AgoraRtmClientKit       | （可选）声网RTM引擎。当项目里已集成Agora RTM可以传入，否则传空由内部自动创建。 |
 
@@ -196,8 +196,6 @@ func getRoomInfoList(lastCreateTime: Int64?,
 
 ```swift
 func launchRoom(roomInfo: AUIRoomInfo,
-                appId: String? = nil,
-                config: AUIRoomConfig,
                 voiceChatView: AUIVoiceChatRoomView) 
 ```
 
