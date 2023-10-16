@@ -6,7 +6,7 @@ VoiceRoomUIKit is a voice chat room scene component, which provides room managem
 
 
 ## Quick Started
-> Please make sure you have successfully run the project according to this [tutorial](../Example/AUIVoiceRoom/README.md) before integrating.。
+> Please make sure you have successfully run the project according to this.After successful operation, the AUIKit folder will appear in the iOS folder level directory. [tutorial](../AUIVoiceRoom/README.md) before integrating.。
 
 ### 1. Add Source Code
 
@@ -14,7 +14,7 @@ VoiceRoomUIKit is a voice chat room scene component, which provides room managem
 
 - [AUIKit](../AUIKit)
 - [AScenesKit](../AScenesKit)
-- [VoiceRoomUIKit.swift](../AUIVoiceRoom/iOS/AUIVoiceRoom/VoiceRoomUIKit.swift)
+- [VoiceRoomUIKit.swift](../AUIVoiceRoom/AUIVoiceRoom/VoiceChatUIKit.swift)
 - [KeyCenter.swift](../AUIVoiceRoom/AUIVoiceRoom/KeyCenter.swift)
 
 **Add dependencies on AScenesKit and AUIKit in the Podfile file (for example, when AUIKit and AScenesKit are placed in the same level directory as the Podfile)**
@@ -24,13 +24,13 @@ VoiceRoomUIKit is a voice chat room scene component, which provides room managem
   pod 'AUIKit', :path => './AUIKit'
 ```
 
-**Drag VoiceRoomUIKit.swift into the project**
+**Drag VoiceChatUIKit.swift into the project**
 
-![](https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/github_readme/uikit/config_keycenter_ios.png)
+![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/WeChatWorkScreenshot_f875a12d-58f4-4f0d-830d-1160514f2927.png)
 
 **Configure microphone and camera permissions**
 
-![](https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/github_readme/uikit/config_app_privacy_ios.png)
+![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/WeChatWorkScreenshot_c9c309c0-731c-4964-8ef3-1e60ab6b9241.png)
 
 
 ### 2. Initialize VoiceRoomUIKit
@@ -42,7 +42,6 @@ commonConfig.userId = userInfo.userId
 commonConfig.userName = userInfo.userName
 commonConfig.userAvatar = userInfo.userAvatar
 VoiceRoomUIKit.shared.setup(roomConfig: commonConfig,
-                          ktvApi: nil,      //If there is an externally initialized KTV API
                           rtcEngine: nil,   //If there is an externally initialized rtc engine
                           rtmClient: nil)   //If there is an externally initialized rtm client
 ```
@@ -161,6 +160,127 @@ AUIRoomContext.shared.switchTheme(themeName: "UIKit")
 ```
 - You can also change the skin of the component by modifying the [theme](../AUIKit/AUIKit/Resource/auiTheme.bundle/UIKit/theme) or replacing the [resource file](../AUIKit/AUIKit/Resource/auiTheme.bundle/UIKit/resource)
 - For more skin changing issues, please refer to [Skin Settings](./VoiceRoomTheme.md)
+
+# API reference
+## setup
+Initialization
+```swift
+func setup(roomConfig: AUICommonConfig,
+           rtcEngine: AgoraRtcEngineKit? = nil,
+           rtmClient: AgoraRtmClientKit? = nil) 
+```
+The parameters are shown in the table below:
+| parameter   | type            | meaning     |
+| ----------- | --------------- | ------------------------------------------------------------ |
+| config      | AUICommonConfig | General configuration, including user information and appId, etc.                              |
+| rtcEngine | AgoraRtcEngineKit     | (Optional) Agora RTC engine. When Agora RTC has been integrated in the project, it can be passed in, otherwise it will be automatically created internally. |
+| rtmClient   | AgoraRtmClientKit       | (Optional) Agora RTM engine. When Agora RTM has been integrated in the project, it can be passed in, otherwise it will be automatically created internally.|
+
+## createRoom
+Create a Room
+
+```swift
+func createRoom(roomInfo: AUICreateRoomInfo,
+                success: ((AUIRoomInfo?)->())?,
+                failure: ((Error)->())?)
+```
+
+The parameters are shown in the table below:
+| parameter   | type            | meaning     |
+| -------------- | ----------------- | -------------------------------- |
+| roomInfo       | AUICreateRoomInfo | Information needed to create a room          |
+| success        | Closure          | Success callback, success will return a room information |
+| failure        | Closure          | Failure callback                         |
+
+
+
+### getRoomInfoList
+Get room list
+
+```swift
+func getRoomInfoList(lastCreateTime: Int64?, 
+                     pageSize: Int, 
+                     callback: @escaping AUIRoomListCallback)
+```
+
+The parameters are shown in the table below:
+| parameter   | type            | meaning     |
+| --------- | -------- | ------------------------------------ |
+| lastCreateTime | Int64     | The page start time
+                         |
+| pageSize  | Int      | The page size                                 |
+| callback   | Closure | Completion callback|
+
+### launchRoom
+Launch Room
+```swift
+func launchRoom(roomInfo: AUIRoomInfo,
+                appId: String? = nil,
+                config: AUIRoomConfig,
+                voiceChatView: AUIVoiceChatRoomView) 
+```
+
+The parameters are shown in the table below:
+
+| parameter   | type            | meaning     |
+| ----------- | --------------- | ------------------------------------- |
+| roomInfo    | AUIRoomInfo     | Room information                     |
+| appId    | String     | (Optional) Set the current AppId. If it is not set during initialization, it must be set here, otherwise it can be ignored  |
+| config      | AUIRoomConfig   | Related configuration in the room, including sub-channel name and token |
+| voiceChatView | AUIVoiceChatRoomView | Room UI View                    |
+
+### destroyRoom
+Destroy Room
+
+```swift
+func destoryRoom(roomId: String)
+```
+
+The parameters are shown in the table below:
+
+| parameter   | type            | meaning     |
+| ------ | ------ | -------------- |
+| roomId | String | The ID of the room to destroy |
+
+
+## Data Model
+
+### AUICommonConfig
+
+| parameter   | type            | meaning     |
+| ---------- | ------- | -------------------- |
+| appId      | String  | Agora AppID          |
+| host       | String  | Backend service domain name     |
+| userId     | String  | User ID              |
+| userName   | String  | User name            |
+| userAvatar | String  | User avatar url      |
+
+### AUIRoomInfo
+| parameter   | type            | meaning     |
+| ----------- | -------------------- | ------------ |
+| roomId      | String               | Room id       |
+| roomOwner   | AUIUserThumbnailInfo | Room information   |
+| memberCount | Int                  | Online user count  |
+| createTime  | Int64                | Room create time |
+
+### AUIUserThumbnailInfo
+
+| parameter   | type            | meaning     |
+| ---------- | ------ | -------- |
+| userId     | String | Room id   |
+| userName   | String | User name   |
+| userAvatar | String | User avatar url |
+
+### AUIRoomConfig
+| parameter   | type            | meaning     |
+| -------------------- | ------ | ------------------------------------------------------------ |
+| channelName          | String | Main channel name, usually roomId                                       |
+| rtmToken007             | String | The rtm token of the main channel whose uid is setup in AUICommonConfig     |
+| rtcToken007             | String | The rtc token of the main channel whose uid is setup in AUICommonConfig     |
+| rtcChannelName       | String | Video channel name, usually {roomId}_rtc                             |
+| rtcRtcToken          | String | The rtc token of the video channel whose uid is setup in AUICommonConfig |
+| rtcRtmToken          | String | The rtm token of the video channel whose uid is setup in AUICommonConfig |
+
 
 ## License
 Copyright © Agora Corporation. All rights reserved.
