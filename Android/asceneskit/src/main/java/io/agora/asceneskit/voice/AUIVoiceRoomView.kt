@@ -27,8 +27,8 @@ import io.agora.auikit.utils.AUILogger
 import io.agora.auikit.utils.ThreadManager
 
 class AUIVoiceRoomView : FrameLayout,
-    IAUIRoomManager.AUIRoomManagerRespDelegate,
-    IAUIMicSeatService.AUIMicSeatRespDelegate {
+    IAUIRoomManager.AUIRoomManagerRespObserver,
+    IAUIMicSeatService.AUIMicSeatRespObserver {
     private val mRoomViewBinding = VoiceRoomViewBinding.inflate(LayoutInflater.from(context))
     private val mBinders = mutableListOf<IAUIBindable>()
     private var mVoiceService: AUIVoiceRoomService? = null
@@ -73,8 +73,8 @@ class AUIVoiceRoomView : FrameLayout,
     fun bindService(service: AUIVoiceRoomService) {
         mVoiceService = service
         imManagerService = service.getIMManagerService() as AUIIMManagerServiceImpl
-        service.getRoomManager().bindRespDelegate(this)
-        service.getMicSeatsService().bindRespDelegate(this)
+        service.getRoomManager().registerRespObserver(this)
+        service.getMicSeatsService().registerRespObserver(this)
 
         setUpRoomStyle(service.getRoomInfo())
 
@@ -233,8 +233,8 @@ class AUIVoiceRoomView : FrameLayout,
         super.onDetachedFromWindow()
         AUILogger.logger().d("AUIVoiceRoomView", "onDetachedFromWindow")
 
-        mVoiceService?.getRoomManager()?.unbindRespDelegate(this)
-        mVoiceService?.getMicSeatsService()?.unbindRespDelegate(this)
+        mVoiceService?.getRoomManager()?.unRegisterRespObserver(this)
+        mVoiceService?.getMicSeatsService()?.unRegisterRespObserver(this)
 
         mBinders.forEach {
             it.unBind()

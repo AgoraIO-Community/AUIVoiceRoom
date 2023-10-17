@@ -15,15 +15,15 @@ import io.agora.auikit.service.IAUIMusicPlayerService
 import io.agora.auikit.service.IAUIUserService
 import io.agora.auikit.service.callback.AUIException
 import io.agora.auikit.service.im.AUIChatManager
-import io.agora.auikit.service.imp.AUIChorusServiceImpl
-import io.agora.auikit.service.imp.AUIGiftServiceImpl
+import io.agora.auikit.service.imp.AUIChorusServiceImplResp
+import io.agora.auikit.service.imp.AUIGiftServiceImplResp
 import io.agora.auikit.service.imp.AUIIMManagerServiceImpl
-import io.agora.auikit.service.imp.AUIInvitationServiceImpl
-import io.agora.auikit.service.imp.AUIJukeboxServiceImpl
-import io.agora.auikit.service.imp.AUIMicSeatServiceImpl
+import io.agora.auikit.service.imp.AUIInvitationServiceImplResp
+import io.agora.auikit.service.imp.AUIJukeboxServiceImplResp
+import io.agora.auikit.service.imp.AUIMicSeatServiceImplResp
 import io.agora.auikit.service.imp.AUIMusicPlayerServiceImpl
-import io.agora.auikit.service.imp.AUIRoomManagerImpl
-import io.agora.auikit.service.imp.AUIUserServiceImpl
+import io.agora.auikit.service.imp.AUIRoomManagerImplRespResp
+import io.agora.auikit.service.imp.AUIUserServiceImplResp
 import io.agora.auikit.service.ktv.KTVApi
 import io.agora.auikit.service.ktv.KTVApiConfig
 import io.agora.auikit.service.ktv.KTVApiImpl
@@ -37,10 +37,10 @@ import io.agora.rtc2.RtcEngine
 class AUIVoiceRoomService constructor(
     private val rtcEngine: RtcEngine?,
     private val ktvApi: KTVApi?,
-    private val roomManager: AUIRoomManagerImpl,
+    private val roomManager: AUIRoomManagerImplRespResp,
     private val roomConfig: AUIRoomConfig,
     private val roomInfo: AUIRoomInfo,
-) : IAUIUserService.AUIUserRespDelegate {
+) : IAUIUserService.AUIUserRespObserver {
 
     private val TAG = "AUIVoiceRoomService"
 
@@ -49,7 +49,7 @@ class AUIVoiceRoomService constructor(
 
     val mRtcEngine: RtcEngine = rtcEngine ?: AgoraEngineCreator.createRtcEngine(
         AUIRoomContext.shared().commonConfig.context,
-        AUIRoomContext.shared().commonConfig.appId
+        AUIRoomContext.shared().appId
     )
 
     private val rtmManager: AUIRtmManager = roomManager.rtmManager
@@ -57,28 +57,28 @@ class AUIVoiceRoomService constructor(
     private val chatManager = AUIChatManager(roomInfo.roomId, AUIRoomContext.shared())
 
     private val userImpl: IAUIUserService by lazy {
-        val user = AUIUserServiceImpl(roomInfo.roomId, rtmManager)
-        user.bindRespDelegate(this)
+        val user = AUIUserServiceImplResp(roomInfo.roomId, rtmManager)
+        user.registerRespObserver(this)
         user
     }
 
     private val chatImpl: IAUIIMManagerService by lazy { AUIIMManagerServiceImpl(roomInfo.roomId, rtmManager, chatManager) }
 
-    private val micSeatImpl: IAUIMicSeatService by lazy { AUIMicSeatServiceImpl(roomInfo.roomId, rtmManager) }
+    private val micSeatImpl: IAUIMicSeatService by lazy { AUIMicSeatServiceImplResp(roomInfo.roomId, rtmManager) }
 
     private val playerImpl: IAUIMusicPlayerService by lazy { AUIMusicPlayerServiceImpl(mRtcEngine, roomInfo.roomId, mKtvApi) }
 
-    private val chorusImpl: IAUIChorusService by lazy { AUIChorusServiceImpl(roomInfo.roomId, mKtvApi, rtmManager) }
+    private val chorusImpl: IAUIChorusService by lazy { AUIChorusServiceImplResp(roomInfo.roomId, mKtvApi, rtmManager) }
 
-    private val jukeboxImpl: IAUIJukeboxService by lazy { AUIJukeboxServiceImpl(roomInfo.roomId, rtmManager, mKtvApi) }
+    private val jukeboxImpl: IAUIJukeboxService by lazy { AUIJukeboxServiceImplResp(roomInfo.roomId, rtmManager, mKtvApi) }
 
-    private val invitationImpl: IAUIInvitationService by lazy { AUIInvitationServiceImpl(roomInfo.roomId, rtmManager) }
+    private val invitationImpl: IAUIInvitationService by lazy { AUIInvitationServiceImplResp(roomInfo.roomId, rtmManager) }
 
-    private val giftImpl:IAUIGiftsService by lazy { AUIGiftServiceImpl(roomInfo.roomId, rtmManager, chatManager) }
+    private val giftImpl:IAUIGiftsService by lazy { AUIGiftServiceImplResp(roomInfo.roomId, rtmManager, chatManager) }
 
     private val mKtvApi: KTVApi = ktvApi ?: run {
         val config = KTVApiConfig(
-            AUIRoomContext.shared().commonConfig.appId,
+            AUIRoomContext.shared().appId,
             roomConfig.rtcRtmToken,
             mRtcEngine,
             roomConfig.rtcChannelName,

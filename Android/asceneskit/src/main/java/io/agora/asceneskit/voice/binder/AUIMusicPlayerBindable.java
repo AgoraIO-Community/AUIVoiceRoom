@@ -22,7 +22,9 @@ import io.agora.auikit.ui.musicplayer.IMusicPlayerView;
 import io.agora.auikit.ui.musicplayer.MusicSettingInfo;
 import io.agora.auikit.ui.musicplayer.impl.AUIMusicPlayerView;
 
-public class AUIMusicPlayerBindable implements IAUIBindable, IAUIMusicPlayerService.AUIPlayerRespDelegate, IAUIJukeboxService.AUIJukeboxRespDelegate, IAUIChorusService.AUIChorusRespDelegate, IAUIMicSeatService.AUIMicSeatRespDelegate, IMusicPlayerView.ActionDelegate {
+public class AUIMusicPlayerBindable implements IAUIBindable, IAUIMusicPlayerService.AUIPlayerRespObserver,
+        IAUIJukeboxService.AUIJukeboxRespObserver, IAUIChorusService.AUIChorusRespObserver, IAUIMicSeatService.AUIMicSeatRespObserver,
+        IMusicPlayerView.ActionDelegate {
 
     private final AUIMusicPlayerView musicPlayerView;
     private final IAUIMusicPlayerService musicPlayerService;
@@ -60,10 +62,10 @@ public class AUIMusicPlayerBindable implements IAUIBindable, IAUIMusicPlayerServ
 
     @Override
     public void bind() {
-        musicPlayerService.bindRespDelegate(this);
-        jukeboxService.bindRespDelegate(this);
-        chorusService.bindRespDelegate(this);
-        micSeatService.bindRespDelegate(this);
+        musicPlayerService.registerRespObserver(this);
+        jukeboxService.registerRespObserver(this);
+        chorusService.registerRespObserver(this);
+        micSeatService.registerRespObserver(this);
 
         musicPlayerView.setMusicPlayerActionDelegate(this);
         musicPlayerView.setEffectProperties(musicPlayerService.effectProperties());
@@ -86,10 +88,10 @@ public class AUIMusicPlayerBindable implements IAUIBindable, IAUIMusicPlayerServ
     @Override
     public void unBind() {
         musicPlayerView.setMusicPlayerActionDelegate(null);
-        musicPlayerService.unbindRespDelegate(this);
-        jukeboxService.unbindRespDelegate(this);
-        chorusService.unbindRespDelegate(this);
-        micSeatService.unbindRespDelegate(this);
+        musicPlayerService.unRegisterRespObserver(this);
+        jukeboxService.unRegisterRespObserver(this);
+        chorusService.unRegisterRespObserver(this);
+        micSeatService.unRegisterRespObserver(this);
     }
 
     private void initUI() {
@@ -151,22 +153,22 @@ public class AUIMusicPlayerBindable implements IAUIBindable, IAUIMusicPlayerServ
     // JukeboxService delegate implement
     @Override
     public void onAddChooseSong(@NonNull AUIChooseMusicModel song) {
-        IAUIJukeboxService.AUIJukeboxRespDelegate.super.onAddChooseSong(song);
+        IAUIJukeboxService.AUIJukeboxRespObserver.super.onAddChooseSong(song);
     }
 
     @Override
     public void onRemoveChooseSong(@NonNull AUIChooseMusicModel song) {
-        IAUIJukeboxService.AUIJukeboxRespDelegate.super.onRemoveChooseSong(song);
+        IAUIJukeboxService.AUIJukeboxRespObserver.super.onRemoveChooseSong(song);
     }
 
     @Override
     public void onUpdateChooseSong(@NonNull AUIChooseMusicModel song) {
-        IAUIJukeboxService.AUIJukeboxRespDelegate.super.onUpdateChooseSong(song);
+        IAUIJukeboxService.AUIJukeboxRespObserver.super.onUpdateChooseSong(song);
     }
 
     @Override
     public void onUpdateAllChooseSongs(@NonNull List<AUIChooseMusicModel> songs) {
-        IAUIJukeboxService.AUIJukeboxRespDelegate.super.onUpdateAllChooseSongs(songs);
+        IAUIJukeboxService.AUIJukeboxRespObserver.super.onUpdateAllChooseSongs(songs);
 
         // 当前无已点歌曲
         if (songs.size() == 0) {
@@ -204,12 +206,12 @@ public class AUIMusicPlayerBindable implements IAUIBindable, IAUIMusicPlayerServ
     // micSeatService delegate implement
     @Override
     public void onSeatListChange(List<AUIMicSeatInfo> seatInfoList) {
-        IAUIMicSeatService.AUIMicSeatRespDelegate.super.onSeatListChange(seatInfoList);
+        IAUIMicSeatService.AUIMicSeatRespObserver.super.onSeatListChange(seatInfoList);
     }
 
     @Override
     public void onAnchorEnterSeat(int seatIndex, @NonNull AUIUserThumbnailInfo userInfo) {
-        IAUIMicSeatService.AUIMicSeatRespDelegate.super.onAnchorEnterSeat(seatIndex, userInfo);
+        IAUIMicSeatService.AUIMicSeatRespObserver.super.onAnchorEnterSeat(seatIndex, userInfo);
         if (userInfo.userId.equals(localUid)) {
             isOnSeat = true;
             musicPlayerView.onSeat();
@@ -218,7 +220,7 @@ public class AUIMusicPlayerBindable implements IAUIBindable, IAUIMusicPlayerServ
 
     @Override
     public void onAnchorLeaveSeat(int seatIndex, @NonNull AUIUserThumbnailInfo userInfo) {
-        IAUIMicSeatService.AUIMicSeatRespDelegate.super.onAnchorLeaveSeat(seatIndex, userInfo);
+        IAUIMicSeatService.AUIMicSeatRespObserver.super.onAnchorLeaveSeat(seatIndex, userInfo);
         if (userInfo.userId.equals(localUid)) {
             isOnSeat = false;
             // 离开合唱
@@ -231,55 +233,55 @@ public class AUIMusicPlayerBindable implements IAUIBindable, IAUIMusicPlayerServ
 
     @Override
     public void onSeatAudioMute(int seatIndex, boolean isMute) {
-        IAUIMicSeatService.AUIMicSeatRespDelegate.super.onSeatAudioMute(seatIndex, isMute);
+        IAUIMicSeatService.AUIMicSeatRespObserver.super.onSeatAudioMute(seatIndex, isMute);
     }
 
     @Override
     public void onSeatVideoMute(int seatIndex, boolean isMute) {
-        IAUIMicSeatService.AUIMicSeatRespDelegate.super.onSeatVideoMute(seatIndex, isMute);
+        IAUIMicSeatService.AUIMicSeatRespObserver.super.onSeatVideoMute(seatIndex, isMute);
     }
 
     @Override
     public void onSeatClose(int seatIndex, boolean isClose) {
-        IAUIMicSeatService.AUIMicSeatRespDelegate.super.onSeatClose(seatIndex, isClose);
+        IAUIMicSeatService.AUIMicSeatRespObserver.super.onSeatClose(seatIndex, isClose);
     }
 
     // musicPlayerService delegate implement
     @Override
     public void onPreludeDidAppear() {
-        IAUIMusicPlayerService.AUIPlayerRespDelegate.super.onPreludeDidAppear();
+        IAUIMusicPlayerService.AUIPlayerRespObserver.super.onPreludeDidAppear();
     }
 
     @Override
     public void onPreludeDidDisappear() {
-        IAUIMusicPlayerService.AUIPlayerRespDelegate.super.onPreludeDidDisappear();
+        IAUIMusicPlayerService.AUIPlayerRespObserver.super.onPreludeDidDisappear();
     }
 
     @Override
     public void onPostludeDidAppear() {
-        IAUIMusicPlayerService.AUIPlayerRespDelegate.super.onPostludeDidAppear();
+        IAUIMusicPlayerService.AUIPlayerRespObserver.super.onPostludeDidAppear();
     }
 
     @Override
     public void onPostludeDidDisappear() {
-        IAUIMusicPlayerService.AUIPlayerRespDelegate.super.onPostludeDidDisappear();
+        IAUIMusicPlayerService.AUIPlayerRespObserver.super.onPostludeDidDisappear();
     }
 
     @Override
     public void onPlayerPositionDidChange(Long position) {
-        IAUIMusicPlayerService.AUIPlayerRespDelegate.super.onPlayerPositionDidChange(position);
+        IAUIMusicPlayerService.AUIPlayerRespObserver.super.onPlayerPositionDidChange(position);
         musicPlayerView.setProgress(position);
     }
 
     @Override
     public void onPitchDidChange(Float pitch) {
-        IAUIMusicPlayerService.AUIPlayerRespDelegate.super.onPitchDidChange(pitch);
+        IAUIMusicPlayerService.AUIPlayerRespObserver.super.onPitchDidChange(pitch);
         musicPlayerView.setPitch(pitch);
     }
 
     @Override
     public void onPlayerStateChanged(int state, boolean isLocal) {
-        IAUIMusicPlayerService.AUIPlayerRespDelegate.super.onPlayerStateChanged(state, isLocal);
+        IAUIMusicPlayerService.AUIPlayerRespObserver.super.onPlayerStateChanged(state, isLocal);
 
         if (state == 4) { // pause
             musicPlayerView.onPlaying();

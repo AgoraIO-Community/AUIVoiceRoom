@@ -23,8 +23,8 @@ class AUIRoomMembersBinder constructor(
     voiceService:AUIVoiceRoomService,
     listener:AUIRoomMemberEvent?,
 ):
-    IAUIBindable, IAUIUserService.AUIUserRespDelegate, AUIRoomMembersActionListener,
-    IAUIMicSeatService.AUIMicSeatRespDelegate, IAUIRoomManager.AUIRoomManagerRespDelegate {
+    IAUIBindable, IAUIUserService.AUIUserRespObserver, AUIRoomMembersActionListener,
+    IAUIMicSeatService.AUIMicSeatRespObserver, IAUIRoomManager.AUIRoomManagerRespObserver {
 
     private var userService:IAUIUserService?
     private var micSeats:IAUIMicSeatService?
@@ -61,17 +61,17 @@ class AUIRoomMembersBinder constructor(
     }
 
     override fun bind() {
-        micSeats?.bindRespDelegate(this)
-        userService?.bindRespDelegate(this)
+        micSeats?.registerRespObserver(this)
+        userService?.registerRespObserver(this)
         memberView?.setMemberActionListener(this)
-        roomManager.bindRespDelegate(this)
+        roomManager.registerRespObserver(this)
     }
 
     override fun unBind() {
-        userService?.unbindRespDelegate(this)
-        micSeats?.unbindRespDelegate(this)
+        userService?.unRegisterRespObserver(this)
+        micSeats?.unRegisterRespObserver(this)
         memberView?.setMemberActionListener(null)
-        roomManager.unbindRespDelegate(this)
+        roomManager.unRegisterRespObserver(this)
     }
 
     override fun onMemberRankClickListener(view: View) {
