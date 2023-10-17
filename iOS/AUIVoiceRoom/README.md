@@ -45,7 +45,7 @@ This document mainly introduces how to quickly run through the AUIVoiceRoom exam
   ```
   If you do not intend to deploy backend services temporarily, you can use the default domain name in KeyCenter.swift
 
-- Open the terminal and enter the [Podfile](Podfile) directory, run `pod install`
+- Open the terminal and enter the [Podfile](Podfile) directory, run `pod update`
 
 - Finally, open AUIVoiceRoom. xcworkspace and run it to start your experience
 

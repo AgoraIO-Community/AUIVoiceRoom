@@ -43,7 +43,7 @@
   ```
   如果暂无意部署后端服务，可以使用KeyCenter.swift里默认的域名
 
-- 打开终端，进入到[Podfile](Podfile)目录下，执行`pod install`命令
+- 打开终端，进入到[Podfile](Podfile)目录下，执行`pod update`命令
 
 - 最后打开AUIVoiceRoom.xcworkspace，运行即可开始您的体验
 
