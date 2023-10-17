@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		055E68492A27309C00842982 /* AUIRoomListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055E68412A27309C00842982 /* AUIRoomListCell.swift */; };
 		055E684A2A27309C00842982 /* AUIRoomListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055E68422A27309C00842982 /* AUIRoomListViewController.swift */; };
-		055E684B2A27309C00842982 /* VoiceChatUIKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055E68432A27309C00842982 /* VoiceChatUIKit.swift */; };
 		055E684C2A27309C00842982 /* RoomViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055E68442A27309C00842982 /* RoomViewController.swift */; };
 		055E684D2A27309C00842982 /* UserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055E68472A27309C00842982 /* UserInfo.swift */; };
 		055E684E2A27309C00842982 /* KeyCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055E68482A27309C00842982 /* KeyCenter.swift */; };
@@ -26,7 +25,6 @@
 /* Begin PBXFileReference section */
 		055E68412A27309C00842982 /* AUIRoomListCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AUIRoomListCell.swift; sourceTree = "<group>"; };
 		055E68422A27309C00842982 /* AUIRoomListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AUIRoomListViewController.swift; sourceTree = "<group>"; };
-		055E68432A27309C00842982 /* VoiceChatUIKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VoiceChatUIKit.swift; sourceTree = "<group>"; };
 		055E68442A27309C00842982 /* RoomViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomViewController.swift; sourceTree = "<group>"; };
 		055E68472A27309C00842982 /* UserInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserInfo.swift; sourceTree = "<group>"; };
 		055E68482A27309C00842982 /* KeyCenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyCenter.swift; sourceTree = "<group>"; };
@@ -111,7 +109,6 @@
 			isa = PBXGroup;
 			children = (
 				058974462A2D6A66002E7D09 /* CreateRoomSetting */,
-				055E68432A27309C00842982 /* VoiceChatUIKit.swift */,
 				055E68482A27309C00842982 /* KeyCenter.swift */,
 				055E68402A27309C00842982 /* List */,
 				055E68452A27309C00842982 /* Model */,
@@ -278,7 +275,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				055E68492A27309C00842982 /* AUIRoomListCell.swift in Sources */,
-				055E684B2A27309C00842982 /* VoiceChatUIKit.swift in Sources */,
 				055E684C2A27309C00842982 /* RoomViewController.swift in Sources */,
 				055E684A2A27309C00842982 /* AUIRoomListViewController.swift in Sources */,
 				055E684D2A27309C00842982 /* UserInfo.swift in Sources */,

@@ -11,21 +11,18 @@ VoiceChatUIKit 是一个语聊房场景组件，提供房间管理和拉起语�
 
 **将以下源码复制到自己的项目中：**
 
-- [AUIKit](../AUIKit)
 - [AScenesKit](../AScenesKit)
-- [VoiceRoomUIKit.swift](../AUIVoiceRoom/AUIVoiceRoom/VoiceChatUIKit.swift)
 - [KeyCenter.swift](../AUIVoiceRoom/AUIVoiceRoom/KeyCenter.swift)
 
-**在Podfile文件中添加对AScenesKit和AUIKit的依赖（比如AUIKit和AScenesKit与Podfile放在同级目录下）**
+**在Podfile文件中添加对AScenesKit的依赖（例如AScenesKit与Podfile放在同级目录下时）**
 
 ```
   pod 'AScenesKit', :path => './AScenesKit'
-  pod 'AUIKit'
 ```
 
-**将 VoiceChatUIKit.swift 拖到项目中**
+**将 KeyCenter.swift 拖到项目中**
 
-![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/WeChatWorkScreenshot_f875a12d-58f4-4f0d-830d-1160514f2927.png)
+![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/add_keycenter_to_voiceroom.jpg)
 
 **配置iOS系统麦克风权限**
 

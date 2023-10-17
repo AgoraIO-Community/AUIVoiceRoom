@@ -7,13 +7,12 @@
 //
 
 import Foundation
-import AScenesKit
 import AUIKitCore
 import AgoraRtcKit
 import AgoraRtmKit
 
-class VoiceChatUIKit: NSObject {
-    static let shared: VoiceChatUIKit = VoiceChatUIKit()
+public class VoiceChatUIKit: NSObject {
+    public static let shared: VoiceChatUIKit = VoiceChatUIKit()
     public var roomConfig: AUICommonConfig?
     private var rtcEngine: AgoraRtcEngineKit?
     private var rtmClient: AgoraRtmClientKit?
@@ -22,16 +21,16 @@ class VoiceChatUIKit: NSObject {
     
     private var roomManager: AUIRoomManagerImpl?
     
-    func setup(roomConfig: AUICommonConfig,
-               rtcEngine: AgoraRtcEngineKit? = nil,
-               rtmClient: AgoraRtmClientKit? = nil) {
+    public func setup(roomConfig: AUICommonConfig,
+                      rtcEngine: AgoraRtcEngineKit? = nil,
+                      rtmClient: AgoraRtmClientKit? = nil) {
         self.roomConfig = roomConfig
         self.rtcEngine = rtcEngine
         self.rtmClient = rtmClient
         self.roomManager = AUIRoomManagerImpl(commonConfig: roomConfig, rtmClient: rtmClient)
     }
     
-    func getRoomInfoList(lastCreateTime: Int64?, pageSize: Int, callback: @escaping AUIRoomListCallback) {
+    public func getRoomInfoList(lastCreateTime: Int64?, pageSize: Int, callback: @escaping AUIRoomListCallback) {
         guard let roomManager = self.roomManager else {
             assert(false, "please invoke setup first")
             return
@@ -39,9 +38,9 @@ class VoiceChatUIKit: NSObject {
         roomManager.getRoomInfoList(lastCreateTime: lastCreateTime, pageSize: pageSize, callback: callback)
     }
     
-    func createRoom(roomInfo: AUICreateRoomInfo,
-                    success: ((AUIRoomInfo?)->())?,
-                    failure: ((Error)->())?) {
+    public func createRoom(roomInfo: AUICreateRoomInfo,
+                           success: ((AUIRoomInfo?)->())?,
+                           failure: ((Error)->())?) {
         guard let roomManager = self.roomManager else {
             assert(false, "please invoke setup first")
             return
@@ -56,9 +55,9 @@ class VoiceChatUIKit: NSObject {
         }
     }
     
-    func launchRoom(roomInfo: AUIRoomInfo,
-                    roomView: AUIVoiceChatRoomView,
-                    completion: @escaping ((NSError?)->())) {
+    public func launchRoom(roomInfo: AUIRoomInfo,
+                           roomView: AUIVoiceChatRoomView,
+                           completion: @escaping ((NSError?)->())) {
         guard /*let rtmClient = self.rtmClient,*/ let roomManager = self.roomManager else {
             assert(false, "please invoke setup first")
             return
@@ -84,17 +83,17 @@ class VoiceChatUIKit: NSObject {
         }
     }
     
-    func destoryRoom(roomId: String) {
+    public func destoryRoom(roomId: String) {
 //        rtmClient?.logout()
         service = nil
     }
     
     
-    func bindRespDelegate(delegate: AUIRoomManagerRespDelegate) {
+    public func bindRespDelegate(delegate: AUIRoomManagerRespDelegate) {
         roomManager?.bindRespDelegate(delegate: delegate)
     }
     
-    func unbindRespDelegate(delegate: AUIRoomManagerRespDelegate) {
+    public func unbindRespDelegate(delegate: AUIRoomManagerRespDelegate) {
         roomManager?.unbindRespDelegate(delegate: delegate)
     }
 }
@@ -182,7 +181,7 @@ extension VoiceChatUIKit {
 }
 
 extension VoiceChatUIKit: AUIRtmErrorProxyDelegate {
-    @objc func onTokenPrivilegeWillExpire(channelName: String?) {
+    @objc public func onTokenPrivilegeWillExpire(channelName: String?) {
         guard let roomInfo = roomInfo else { return }
         generateToken(roomInfo: roomInfo) {[weak self] config, _ in
             self?.renew(config: config)
