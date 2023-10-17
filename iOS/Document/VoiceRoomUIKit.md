@@ -6,7 +6,6 @@ VoiceRoomUIKit is a voice chat room scene component, which provides room managem
 
 
 ## Quick Started
-> Please make sure you have successfully run the project according to this.After successful operation, the AUIKit folder will appear in the iOS folder level directory. [tutorial](../AUIVoiceRoom/README.md) before integrating.。
 
 ### 1. Add Source Code
 
