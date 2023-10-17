@@ -88,7 +88,7 @@ import SwiftTheme
     public var onClickOffButton: (()->())?
 
     deinit {
-        aui_info("deinit AUiKaraokeRoomView", tag: "AUiKaraokeRoomView")
+        aui_info("deinit AUIVoiceChatRoomView", tag: "AUIVoiceChatRoomView")
     }
     
     public override init(frame: CGRect) {
@@ -99,7 +99,7 @@ import SwiftTheme
     @objc public convenience init(frame: CGRect, roomInfo: AUIRoomInfo) {
         self.init(frame: frame)
         self.roomInfo = roomInfo
-        aui_info("init AUiKaraokeRoomView", tag: "AUiKaraokeRoomView")
+        aui_info("init AUIVoiceChatRoomView", tag: "AUIVoiceChatRoomView")
         
         //设置皮肤路径
         if let folderPath = Bundle.main.path(forResource: "auiVoiceChatTheme", ofType: "bundle") {
@@ -128,17 +128,17 @@ import SwiftTheme
         self.viewBinderConnected()
         
         let channelName:String = service.channelName
-        aui_info("enter room: \(channelName)", tag: "AUiKaraokeRoomView")
+        aui_info("enter room: \(channelName)", tag: "AUIVoiceChatRoomView")
         self.service?.roomManagerImpl.enterRoom(roomId: channelName) { error in
-            aui_info("enter room success", tag: "AUiKaraokeRoomView")
+            aui_info("enter room success", tag: "AUIVoiceChatRoomView")
         }
         self.service?.joinRtcChannel { error in
-            aui_info("joinRtcChannel finished: \(error?.localizedDescription ?? "success")", tag: "AUiKaraokeRoomView")
+            aui_info("joinRtcChannel finished: \(error?.localizedDescription ?? "success")", tag: "AUIVoiceChatRoomView")
         }
     }
     
     private func loadSubviews() {
-        aui_info("load karaoke room subview", tag: "AUiKaraokeRoomView")
+        aui_info("load voicechat room subview", tag: "AUIVoiceChatRoomView")
         
 
         self.addSubViews([self.background,self.micSeatView,self.roomInfoView,self.membersView,self.chatView,self.receiveGift,self.closeButton])
@@ -151,11 +151,11 @@ import SwiftTheme
     }
     
     private func viewBinderConnected() {
-        aui_info("viewBinderConnected", tag: "AUiKaraokeRoomView")
+        aui_info("viewBinderConnected", tag: "AUIVoiceChatRoomView")
         
         guard let service = service else {
             assert(false, "service is empty")
-            aui_error("service is empty", tag: "AUiKaraokeRoomView")
+            aui_error("service is empty", tag: "AUIVoiceChatRoomView")
             return
         }
         service.beKickedClosure = { [weak self] in
@@ -545,7 +545,7 @@ extension AUIVoiceChatRoomView: AUIMicSeatViewEventsDelegate {
     }
     
     @objc func onSelectedMusic() {
-        aui_info("onSelectedMusic", tag: "AUiKaraokeRoomView")
+        aui_info("onSelectedMusic", tag: "AUIVoiceChatRoomView")
     }
     
     open override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {

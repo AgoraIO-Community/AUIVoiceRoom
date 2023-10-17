@@ -2,7 +2,7 @@
 
 *English | [中文](README_zh.md)*
 ##  Overview
-AScenesKit is a container component for karaoke rooms that integrates UI and services provided by AUIKit, providing developers with a solution to quickly build karaoke scenes.
+AScenesKit is a container component for voicechat rooms that integrates UI and services provided by AUIKit, providing developers with a solution to quickly build voicechat scenes.
 
 ### Directory
 ```
@@ -14,9 +14,9 @@ AScenesKit
 │  ├─ AUIIMViewBinder              // Binder for chat management
 |  └─ AUIRoomGiftBinder            // Binder for gift management
 │
-└─ RoomContainer                   // Karaoke integration container
-   ├─ AUIVoiceChatRoomView           // VoiceRoom View, responsible for creating, assembling, and binding components 
-   └─ AUIVoiceChatRoomService        // VoiceRoom Service, responsible for creating basic services
+└─ RoomContainer                   // VoiceRoom integration container
+   ├─ AUIVoiceChatRoomView         // VoiceRoom View, responsible for creating, assembling, and binding components 
+   └─ AUIVoiceChatRoomService      // VoiceRoom Service, responsible for creating basic services
 ```
 ###  Relationship between component and service dependencies
 ![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/VoiceRoom_en.png)
@@ -26,14 +26,14 @@ AScenesKit
 ![](https://fullapp.oss-cn-beijing.aliyuncs.com/pic/pako_eNo9UD1vwjAQ_SunmwMqbaDEQyUCKxNVh2IGK76ApcROHbuUxvnvNQ7qTad7H_f0BqyMJGRYN-ZaXYR18L7jGuJsjh-KrqXSkuwJZrO34DspHIFXAcoEniZmeUcheAWicsroAJuHRZL1pCVY-vLUuwDb44Hst6roId5OYkt9B5IaOscX0QAww5ZsK5SM6YY7l6O7UEscWVwl1cI3jiPXY6QK78zhpitktWh6ynDKulP.png)
 
 ## Quick Started
-> Please make sure you have successfully run the project according to this [tutorial](../Example/AUIKaraoke/README.md) before integrating。
+> Please make sure you have successfully run the project according to this [tutorial](../Example/AUIVoiceRoom/README.md) before integrating。
 
 ### 1. Add Source Code
 
 **Copy the following source code into your own project：**
 
 - [AScenesKit](../AScenesKit)
-- [KeyCenter.swift](../Example/AUIKaraoke/AUIKaraoke/KeyCenter.swift)
+- [KeyCenter.swift](../Example/AUIVoiceRoom/AUIVoiceRoom/KeyCenter.swift)
 
 **Add dependencies on AScenesKit in the Podfile file (for example, when AScenesKit are placed in the same level directory as the Podfile)**
 
@@ -42,7 +42,7 @@ AScenesKit
   pod 'AUIKitCore'
 ```
 
-**Drag KaraokeUIKit.swift into the project**
+**Drag VoiceChatUIKit.swift into the project**
 
 ![](https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/github_readme/uikit/config_keycenter_ios.png) 
 
@@ -96,10 +96,10 @@ AUIRoomContext.shared.commonConfig?.appId = appId
 ```
 ####  5.3 Create room view
 ```swift
-//create karaoke room view
-let karaokeView = AUIKaraokeRoomView(frame: self.view.bounds)  
-self.view.addSubview(karaokeView)
-karaokeView.onClickOffButton = { [weak self] in
+//create voicechat room view
+let voiceChatView = AUIVoiceChatRoomView(frame: self.view.bounds)  
+self.view.addSubview(voiceChatView)
+voiceChatView.onClickOffButton = { [weak self] in
     //click exit button
 }
 
@@ -108,14 +108,13 @@ let roomConfig = AUIRoomConfig()
 ...
 
 //rtcEngine and ktvApi can be empty
-let service = AUIKaraokeRoomService(rtcEngine: rtcEngine,
-                                    ktvApi: ktvApi,
+let service = AUIVoiceChatRoomService(rtcEngine: rtcEngine,
                                     roomManager: roomManager,
                                     roomConfig: roomConfig,
                                     roomInfo: roomInfo)
-karaokeView.bindService(service: service)
+voiceChatView.bindService(service: service)
 ```
-After the above five steps, you can create a room with a karaoke scene.
+After the above five steps, you can create a room with a voicechat scene.
 
 ## 6.Subscription room changes
 Subscribe to changes through the bindRespDelegate method of AUIRoomManagerImpl

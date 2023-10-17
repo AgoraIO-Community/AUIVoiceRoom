@@ -66,7 +66,7 @@ public class VoiceChatUIKit: NSObject {
         generateToken(roomInfo: roomInfo) {[weak self] roomConfig, appId in
             guard let self = self else { return }
             guard appId.count > 0 else {
-                completion(NSError(domain: "KaraokeUIKit Error", code: -1, userInfo: [ NSLocalizedDescriptionKey : "token generate fail!"]))
+                completion(NSError(domain: "VoiceChatUIKit Error", code: -1, userInfo: [ NSLocalizedDescriptionKey : "token generate fail!"]))
                 return
             }
             AUIRoomContext.shared.commonConfig?.appId = appId

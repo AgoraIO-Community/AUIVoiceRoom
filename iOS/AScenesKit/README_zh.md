@@ -33,7 +33,7 @@ AScenesKit
 **将以下源码复制到自己项目里：**
 
 - [AScenesKit](../AScenesKit)
-- [KeyCenter.swift](../Example/AUIKaraoke/KeyCenter.swift)
+- [KeyCenter.swift](../Example/AUIVoiceRoom/KeyCenter.swift)
 
 **在Podfile文件里添加依赖AScenesKit(例如AScenesKit放置在Podfile同一级目录下时)**
 
@@ -97,9 +97,9 @@ AUIRoomContext.shared.commonConfig?.appId = appId
 ####  5.3生成房间容器
 ```swift
 //创建房间容器
-let karaokeView = AUIKaraokeRoomView(frame: self.view.bounds)  
-self.view.addSubview(karaokeView)
-karaokeView.onClickOffButton = { [weak self] in
+let voiceChatView = AUIVoiceChatRoomView(frame: self.view.bounds)  
+self.view.addSubview(voiceChatView)
+voiceChatView.onClickOffButton = { [weak self] in
     //点击退出按钮后
 }
 
@@ -108,14 +108,13 @@ let roomConfig = AUIRoomConfig()
 ...
 
 //rtcEngine和ktvApi可空
-let service = AUIKaraokeRoomService(rtcEngine: rtcEngine,
-                                    ktvApi: ktvApi,
-                                    roomManager: roomManager,
-                                    roomConfig: roomConfig,
-                                    roomInfo: roomInfo)
-karaokeView.bindService(service: service)
+let service = AUIVoiceChatRoomService(rtcEngine: rtcEngine,
+                                      roomManager: roomManager,
+                                      roomConfig: roomConfig,
+                                      roomInfo: roomInfo)
+voiceChatView.bindService(service: service)
 ```
-经过上述五步，即可创建一个K歌场景的房间
+经过上述五步，即可创建一个语聊场景的房间
 
 ## 6.订阅房间变化
 通过AUIRoomManagerImpl的bindRespDelegate方法订阅变化

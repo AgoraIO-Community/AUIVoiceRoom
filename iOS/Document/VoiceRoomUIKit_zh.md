@@ -1,6 +1,6 @@
 # VoiceRoomUIKit
 
-*English | [英文](VoiceRoomUIKit.md)*
+*[English](VoiceRoomUIKit.md) | 中文*
 
 VoiceChatUIKit 是一个语聊房场景组件，提供房间管理和拉起语聊房场景页面的能力。 开发者可以使用该组件快速构建一个语聊房应用。
 
