@@ -95,7 +95,7 @@ voiceRoomView.onClickOffButton = { [weak self] in
 ```
 
 #### 6.2 Room destruction passive exit
-Please refer to [Room Destruction] (#%207.1-Room-Destruction)
+Please refer to [Room Destruction](#71-room-destruction)
 
 
 ### 7. Exception handling

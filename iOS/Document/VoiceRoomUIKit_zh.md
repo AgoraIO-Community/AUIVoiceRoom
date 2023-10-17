@@ -93,7 +93,7 @@ voiceRoomView.onClickOffButton = { [weak self] in
 ```
 
 #### 6.2 房间销毁与自动退出
-详见[房间销毁](#7.1%20房间销毁)
+详见[房间销毁](#71-房间销毁)
 
 ### 7. 异常处理
 
