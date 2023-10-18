@@ -1,6 +1,9 @@
 
 [English](CHANGELOG.md) | 中文
 
+## [0.3.2](https://github.com/AgoraIO-Community/AUIVoiceRoom/releases/tag/0.3.2)
+- 升级AUIKit到0.5.2
+
 ## [0.3.1](https://github.com/AgoraIO-Community/AUIVoiceRoom/releases/tag/0.3.1)
 - 升级AUIKit到0.5.1
 - [Android]修复房间销毁异常
