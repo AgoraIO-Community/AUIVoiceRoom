@@ -37,10 +37,10 @@ VoiceRoomUIKit is a voice chat room scene component, which provides room managem
     // Create Common Config
     val config = AUICommonConfig()
         config.context = application
-        config.appId = BuildConfig.AGORA_APP_ID
         config.userId = mUserId
         config.userName = "user_$mUserId"
         config.userAvatar = randomAvatar()
+        config.host = BuildConfig.SERVER_HOST
 
     // init AUiKit
     AUIVoiceRoomUikit.init(
@@ -93,8 +93,7 @@ VoiceRoomUIKit is a voice chat room scene component, which provides room managem
                         AUIVoiceRoomUikit.RoomEventHandler {
 
                         })
-                    AUIVoiceRoomUikit.subscribeError(roomInfo.roomId, this)
-                    AUIVoiceRoomUikit.bindRespDelegate(this)
+                    AUIVoiceRoomUikit.registerRespObserver(this)
                 }
             },
             {
@@ -111,41 +110,24 @@ VoiceRoomUIKit is a voice chat room scene component, which provides room managem
  private fun shutDownRoom() {
         roomInfo?.roomId?.let { roomId ->
             AUIVoiceRoomUikit.destroyRoom(roomId)
-            AUIVoiceRoomUikit.unsubscribeError(roomId, this@VoiceRoomActivity)
-            AUIVoiceRoomUikit.unbindRespDelegate(this@VoiceRoomActivity)
+            AUIVoiceRoomUikit.unRegisterRespObserver(this@VoiceRoomActivity)
         }
         finish()
     }
 ```
 
 #### 6.2 Room destruction passive exit
-Please refer to [Room Destruction] (# 7.2-Room-Destruction)
+Please refer to [Room Destruction] (# 7.1-Room-Destruction)
 
 
 ### 7. Exception handling
-#### 7.1 Token expiration processing
-```kotlin
-//Subscribe to the callback for AUIRtmErrorProxyDelegate after AUIVoiceRoomUikit.subscribeError
-AUIVoiceRoomUikit.subscribeError(roomInfo.roomId, this)
-
-//Unsubscribe when exiting the room
-AUIVoiceRoomUikit.unsubscribeError(roomId, this@VoiceRoomActivity)
-
-//Then use the onTokenPrivilegeWillExpire callback method in the AUIRtmErrorProxyDelegate callback to renew all tokens
-override fun onTokenPrivilegeWillExpire(channelName: String?) {
-        generateToken(channelName, onSuccess = {
-            AUIRoomContext.shared().roomConfig = it
-        })
-    }
-```
-
-#### 7.2 Room destruction
+#### 7.1 Room destruction
 ```kotlin
 //Subscribe to the callback for AUIRoomManagerRespDelegate after VoiceRoomUIKit. shared. launchRoom
-mVoiceService.getRoomManager().bindRespDelegate(this)
+mVoiceService.getRoomManager().registerRespObserver(this)
 
 //Unsubscribe when exiting the room
-mVoiceService?.getRoomManager()?.unbindRespDelegate(this)
+mVoiceService?.getRoomManager()?.unRegisterRespObserver(this)
 
 //Process room destruction through onRoomDestroy in the AUIRoomManagerRespDelegate callback method
 override fun onRoomDestroy(roomId: String) {

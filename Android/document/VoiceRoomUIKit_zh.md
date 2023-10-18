@@ -38,10 +38,10 @@ VoiceRoomUIKit 是一个语聊房场景组件，提供房间管理和拉起语�
     // Create Common Config
     val config = AUICommonConfig()
         config.context = application
-        config.appId = BuildConfig.AGORA_APP_ID
         config.userId = mUserId
         config.userName = "user_$mUserId"
         config.userAvatar = randomAvatar()
+        config.host = BuildConfig.SERVER_HOST
 
     // init AUiKit
     AUIVoiceRoomUikit.init(
@@ -95,8 +95,7 @@ VoiceRoomUIKit 是一个语聊房场景组件，提供房间管理和拉起语�
                         AUIVoiceRoomUikit.RoomEventHandler {
 
                         })
-                    AUIVoiceRoomUikit.subscribeError(roomInfo.roomId, this)
-                    AUIVoiceRoomUikit.bindRespDelegate(this)
+                    AUIVoiceRoomUikit.registerRespObserver(this)
                 }
             },
             {
@@ -113,41 +112,24 @@ VoiceRoomUIKit 是一个语聊房场景组件，提供房间管理和拉起语�
  private fun shutDownRoom() {
         roomInfo?.roomId?.let { roomId ->
             AUIVoiceRoomUikit.destroyRoom(roomId)
-            AUIVoiceRoomUikit.unsubscribeError(roomId, this@VoiceRoomActivity)
-            AUIVoiceRoomUikit.unbindRespDelegate(this@VoiceRoomActivity)
+            AUIVoiceRoomUikit.unRegisterRespObserver(this@VoiceRoomActivity)
         }
         finish()
     }
 ```
 
 #### 6.2 房间销毁与自动退出
-Please refer to [Room Destruction] (# 7.2-Room-Destruction)
+Please refer to [Room Destruction] (# 7.1-Room-Destruction)
 
 
 ### 7. 异常处理
-#### 7.1 Token过期处理
-```kotlin
-//订阅 AUIVoiceRoomUikit.subscribeError 后 AUIRtmErrorProxyDelegate 的回调
-AUIVoiceRoomUikit.subscribeError(roomInfo.roomId, this)
-
-//退出房间时取消订阅
-AUIVoiceRoomUikit.unsubscribeError(roomId, this@VoiceRoomActivity)
-
-//然后使用AUIRtmErrorProxyDelegate回调中的onTokenPrivilegeWillExpire回调方法更新所有token
-override fun onTokenPrivilegeWillExpire(channelName: String?) {
-        generateToken(channelName, onSuccess = {
-            AUIRoomContext.shared().roomConfig = it
-        })
-    }
-```
-
-#### 7.2 Room destruction
+#### 7.1 Room destruction
 ```kotlin
 //订阅 VoiceRoomUIKit 后 AUIRoomManagerRespDelegate 的回调。
-mVoiceService.getRoomManager().bindRespDelegate(this)
+mVoiceService.getRoomManager().registerRespObserver(this)
 
 //退出房间时取消订阅
-mVoiceService?.getRoomManager()?.unbindRespDelegate(this)
+mVoiceService?.getRoomManager()?.unRegisterRespObserver(this)
 
 //通过AUIRoomManagerRespDelegate回调方法中的onRoomDestroy处理房间销毁
 override fun onRoomDestroy(roomId: String) {
