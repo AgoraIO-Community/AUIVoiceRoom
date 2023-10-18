@@ -32,88 +32,87 @@ VoiceRoomUIKit is a voice chat room scene component, which provides room managem
 
 ### 2. Initialize VoiceRoomUIKit
 ```kotlin
-    //VoiceRoomUIKit Set basic information
+//VoiceRoomUIKit Set basic information
 
-    // Create Common Config
-    val config = AUICommonConfig()
-        config.context = application
-        config.userId = mUserId
-        config.userName = "user_$mUserId"
-        config.userAvatar = randomAvatar()
-        config.host = BuildConfig.SERVER_HOST
+// Create Common Config
+val config = AUICommonConfig()
+config.context = application
+config.userId = mUserId
+config.userName = "user_$mUserId"
+config.userAvatar = randomAvatar()
+config.host = BuildConfig.SERVER_HOST
 
-    // init AUiKit
-    AUIVoiceRoomUikit.init(
-        config = config, // must
-        rtmClient = null, // option
-        rtcEngineEx = null, // option
-        ktvApi = null,// option
-        serverHost = BuildConfig.SERVER_HOST
-    )
+// init AUiKit
+AUIVoiceRoomUikit.init(
+    config = config, // must
+    rtmClient = null, // option
+    rtcEngineEx = null, // option
+    ktvApi = null// option
+)
 ```
 
 ### 3. Get room list
 ```kotlin
-    AUIVoiceRoomUikit.getRoomList(
-        lastCreateTime: Long?,
-        pageSize: Int,
-        success: (List<AUIRoomInfo>) -> Unit,
-        failure: (AUIException) -> Unit
-    )
+AUIVoiceRoomUikit.getRoomList(
+    lastCreateTime,
+    pageSize,
+    success = {},
+    failure = {}
+)
 ```
 
 ### 4. Create room
 ```kotlin
-    val createRoomInfo = AUICreateRoomInfo()
-        createRoomInfo.roomName = roomName
-        createRoomInfo.micSeatCount = seatCount
-        createRoomInfo.micSeatStyle = seatStyle
-        AUIVoiceRoomUikit.createRoom(
-            createRoomInfo,
-            success = { roomInfo ->
-                gotoRoomDetailPage(AUIVoiceRoomUikit.LaunchType.CREATE,roomInfo)
-            },
-            failure = {
-                Toast.makeText(this@VoiceRoomListActivity, "Create room failed!", Toast.LENGTH_SHORT)
-                    .show()
-            }
-        )
+val createRoomInfo = AUICreateRoomInfo()
+createRoomInfo.roomName = roomName
+createRoomInfo.micSeatCount = seatCount
+createRoomInfo.micSeatStyle = seatStyle
+AUIVoiceRoomUikit.createRoom(
+    createRoomInfo,
+    success = { roomInfo ->
+        gotoRoomDetailPage(AUIVoiceRoomUikit.LaunchType.CREATE,roomInfo)
+    },
+    failure = {
+        Toast.makeText(this@VoiceRoomListActivity, "Create room failed!", Toast.LENGTH_SHORT)
+            .show()
+    }
+)
 ```
 
 ### 5. Check permissions and Launch room
 ```kotlin
-    mPermissionHelp.checkMicPerm(
-            {
-                generateToken { config ->
-                    AUIVoiceRoomUikit.launchRoom(
-                        lunchType,
-                        roomInfo,
-                        config,
-                        mViewBinding.VoiceRoomView,
-                        AUIVoiceRoomUikit.RoomEventHandler {
+mPermissionHelp.checkMicPerm(
+        {
+            generateToken { config ->
+                AUIVoiceRoomUikit.launchRoom(
+                    lunchType,
+                    roomInfo,
+                    config,
+                    mViewBinding.VoiceRoomView,
+                    AUIVoiceRoomUikit.RoomEventHandler {
 
-                        })
-                    AUIVoiceRoomUikit.registerRespObserver(this)
-                }
-            },
-            {
-                finish()
-            },
-            true
-        )
+                    })
+                AUIVoiceRoomUikit.registerRespObserver(this)
+            }
+        },
+        {
+            finish()
+        },
+        true
+    )
 ```
 
 ### 6. Exit the room
 #### 6.1 Proactively exiting
 ```kotlin
 //AUIVoiceChatRoomView provides a closure for onClickOffButton
- private fun shutDownRoom() {
-        roomInfo?.roomId?.let { roomId ->
-            AUIVoiceRoomUikit.destroyRoom(roomId)
-            AUIVoiceRoomUikit.unRegisterRespObserver(this@VoiceRoomActivity)
-        }
-        finish()
+private fun shutDownRoom() {
+    roomInfo?.roomId?.let { roomId ->
+        AUIVoiceRoomUikit.destroyRoom(roomId)
+        AUIVoiceRoomUikit.unRegisterRespObserver(this@VoiceRoomActivity)
     }
+    finish()
+}
 ```
 
 #### 6.2 Room destruction passive exit
@@ -135,17 +134,17 @@ override fun onRoomDestroy(roomId: String) {
 }
 
 override fun onRoomUserBeKicked(roomId: String?, userId: String?) {
-        if (roomId == mVoiceService?.getRoomInfo()?.roomId){
-            AUIAlertDialog(context).apply {
-                setTitle("You have been kicked out of the room")
-                setPositiveButton("confirm") {
-                    dismiss()
-                    mOnRoomDestroyEvent?.invoke()
-                }
-                show()
+    if (roomId == mVoiceService?.getRoomInfo()?.roomId){
+        AUIAlertDialog(context).apply {
+            setTitle("You have been kicked out of the room")
+            setPositiveButton("confirm") {
+                dismiss()
+                mOnRoomDestroyEvent?.invoke()
             }
+            show()
         }
     }
+}
 ```
 
 ## License

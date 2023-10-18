@@ -1,6 +1,7 @@
 package io.agora.asceneskit.voice
 
 import android.util.Log
+import io.agora.auikit.model.AUICommonConfig
 import io.agora.auikit.model.AUICreateRoomInfo
 import io.agora.auikit.model.AUIRoomConfig
 import io.agora.auikit.model.AUIRoomContext
@@ -9,13 +10,13 @@ import io.agora.auikit.service.IAUIRoomManager
 import io.agora.auikit.service.callback.AUIException
 import io.agora.auikit.service.http.CommonResp
 import io.agora.auikit.service.http.HttpManager
-import io.agora.auikit.service.http.TokenGenerator.generateToken
 import io.agora.auikit.service.http.application.ApplicationInterface
 import io.agora.auikit.service.http.application.TokenGenerateReq
 import io.agora.auikit.service.http.application.TokenGenerateResp
 import io.agora.auikit.service.imp.AUIRoomManagerImplRespResp
 import io.agora.auikit.service.ktv.KTVApi
 import io.agora.auikit.service.rtm.AUIRtmErrorRespObserver
+import io.agora.auikit.utils.AUILogger
 import io.agora.rtc2.RtcEngine
 import io.agora.rtc2.RtcEngineEx
 import io.agora.rtm2.RtmClient
@@ -41,6 +42,7 @@ object AUIVoiceRoomUikit {
      *      当外部传入时在release时不会销毁
      */
     fun init(
+        config: AUICommonConfig,
         ktvApi: KTVApi? = null,
         rtcEngineEx: RtcEngineEx? = null,
         rtmClient: RtmClient? = null
@@ -48,6 +50,9 @@ object AUIVoiceRoomUikit {
         if (mRoomManager != null) {
             throw initedException
         }
+        AUIRoomContext.shared().commonConfig = config
+        HttpManager.setBaseURL(config.host)
+        AUILogger.initLogger(AUILogger.Config(config.context, "Voice"))
 
         mKTVApi = ktvApi
 
@@ -141,34 +146,41 @@ object AUIVoiceRoomUikit {
      */
     fun launchRoom(
         roomInfo: AUIRoomInfo,
-        config: AUIRoomConfig,
         voiceRoom:AUIVoiceRoomView,
         eventHandler: RoomEventHandler? = null,
     ) {
         RtcEngine.destroy()
-        AUIRoomContext.shared().roomConfigMap[roomInfo.roomId] = config
-        val roomManager = mRoomManager ?: AUIRoomManagerImplRespResp(AUIRoomContext.shared().commonConfig, null)
-        val roomService = AUIVoiceRoomService(
-            mRtcEngineEx,
-            mKTVApi,
-            roomManager,
-            config,
-            roomInfo
-        )
+        generateToken(roomInfo.roomId,
+            onSuccess = {config ->
+                AUIRoomContext.shared().roomConfigMap[roomInfo.roomId] = config
+                val roomManager = mRoomManager ?: AUIRoomManagerImplRespResp(AUIRoomContext.shared().commonConfig, null)
+                val roomService = AUIVoiceRoomService(
+                    mRtcEngineEx,
+                    mKTVApi,
+                    roomManager,
+                    config,
+                    roomInfo
+                )
 
-        mService = roomService
-        voiceRoom.bindService(roomService)
+                mService = roomService
+                voiceRoom.bindService(roomService)
 
-        val observer = AUIRtmErrorRespObserverImp(roomInfo.roomId)
-        mErrorObservers.add(observer)
-        mRoomManager?.rtmManager?.proxy?.registerErrorRespObserver(observer)
-        eventHandler?.onRoomLaunchSuccess?.invoke(roomService)
+                val observer = AUIRtmErrorRespObserverImp(roomInfo.roomId)
+                mErrorObservers.add(observer)
+                mRoomManager?.rtmManager?.proxy?.registerErrorRespObserver(observer)
+                eventHandler?.onRoomLaunchSuccess?.invoke(roomService)
+            },
+            onFailure = {
+                eventHandler?.onRoomLaunchFailure?.invoke(ErrorCode.ROOM_TOKEN_GENERATE_FAILED)
+            })
+
     }
 
     enum class ErrorCode(val value: Int, val message: String) {
         RTM_LOGIN_FAILURE(100, "Rtm login failed!"),
         ROOM_PERMISSIONS_LEAK(101, "The room leak required permissions!"),
         ROOM_DESTROYED(102, "The room has been destroyed!"),
+        ROOM_TOKEN_GENERATE_FAILED(103, "The room token config generate failed!"),
     }
 
     data class RoomEventHandler(

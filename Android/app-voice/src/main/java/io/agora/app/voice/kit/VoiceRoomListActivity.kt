@@ -18,11 +18,13 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import io.agora.app.voice.BuildConfig
 import io.agora.app.voice.R
 import io.agora.app.voice.databinding.VoiceRoomListActivityBinding
 import io.agora.app.voice.databinding.VoiceRoomListItemBinding
 import io.agora.asceneskit.voice.AUIVoiceRoomUikit
 import io.agora.asceneskit.voice.VoiceRoomActivity
+import io.agora.auikit.model.AUICommonConfig
 import io.agora.auikit.model.AUICreateRoomInfo
 import io.agora.auikit.model.AUIRoomInfo
 import io.agora.auikit.ui.basic.AUIAlertDialog
@@ -124,7 +126,15 @@ class VoiceRoomListActivity: AppCompatActivity() {
 
     private fun initService() {
         // init AUiKit
+        val config = AUICommonConfig()
+        config.context = applicationContext
+        config.userId = Random().nextInt(99999999).toString()
+        config.userName = randomUserName()
+        config.userAvatar = randomAvatar()
+        config.host = BuildConfig.SERVER_HOST
+
         AUIVoiceRoomUikit.init(
+            config,
             rtmClient = null, // option
             rtcEngineEx = null, // option
             ktvApi = null// option
@@ -284,4 +294,34 @@ class VoiceRoomListActivity: AppCompatActivity() {
         }
     }
 
+
+    private fun randomAvatar(): String {
+        val randomValue = Random().nextInt(8) + 1
+        return "https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/sample_avatar/sample_avatar_${randomValue}.png"
+    }
+
+    private fun randomUserName(): String {
+        val userNames = arrayListOf(
+            "安迪",
+            "路易",
+            "汤姆",
+            "杰瑞",
+            "杰森",
+            "布朗",
+            "吉姆",
+            "露西",
+            "莉莉",
+            "韩梅梅",
+            "李雷",
+            "张三",
+            "李四",
+            "小红",
+            "小明",
+            "小刚",
+            "小霞",
+            "小智",
+        )
+        val randomValue = Random().nextInt(userNames.size) + 1
+        return userNames[randomValue % userNames.size]
+    }
 }
