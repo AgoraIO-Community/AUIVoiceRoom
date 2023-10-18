@@ -69,7 +69,7 @@ public class VoiceChatUIKit: NSObject {
                 completion(NSError(domain: "VoiceChatUIKit Error", code: -1, userInfo: [ NSLocalizedDescriptionKey : "token generate fail!"]))
                 return
             }
-            AUIRoomContext.shared.commonConfig?.appId = appId
+            AUIRoomContext.shared.appId = appId
             let service = AUIVoiceChatRoomService(rtcEngine: rtcEngine,
                                                   roomManager: roomManager,
                                                   roomConfig: roomConfig,
