@@ -212,7 +212,7 @@ class VoiceRoomActivity : AppCompatActivity(), IAUIRoomManager.AUIRoomManagerRes
 
     private fun shutDownRoom() {
         AUILogger.logger().d("VoiceRoomActivity", "shutDownRoom ...")
-        roomInfo.roomId.let { roomId ->
+        roomInfo.roomId?.let { roomId ->
             AUIVoiceRoomUikit.destroyRoom(roomId)
             AUIVoiceRoomUikit.unRegisterRespObserver(this@VoiceRoomActivity)
         }
