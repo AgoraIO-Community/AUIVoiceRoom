@@ -6,9 +6,8 @@ import io.agora.auikit.model.AUIRoomContext
 import io.agora.auikit.model.AUIRoomInfo
 import io.agora.auikit.service.IAUIRoomManager
 import io.agora.auikit.service.callback.AUIException
-import io.agora.auikit.service.imp.AUIRoomManagerImpl
+import io.agora.auikit.service.imp.AUIRoomManagerImplRespResp
 import io.agora.auikit.service.ktv.KTVApi
-import io.agora.auikit.service.rtm.AUIRtmErrorProxyDelegate
 import io.agora.rtc2.RtcEngine
 import io.agora.rtc2.RtcEngineEx
 import io.agora.rtm2.RtmClient
@@ -19,7 +18,7 @@ object AUIVoiceRoomUikit {
     private val initedException =
         RuntimeException("The VoiceServiceManager has been initialized!")
 
-    private var mRoomManager: AUIRoomManagerImpl? = null
+    private var mRoomManager: AUIRoomManagerImplRespResp? = null
     private var shouldReleaseRtc = true
     private var mRtcEngineEx: RtcEngineEx? = null
     private var mKTVApi: KTVApi? = null
@@ -47,7 +46,7 @@ object AUIVoiceRoomUikit {
             shouldReleaseRtc = false
         }
 
-        mRoomManager = AUIRoomManagerImpl(AUIRoomContext.shared().commonConfig, rtmClient)
+        mRoomManager = AUIRoomManagerImplRespResp(AUIRoomContext.shared().commonConfig, rtmClient)
 
     }
 
@@ -69,20 +68,12 @@ object AUIVoiceRoomUikit {
         mService = null
     }
 
-    fun subscribeError(roomId: String, delegate: AUIRtmErrorProxyDelegate) {
-        mRoomManager?.rtmManager?.proxy?.subscribeError(roomId, delegate)
+    fun registerRespObserver(delegate: IAUIRoomManager.AUIRoomManagerRespObserver) {
+        mRoomManager?.registerRespObserver(delegate)
     }
 
-    fun unsubscribeError(roomId: String, delegate: AUIRtmErrorProxyDelegate) {
-        mRoomManager?.rtmManager?.proxy?.unsubscribeError(roomId, delegate)
-    }
-
-    fun bindRespDelegate(delegate: IAUIRoomManager.AUIRoomManagerRespDelegate) {
-        mRoomManager?.bindRespDelegate(delegate)
-    }
-
-    fun unbindRespDelegate(delegate: IAUIRoomManager.AUIRoomManagerRespDelegate) {
-        mRoomManager?.unbindRespDelegate(delegate)
+    fun unRegisterRespObserver(delegate: IAUIRoomManager.AUIRoomManagerRespObserver) {
+        mRoomManager?.unRegisterRespObserver(delegate)
     }
 
     /**
@@ -114,7 +105,7 @@ object AUIVoiceRoomUikit {
         success: (AUIRoomInfo) -> Unit,
         failure: (AUIException) -> Unit
     ) {
-        val roomManager = mRoomManager ?: AUIRoomManagerImpl(AUIRoomContext.shared().commonConfig, null)
+        val roomManager = mRoomManager ?: AUIRoomManagerImplRespResp(AUIRoomContext.shared().commonConfig, null)
         roomManager.createRoom(
             createRoomInfo
         ) { error, roomInfo ->
@@ -138,7 +129,7 @@ object AUIVoiceRoomUikit {
     ) {
         RtcEngine.destroy()
         AUIRoomContext.shared().roomConfigMap[roomInfo.roomId] = config
-        val roomManager = mRoomManager ?: AUIRoomManagerImpl(AUIRoomContext.shared().commonConfig, null)
+        val roomManager = mRoomManager ?: AUIRoomManagerImplRespResp(AUIRoomContext.shared().commonConfig, null)
         val roomService = AUIVoiceRoomService(
             mRtcEngineEx,
             mKTVApi,

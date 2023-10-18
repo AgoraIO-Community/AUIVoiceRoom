@@ -17,10 +17,10 @@ class VoiceApplication : Application() {
 
         val config = AUICommonConfig()
         config.context = applicationContext
-        config.appId = BuildConfig.AGORA_APP_ID
         config.userId = mUserId
         config.userName = randomUserName()
         config.userAvatar = randomAvatar()
+        config.host = BuildConfig.SERVER_HOST
 
         AUIRoomContext.shared().commonConfig = config
 

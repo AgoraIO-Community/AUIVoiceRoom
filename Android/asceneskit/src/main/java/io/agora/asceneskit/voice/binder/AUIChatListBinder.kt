@@ -16,7 +16,7 @@ class AUIChatListBinder constructor(
     private val chatBottomBar:IAUIChatBottomBarView,
     private val chatManager: AUIChatManager,
     private val imManagerService:IAUIIMManagerService,
-): IAUIBindable, AUIChatListItemClickListener, IAUIIMManagerService.AUIIMManagerRespDelegate {
+): IAUIBindable, AUIChatListItemClickListener, IAUIIMManagerService.AUIIMManagerRespObserver {
 
     init {
         (chatList as? AUIChatListView)?.setOwnerId(roomInfo.roomOwner?.userId ?: "")
@@ -24,12 +24,12 @@ class AUIChatListBinder constructor(
 
     override fun bind() {
         chatList.setChatListItemClickListener(this)
-        imManagerService.bindRespDelegate(this)
+        imManagerService.registerRespObserver(this)
     }
 
     override fun unBind() {
         chatList.setChatListItemClickListener(null)
-        imManagerService.unbindRespDelegate(this)
+        imManagerService.unRegisterRespObserver(this)
     }
 
     override fun onChatListViewClickListener() {

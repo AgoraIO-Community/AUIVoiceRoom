@@ -28,9 +28,9 @@ class AUIChatBottomBarBinder constructor(
     private val event: AUIChatBottomBarEventDelegate?
 ) : IAUIBindable,
     AUIMenuItemClickListener,
-    IAUIUserService.AUIUserRespDelegate,
-    IAUIMicSeatService.AUIMicSeatRespDelegate,
-    IAUIInvitationService.AUIInvitationRespDelegate {
+    IAUIUserService.AUIUserRespObserver,
+    IAUIMicSeatService.AUIMicSeatRespObserver,
+    IAUIInvitationService.AUIInvitationRespObserver {
 
     private val roomInfo = voiceService.getRoomInfo()
     private val userService = voiceService.getUserService()
@@ -56,18 +56,18 @@ class AUIChatBottomBarBinder constructor(
     }
 
     override fun bind() {
-        userService.bindRespDelegate(this)
-        micSeatsService.bindRespDelegate(this)
-        invitationService.bindRespDelegate(this)
+        userService.registerRespObserver(this)
+        micSeatsService.registerRespObserver(this)
+        invitationService.registerRespObserver(this)
 
         chatBottomBarView.setMenuItemClickListener(this)
         chatBottomBarView.setSoftKeyListener()
     }
 
     override fun unBind() {
-        userService.unbindRespDelegate(this)
-        micSeatsService.unbindRespDelegate(this)
-        invitationService.unbindRespDelegate(this)
+        userService.unRegisterRespObserver(this)
+        micSeatsService.unRegisterRespObserver(this)
+        invitationService.unRegisterRespObserver(this)
 
         chatBottomBarView.setMenuItemClickListener(null)
     }

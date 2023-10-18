@@ -18,14 +18,12 @@ import io.agora.auikit.service.http.HttpManager
 import io.agora.auikit.service.http.application.ApplicationInterface
 import io.agora.auikit.service.http.application.TokenGenerateReq
 import io.agora.auikit.service.http.application.TokenGenerateResp
-import io.agora.auikit.service.rtm.AUIRtmErrorProxyDelegate
 import io.agora.auikit.ui.basic.AUIAlertDialog
 import io.agora.auikit.utils.AUILogger
 import io.agora.auikit.utils.PermissionHelp
 import retrofit2.Response
 
-class VoiceRoomActivity : AppCompatActivity(), AUIRtmErrorProxyDelegate,
-    IAUIRoomManager.AUIRoomManagerRespDelegate {
+class VoiceRoomActivity : AppCompatActivity(), IAUIRoomManager.AUIRoomManagerRespObserver {
 
     private val mViewBinding by lazy { VoiceRoomActivityBinding.inflate(LayoutInflater.from(this)) }
     private val mPermissionHelp = PermissionHelp(this)
@@ -92,8 +90,7 @@ class VoiceRoomActivity : AppCompatActivity(), AUIRtmErrorProxyDelegate,
 
                                 }
                             ))
-                        AUIVoiceRoomUikit.subscribeError(it.roomId, this)
-                        AUIVoiceRoomUikit.bindRespDelegate(this)
+                        AUIVoiceRoomUikit.registerRespObserver(this)
                     }
                 }
             },
@@ -148,7 +145,7 @@ class VoiceRoomActivity : AppCompatActivity(), AUIRtmErrorProxyDelegate,
                     if (rspObj != null) {
                         config.rtcToken = rspObj.rtcToken
                         config.rtmToken = rspObj.rtmToken
-                        AUIRoomContext.shared()?.commonConfig?.appId = rspObj.appId
+                        AUIRoomContext.shared()?.appId = rspObj.appId
                         AUILogger.logger().d("VoiceRoomActivity", "generateToken update rtcToken/rtmToken...")
                     }
                     AUILogger.logger().d("VoiceRoomActivity", "generateToken success...")
@@ -193,13 +190,6 @@ class VoiceRoomActivity : AppCompatActivity(), AUIRtmErrorProxyDelegate,
             })
     }
 
-    override fun onTokenPrivilegeWillExpire(channelName: String?) {
-        AUILogger.logger().d("VoiceRoomActivity", "onTokenPrivilegeWillExpire $channelName ...")
-        generateToken(channelName, onSuccess = {
-            service?.renew(it)
-        })
-    }
-
     private fun onUserLeaveRoom() {
         val owner = (roomInfo.roomOwner?.userId == AUIRoomContext.shared().currentUserInfo.userId)
         AUIAlertDialog(this).apply {
@@ -224,8 +214,7 @@ class VoiceRoomActivity : AppCompatActivity(), AUIRtmErrorProxyDelegate,
         AUILogger.logger().d("VoiceRoomActivity", "shutDownRoom ...")
         roomInfo.roomId.let { roomId ->
             AUIVoiceRoomUikit.destroyRoom(roomId)
-            AUIVoiceRoomUikit.unsubscribeError(roomId, this@VoiceRoomActivity)
-            AUIVoiceRoomUikit.unbindRespDelegate(this@VoiceRoomActivity)
+            AUIVoiceRoomUikit.unRegisterRespObserver(this@VoiceRoomActivity)
         }
         finish()
     }
