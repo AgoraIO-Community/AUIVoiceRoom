@@ -1,4 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <application>
+
+        <activity
+            android:name="io.agora.asceneskit.voice.VoiceRoomActivity"
+            android:windowSoftInputMode="adjustNothing"
+            android:screenOrientation="portrait"/>
+
+    </application>
 
 </manifest>
