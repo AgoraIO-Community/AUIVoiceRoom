@@ -1,4 +1,4 @@
-# UIKit Karaoke Scene Backend Service
+# UIKit VoiceChat Scene Backend Service
 
 English | [中文](README_zh.md)
 

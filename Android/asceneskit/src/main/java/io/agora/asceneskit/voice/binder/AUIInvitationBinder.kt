@@ -11,7 +11,7 @@ import io.agora.auikit.model.AUIUserThumbnailInfo
 import io.agora.auikit.service.IAUIInvitationService
 import io.agora.auikit.service.IAUIMicSeatService
 import io.agora.auikit.service.IAUIUserService
-import io.agora.auikit.service.imp.AUIInvitationServiceImpl
+import io.agora.auikit.service.imp.AUIInvitationServiceImplResp
 import io.agora.auikit.ui.action.AUIActionUserInfo
 import io.agora.auikit.ui.action.AUIActionUserInfoList
 import io.agora.auikit.ui.action.impI.AUIApplyDialog
@@ -24,11 +24,11 @@ class AUIInvitationBinder constructor(
     activity: FragmentActivity?,
     voiceService:AUIVoiceRoomService,
 ):
-    IAUIBindable, IAUIInvitationService.AUIInvitationRespDelegate,
-    IAUIUserService.AUIUserRespDelegate, IAUIMicSeatService.AUIMicSeatRespDelegate {
+    IAUIBindable, IAUIInvitationService.AUIInvitationRespObserver,
+    IAUIUserService.AUIUserRespObserver, IAUIMicSeatService.AUIMicSeatRespObserver {
     private var activity: FragmentActivity?
     private var mVoiceService:AUIVoiceRoomService
-    private var invitationImpl:AUIInvitationServiceImpl
+    private var invitationImpl:AUIInvitationServiceImplResp
     private var invitationService:IAUIInvitationService
     private val applyList = mutableListOf<AUIUserInfo?>()
     private var applyDialog:AUIApplyDialog?=null
@@ -43,7 +43,7 @@ class AUIInvitationBinder constructor(
     init {
         this.mVoiceService = voiceService
         this.invitationService = voiceService.getInvitationService()
-        this.invitationImpl = invitationService as AUIInvitationServiceImpl
+        this.invitationImpl = invitationService as AUIInvitationServiceImplResp
         this.activity = activity
         this.userService = voiceService.getUserService()
 
@@ -57,15 +57,15 @@ class AUIInvitationBinder constructor(
     }
 
     override fun bind() {
-        invitationImpl.bindRespDelegate(this)
-        mVoiceService.getUserService().bindRespDelegate(this)
-        mVoiceService.getMicSeatsService().bindRespDelegate(this)
+        invitationImpl.registerRespObserver(this)
+        mVoiceService.getUserService().registerRespObserver(this)
+        mVoiceService.getMicSeatsService().registerRespObserver(this)
     }
 
     override fun unBind() {
-        invitationImpl.unbindRespDelegate(this)
-        mVoiceService.getUserService().unbindRespDelegate(this)
-        mVoiceService.getMicSeatsService().unbindRespDelegate(this)
+        invitationImpl.unRegisterRespObserver(this)
+        mVoiceService.getUserService().unRegisterRespObserver(this)
+        mVoiceService.getMicSeatsService().unRegisterRespObserver(this)
     }
 
     // 显示申请列表

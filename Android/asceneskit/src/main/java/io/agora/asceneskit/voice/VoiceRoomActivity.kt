@@ -8,24 +8,15 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import io.agora.asceneskit.R
 import io.agora.asceneskit.databinding.VoiceRoomActivityBinding
-import io.agora.auikit.model.AUIRoomConfig
 import io.agora.auikit.model.AUIRoomContext
 import io.agora.auikit.model.AUIRoomInfo
 import io.agora.auikit.model.AUIUserThumbnailInfo
 import io.agora.auikit.service.IAUIRoomManager
-import io.agora.auikit.service.http.CommonResp
-import io.agora.auikit.service.http.HttpManager
-import io.agora.auikit.service.http.application.ApplicationInterface
-import io.agora.auikit.service.http.application.TokenGenerateReq
-import io.agora.auikit.service.http.application.TokenGenerateResp
-import io.agora.auikit.service.rtm.AUIRtmErrorProxyDelegate
 import io.agora.auikit.ui.basic.AUIAlertDialog
 import io.agora.auikit.utils.AUILogger
 import io.agora.auikit.utils.PermissionHelp
-import retrofit2.Response
 
-class VoiceRoomActivity : AppCompatActivity(), AUIRtmErrorProxyDelegate,
-    IAUIRoomManager.AUIRoomManagerRespDelegate {
+class VoiceRoomActivity : AppCompatActivity(), IAUIRoomManager.AUIRoomManagerRespObserver {
 
     private val mViewBinding by lazy { VoiceRoomActivityBinding.inflate(LayoutInflater.from(this)) }
     private val mPermissionHelp = PermissionHelp(this)
@@ -79,22 +70,18 @@ class VoiceRoomActivity : AppCompatActivity(), AUIRtmErrorProxyDelegate,
         mPermissionHelp.checkMicPerm(
             {
                 roomInfo.let {
-                    generateToken(roomInfo.roomId) { config ->
-                        AUIVoiceRoomUikit.launchRoom(
-                            it,
-                            config,
-                            mViewBinding.VoiceRoomView,
-                            AUIVoiceRoomUikit.RoomEventHandler(
-                                onRoomLaunchSuccess = {
-                                    this.service = it
-                                },
-                                onRoomLaunchFailure = {
+                    AUIVoiceRoomUikit.launchRoom(
+                        it,
+                        mViewBinding.VoiceRoomView,
+                        AUIVoiceRoomUikit.RoomEventHandler(
+                            onRoomLaunchSuccess = {
+                                this.service = it
+                            },
+                            onRoomLaunchFailure = {
 
-                                }
-                            ))
-                        AUIVoiceRoomUikit.subscribeError(it.roomId, this)
-                        AUIVoiceRoomUikit.bindRespDelegate(this)
-                    }
+                            }
+                        ))
+                    AUIVoiceRoomUikit.registerRespObserver(this)
                 }
             },
             {
@@ -128,78 +115,6 @@ class VoiceRoomActivity : AppCompatActivity(), AUIRtmErrorProxyDelegate,
         onUserLeaveRoom()
     }
 
-    private fun generateToken(roomId:String?,onSuccess: (AUIRoomConfig) -> Unit) {
-        val config = AUIRoomConfig( roomId ?: "")
-        var response = 3
-        val trySuccess = {
-            response -= 1;
-            if (response == 0) {
-                onSuccess.invoke(config)
-            }
-        }
-        val userId = AUIRoomContext.shared().currentUserInfo.userId
-        AUILogger.logger().d("VoiceRoomActivity", "generateToken start channelName=${config.channelName} userId=$userId...")
-        HttpManager
-            .getService(ApplicationInterface::class.java)
-            .tokenGenerate(TokenGenerateReq(config.channelName, userId))
-            .enqueue(object : retrofit2.Callback<CommonResp<TokenGenerateResp>> {
-                override fun onResponse(call: retrofit2.Call<CommonResp<TokenGenerateResp>>, response: Response<CommonResp<TokenGenerateResp>>) {
-                    val rspObj = response.body()?.data
-                    if (rspObj != null) {
-                        config.rtcToken = rspObj.rtcToken
-                        config.rtmToken = rspObj.rtmToken
-                        AUIRoomContext.shared()?.commonConfig?.appId = rspObj.appId
-                        AUILogger.logger().d("VoiceRoomActivity", "generateToken update rtcToken/rtmToken...")
-                    }
-                    AUILogger.logger().d("VoiceRoomActivity", "generateToken success...")
-                    trySuccess.invoke()
-                }
-                override fun onFailure(call: retrofit2.Call<CommonResp<TokenGenerateResp>>, t: Throwable) {
-                    AUILogger.logger().e("VoiceRoomActivity", "generateToken onFailure ${t.message}...")
-                    trySuccess.invoke()
-                }
-            })
-        HttpManager
-            .getService(ApplicationInterface::class.java)
-            .tokenGenerate(TokenGenerateReq(config.rtcChannelName, userId))
-            .enqueue(object : retrofit2.Callback<CommonResp<TokenGenerateResp>> {
-                override fun onResponse(call: retrofit2.Call<CommonResp<TokenGenerateResp>>, response: Response<CommonResp<TokenGenerateResp>>) {
-                    val rspObj = response.body()?.data
-                    if (rspObj != null) {
-                        config.rtcRtcToken = rspObj.rtcToken
-                        config.rtcRtmToken = rspObj.rtmToken
-                    }
-                    trySuccess.invoke()
-                }
-                override fun onFailure(call: retrofit2.Call<CommonResp<TokenGenerateResp>>, t: Throwable) {
-                    trySuccess.invoke()
-                }
-            })
-        HttpManager
-            .getService(ApplicationInterface::class.java)
-            .tokenGenerate(TokenGenerateReq(config.rtcChorusChannelName, userId))
-            .enqueue(object : retrofit2.Callback<CommonResp<TokenGenerateResp>> {
-                override fun onResponse(call: retrofit2.Call<CommonResp<TokenGenerateResp>>, response: Response<CommonResp<TokenGenerateResp>>) {
-                    val rspObj = response.body()?.data
-                    if (rspObj != null) {
-                        // rtcChorusRtcToken007
-                        config.rtcChorusRtcToken = rspObj.rtcToken
-                    }
-                    trySuccess.invoke()
-                }
-                override fun onFailure(call: retrofit2.Call<CommonResp<TokenGenerateResp>>, t: Throwable) {
-                    trySuccess.invoke()
-                }
-            })
-    }
-
-    override fun onTokenPrivilegeWillExpire(channelName: String?) {
-        AUILogger.logger().d("VoiceRoomActivity", "onTokenPrivilegeWillExpire $channelName ...")
-        generateToken(channelName, onSuccess = {
-            service?.renew(it)
-        })
-    }
-
     private fun onUserLeaveRoom() {
         val owner = (roomInfo.roomOwner?.userId == AUIRoomContext.shared().currentUserInfo.userId)
         AUIAlertDialog(this).apply {
@@ -222,10 +137,9 @@ class VoiceRoomActivity : AppCompatActivity(), AUIRtmErrorProxyDelegate,
 
     private fun shutDownRoom() {
         AUILogger.logger().d("VoiceRoomActivity", "shutDownRoom ...")
-        roomInfo.roomId.let { roomId ->
+        roomInfo.roomId?.let { roomId ->
             AUIVoiceRoomUikit.destroyRoom(roomId)
-            AUIVoiceRoomUikit.unsubscribeError(roomId, this@VoiceRoomActivity)
-            AUIVoiceRoomUikit.unbindRespDelegate(this@VoiceRoomActivity)
+            AUIVoiceRoomUikit.unRegisterRespObserver(this@VoiceRoomActivity)
         }
         finish()
     }

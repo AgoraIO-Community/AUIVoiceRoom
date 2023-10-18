@@ -168,7 +168,7 @@ open class AUIVoiceChatRoomService: NSObject {
 extension AUIVoiceChatRoomService {
     private func _rtcEngineConfig(commonConfig: AUICommonConfig) -> AgoraRtcEngineConfig {
        let config = AgoraRtcEngineConfig()
-        config.appId = commonConfig.appId
+        config.appId = AUIRoomContext.shared.appId
         config.channelProfile = .liveBroadcasting
         config.audioScenario = .gameStreaming
         config.areaCode = .global

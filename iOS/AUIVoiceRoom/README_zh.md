@@ -15,7 +15,7 @@
 ├─ AUiScenesKit                // 场景业务组装模块，目前只包含VoiceRoom
 │  ├─ AUIVoiceRoomRoomView       // VoiceRoom房间容器View，用于拼接各个基础组件以及基础组件与Service的绑定
 │  ├─ AUIVoiceRoomRoomService    // VoiceRoom房间Service，用于创建各个基础Service以及RTC/RTM/IM等的初始化
-│	 └─ Binder                   // 把UI Components和Service关联起来的业务绑定模块
+│  └─ Binder                   // 把UI Components和Service关联起来的业务绑定模块
 └─ AUIKit                      // 包含基础组件和基础服务
    ├─ Service                  // 相关基础组件服务类，包括麦位以及申请邀请上麦、点歌器、聊天服务、送礼服务、用户管理、合唱等
    ├─ UI Widgets               // 基础UI组件，支持通过配置文件进行一键换肤
@@ -37,18 +37,13 @@
 
 ### 2. 项目运行
 - 克隆或者直接下载项目源码
-- 打开终端，在根目录执行以下命令
-```
-git submodule init
-git submodule update
-```
 - 在项目的[KeyCenter.swift](AUIVoiceRoom/KeyCenter.swift) 中填入步骤1部署的HostUrl
-```
-static var HostUrl: String = <#Your HostUrl#>
-```
-如果暂无意部署后端服务，可以使用KeyCenter.swift里默认的域名
+  ```
+  static var HostUrl: String = <#Your HostUrl#>
+  ```
+  如果暂无意部署后端服务，可以使用KeyCenter.swift里默认的域名
 
-- 打开终端，进入到[Podfile](Podfile)目录下，执行`pod install`命令
+- 打开终端，进入到[Podfile](Podfile)目录下，执行`pod update`命令
 
 - 最后打开AUIVoiceRoom.xcworkspace，运行即可开始您的体验
 
