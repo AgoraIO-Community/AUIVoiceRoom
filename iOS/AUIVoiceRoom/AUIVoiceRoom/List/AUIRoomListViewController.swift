@@ -117,7 +117,7 @@ final class AUIRoomListViewController: UIViewController {
         self.roomList = []
         self.collectionView.reloadData()
         self.collectionView.mj_footer = nil
-        VoiceChatUIKit.shared.getRoomInfoList(lastCreateTime: nil, pageSize: kListCountPerPage, callback: {[weak self] error, list in
+        VoiceChatUIKit.shared.getRoomInfoList(lastCreateTime: 0, pageSize: kListCountPerPage, callback: {[weak self] error, list in
             guard let self = self else {return}
             defer {
                 self.collectionView.mj_header?.endRefreshing()
@@ -146,7 +146,7 @@ final class AUIRoomListViewController: UIViewController {
     
     func onLoadMoreAction() {
         let lastCreateTime = roomList.last?.createTime
-        VoiceChatUIKit.shared.getRoomInfoList(lastCreateTime: lastCreateTime, pageSize: kListCountPerPage, callback: {[weak self] error, list in
+        VoiceChatUIKit.shared.getRoomInfoList(lastCreateTime: lastCreateTime ?? 0, pageSize: kListCountPerPage, callback: {[weak self] error, list in
             guard let self = self else {return}
             self.roomList += list ?? []
             self.collectionView.reloadData()

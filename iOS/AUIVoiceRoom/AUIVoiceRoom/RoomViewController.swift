@@ -67,7 +67,7 @@ class RoomViewController: UIViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        VoiceChatUIKit.shared.destoryRoom(roomId: roomInfo?.roomId ?? "")
+        VoiceChatUIKit.shared.destroyRoom(roomId: roomInfo?.roomId ?? "")
         VoiceChatUIKit.shared.unbindRespDelegate(delegate: self)
         AUIToast.hidden(delay:0)
         AUICommonDialog.hidden()

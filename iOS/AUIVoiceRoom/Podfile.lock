@@ -4,12 +4,12 @@ PODS:
   - AgoraRtcEngine_Special_iOS (4.1.1.17)
   - AgoraRtm_iOS (2.1.4)
   - Alamofire (5.8.0)
-  - AScenesKit (0.3.2):
-    - AUIKitCore (= 0.5.2)
+  - AScenesKit (0.3.3):
+    - AUIKitCore (= 0.5.3)
     - libpag
-  - AUIKitCore (0.5.2):
-    - AUIKitCore/All (= 0.5.2)
-  - AUIKitCore/All (0.5.2):
+  - AUIKitCore (0.5.3):
+    - AUIKitCore/All (= 0.5.3)
+  - AUIKitCore/All (0.5.3):
     - Agora_Chat_iOS
     - AgoraLyricsScore
     - AgoraRtcEngine_Special_iOS (~> 4.1.1.1)
@@ -86,8 +86,8 @@ SPEC CHECKSUMS:
   AgoraRtcEngine_Special_iOS: 5b3106aad2d76959393cc6497affe83dbdc926a0
   AgoraRtm_iOS: 11b767ee81a7202dcf09e045cd2d359b5abbc965
   Alamofire: 0e92e751b3e9e66d7982db43919d01f313b8eb91
-  AScenesKit: 19ff1ce8265abc330544acd638a653211526998c
-  AUIKitCore: 388fb75a4cd26af9c46dac9b651457dd69e906a7
+  AScenesKit: 3792546aa93e284c96383827fbe1878935b6248c
+  AUIKitCore: fc5df86f26781fe6b76b4ced98f94da3872cf815
   DoraemonKit: 7448814a80d9ca56bc8db9105c464b7ec2e62623
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   GCDWebServer: 2c156a56c8226e2d5c0c3f208a3621ccffbe3ce4

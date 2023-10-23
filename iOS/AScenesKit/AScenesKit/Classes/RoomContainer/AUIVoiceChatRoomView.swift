@@ -539,7 +539,7 @@ extension AUIVoiceChatRoomView: AUIMicSeatViewEventsDelegate {
         }
         AUICommonDialog.hidden()
         AUIToast.hidden()
-        service.destory()
+        service.destroy()
         AUIRoomContext.shared.clean(channelName: service.channelName)
 //        self.didClickOffButton()
     }
