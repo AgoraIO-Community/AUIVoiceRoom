@@ -54,7 +54,6 @@ DEPENDENCIES:
   - AgoraLyricsScore (= 1.1.1-beta-3)
   - AgoraRtcEngine_Special_iOS (= 4.1.1.17)
   - AScenesKit (from `../AScenesKit`)
-  - AUIKitCore (from `../../../AUIKit`)
   - DoraemonKit
 
 SPEC REPOS:
@@ -64,6 +63,7 @@ SPEC REPOS:
     - AgoraRtcEngine_Special_iOS
     - AgoraRtm_iOS
     - Alamofire
+    - AUIKitCore
     - DoraemonKit
     - FMDB
     - GCDWebServer
@@ -79,8 +79,6 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   AScenesKit:
     :path: "../AScenesKit"
-  AUIKitCore:
-    :path: "../../../AUIKit"
 
 SPEC CHECKSUMS:
   Agora_Chat_iOS: e11aa75b290e5e8a6b90c1c73642ac1172a71b97
@@ -102,6 +100,6 @@ SPEC CHECKSUMS:
   YYModel: 2a7fdd96aaa4b86a824e26d0c517de8928c04b30
   Zip: b3fef584b147b6e582b2256a9815c897d60ddc67
 
-PODFILE CHECKSUM: 7b3847c94ac933847ae73e3a1a6cf59079576da2
+PODFILE CHECKSUM: 71cb9b9f0481f44cad03daf8cbd4033652ce2c52
 
 COCOAPODS: 1.12.1
