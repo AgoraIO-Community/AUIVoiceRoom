@@ -117,7 +117,7 @@ open class AUIVoiceChatRoomService: NSObject {
         aui_error("leaveRtcChannel", tag: "AUIVoiceChatRoomService")
     }
     
-    func destory() {
+    func destroy() {
         leaveRtcChannel()
     }
     

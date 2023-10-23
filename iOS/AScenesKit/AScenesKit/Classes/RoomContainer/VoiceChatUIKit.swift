@@ -11,6 +11,7 @@ import AUIKitCore
 import AgoraRtcKit
 import AgoraRtmKit
 
+@objcMembers
 public class VoiceChatUIKit: NSObject {
     public static let shared: VoiceChatUIKit = VoiceChatUIKit()
     public var roomConfig: AUICommonConfig?
@@ -30,7 +31,7 @@ public class VoiceChatUIKit: NSObject {
         self.roomManager = AUIRoomManagerImpl(commonConfig: roomConfig, rtmClient: rtmClient)
     }
     
-    public func getRoomInfoList(lastCreateTime: Int64?, pageSize: Int, callback: @escaping AUIRoomListCallback) {
+    public func getRoomInfoList(lastCreateTime: Int64, pageSize: Int, callback: @escaping AUIRoomListCallback) {
         guard let roomManager = self.roomManager else {
             assert(false, "please invoke setup first")
             return
@@ -83,7 +84,7 @@ public class VoiceChatUIKit: NSObject {
         }
     }
     
-    public func destoryRoom(roomId: String) {
+    public func destroyRoom(roomId: String) {
 //        rtmClient?.logout()
         service = nil
     }
