@@ -1,6 +1,9 @@
 
 [English](CHANGELOG.md) | 中文
 
+## [0.3.3](https://github.com/AgoraIO-Community/AUIVoiceRoom/releases/tag/0.3.3)
+- [iOS]更新RTC SDK到最新版本
+
 ## [0.3.2](https://github.com/AgoraIO-Community/AUIVoiceRoom/releases/tag/0.3.2)
 - 升级AUIKit到0.5.2
 
