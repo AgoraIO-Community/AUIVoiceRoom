@@ -2,7 +2,7 @@
 
 *English | [中文](README_zh.md)
 
-This document mainly introduces how to quickly run through the AUIVoiceRoom example  and experience online VoiceRoom scenarios, including micseat service, invite&apply service, user service, chat service, gift service, etc. For a more detailed introduction, please refer to [AUIScenesKit](../AScenesKit/README.md) and [AUIKit](https://github.com/AgoraIO-Community/AUIKit/tree/main/Android)
+This document mainly introduces how to quickly run through the AUIVoiceRoom example  and experience online VoiceRoom scenarios, including micseat service, invite&apply service, user service, chat service, gift service, etc. For a more detailed introduction, please refer to [AUIKit](https://github.com/AgoraIO-Community/AUIKit/tree/main/Android)
 
 ## Architecture
 ![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/uikit_structure_chart_voicechat_0.2.0.png.png)
@@ -63,6 +63,10 @@ SERVER_HOST= （Domain name of the business server）
 > Agora Test Domain: https://service.agora.io/uikit-voiceroom
 
 - Run the project with Android Studio to begin your experience.
+
+
+## Quick Integration
+Please review [VoiceRoomUIKit](document/VoiceRoomUIKit.md)
 
 ## FAQ
 

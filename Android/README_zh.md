@@ -2,7 +2,7 @@
 
 *[English](README.md) | 中文*
 
-本文档主要介绍如何快速跑通 AUIVoiceRoom 示例工程，体验在线语聊房场景，包括麦位管理、用户管理、申请邀请管理、聊天管理、礼物管理等，更详细的介绍，请参考[AUIScenesKit](../AScenesKit/README_zh.md)和[AUIKit](https://github.com/AgoraIO-Community/AUIKit/blob/main/iOS/README_zh.md)
+本文档主要介绍如何快速跑通 AUIVoiceRoom 示例工程，体验在线语聊房场景，包括麦位管理、用户管理、申请邀请管理、聊天管理、礼物管理等，更详细的介绍，请参考[AUIKit](https://github.com/AgoraIO-Community/AUIKit/blob/main/iOS/README_zh.md)
 
 ## 架构图
 ![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/uikit_structure_chart_voicechat_0.2.0.png.png)
@@ -54,7 +54,6 @@ git submodule update
 
   ![图片](https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/github_readme/uikit/config_serverhost_android.png)
 
-``` 
 
 - 在项目的[**local.properties**](/local.properties)里配置业务服务器域名
 ```
@@ -65,6 +64,10 @@ SERVER_HOST== “Your SERVER_HOST”
 
 
 - 用 Android Studio 运行项目即可开始您的体验
+
+
+## 快速集成
+请查看[VoiceRoomUIKit](document/VoiceRoomUIKit_zh.md)
 
 ## 常见问题
 
