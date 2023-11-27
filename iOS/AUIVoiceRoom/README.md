@@ -49,6 +49,8 @@ This document mainly introduces how to quickly run through the AUIVoiceRoom exam
 
 - Finally, open AUIVoiceRoom. xcworkspace and run it to start your experience
 
+## Quick Integration
+Please review [VoiceRoomUIKit](../Document/VoiceRoomUIKit.md)
 
 ## FAQ
 

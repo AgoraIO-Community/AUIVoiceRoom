@@ -47,6 +47,9 @@
 
 - 最后打开AUIVoiceRoom.xcworkspace，运行即可开始您的体验
 
+## 快速集成
+请查看[VoiceRoomUIKit](../Document/VoiceRoomUIKit_zh.md)
+
 ## 常见问题
 
 - [常见问题](VoiceRoomFAQ_zh.md)
