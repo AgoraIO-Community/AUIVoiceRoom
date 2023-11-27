@@ -64,6 +64,10 @@ SERVER_HOST= （Domain name of the business server）
 
 - Run the project with Android Studio to begin your experience.
 
+
+## Quick Integration
+Please review [VoiceRoomUIKit](document/VoiceRoomUIKit.md)
+
 ## FAQ
 
 - [FAQ](VoiceRoomFAQ.md)

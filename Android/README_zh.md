@@ -54,7 +54,6 @@ git submodule update
 
   ![图片](https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/github_readme/uikit/config_serverhost_android.png)
 
-``` 
 
 - 在项目的[**local.properties**](/local.properties)里配置业务服务器域名
 ```
@@ -65,6 +64,10 @@ SERVER_HOST== “Your SERVER_HOST”
 
 
 - 用 Android Studio 运行项目即可开始您的体验
+
+
+## 快速集成
+请查看[VoiceRoomUIKit](document/VoiceRoomUIKit_zh.md)
 
 ## 常见问题
 
