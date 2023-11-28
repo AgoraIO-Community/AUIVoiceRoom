@@ -11,8 +11,7 @@ VoiceRoomUIKit 是一个语聊房场景组件，提供房间管理和拉起语�
 
 **将以下源码复制到自己的项目中：**
 
-- [AUIKit](../AUIKit)
-- [AScenesKit](../AScenesKit)
+- [asceneskit](../asceneskit)
 
 
 **在Setting.gradle文件中添加对AScenesKit和AUIKit的依赖**

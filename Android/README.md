@@ -42,11 +42,6 @@ This document mainly introduces how to quickly run through the AUIVoiceRoom exam
 
 ### 2. Running the Example
 - Clone or download  source code
-- Open the terminal and execute the following command in the root directory
-```
-git submodule init
-git submodule update
-```
 - Obtain Agora SDK
   Download [the rtc sdk with rtm 2.0](https://download.agora.io/null/Agora_Native_SDK_for_Android_rel.v4.1.1.30_49294_FULL_20230512_1606_264137.zip) and then unzip it to the directions belows:
   [AUIKit/Android/auikit/libs](../AUIKit/Android/auikit/libs) : agora-rtc-sdk.jar

@@ -12,8 +12,7 @@ VoiceRoomUIKit is a voice chat room scene component, which provides room managem
 
 **Copy the following source code into your own project：**
 
-- [AUIKit](../AUIKit)
-- [AScenesKit](../AScenesKit)
+- [asceneskit](../asceneskit)
 
 **Add dependencies on AScenesKit and AUIKit in the Setting.gradle file**
 

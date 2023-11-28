@@ -39,11 +39,6 @@
 
 ### 2. 项目运行
 - 克隆或者直接下载项目源码
-- 打开终端，在根目录执行以下命令
-```
-git submodule init
-git submodule update
-```
 
 - 获取声网sdk
   下载[包含RTM 2.0的RTC SDK最新版本](https://download.agora.io/null/Agora_Native_SDK_for_Android_rel.v4.1.1.30_49294_FULL_20230512_1606_264137.zip)并将文件解压到以下目录
