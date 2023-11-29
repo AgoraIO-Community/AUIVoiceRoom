@@ -28,7 +28,7 @@ AUIVoiceRoom 提供以下核心功能：
 
 
 ## Demo 体验
-  ![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/IMG_8055.PNG)  ![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/IMG_8056.PNG)  ![Alt](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/IMG_8057.PNG) 
+  ![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/IMG_8055.PNG?x-oss-process=image/resize,w_200)  ![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/IMG_8056.PNG?x-oss-process=image/resize,w_200)  ![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/IMG_8057.PNG?x-oss-process=image/resize,w_200) 
 
 | iOS                                                          | Android                                                      |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
