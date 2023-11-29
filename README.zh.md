@@ -38,7 +38,7 @@ AUIVoiceRoom 提供以下核心功能：
 
 | iOS                                           | Android                       | Backend                       |
 |-----------------------------------------------|-------------------------------|-------------------------------|
-| [VoiceRoom(iOS)](iOS/AUIVoiceRoom) | [VoiceRoom(Android)](Android) | [VoiceRoom(Backend)](backend) |
+| [VoiceRoom(iOS)](iOS/AUIVoiceRoom/README_zh.md) | [VoiceRoom(Android)](Android/README_zh.md) | [VoiceRoom(Backend)](backend/README_zh.md) |
 |                                               |                               |                               |
 |                                               |                               |                               |
 |                                               |                               |                               |
