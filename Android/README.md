@@ -9,18 +9,13 @@ This document mainly introduces how to quickly run through the AUIVoiceRoom exam
 
 ## Directory
 ```
-┌─ Example                    	// Demo Code Integration Catalog
+┌─ app-voice                    	// Demo Code Integration Catalog
 │  ├─ VoiceRoomListActivity           	// Provide VoiceRoom's list page
 │  └─ VoiceRoomSettingActivity			// Provide VoiceRoom's Settings page
-├─ AUIScenesKit                		// Scenario business assembly module, currently only including VoiceRoom
-│  ├─ AUIVoiceRoomView      			// VoiceRoom room container view, used to splice various basic components and bind them to services
-│  ├─ AUIVoiceRoomService    			// VoiceRoom Room Service, used to create various basic services and initialize RTC/RTM/IM, etc
-│  └─ Binder                   			// Business binding module that associates UI Components with Service
-└─ AUIKit                      		// Including basic components and services
-   ├─ Service                  			// Related basic component services, including micseat, jukebox, user, choir, etc
-   ├─ UI Widgets               			// Basic UI component, supporting one click skin changing through configuration files
-   └─ UI Components       				// Related basic business UI modules, including micseat,chat,gift etc. These UI modules do not contain any business 											logic and are pure UI modules
-   
+└─ asceneskit                		// Scenario business assembly module, currently only including VoiceRoom
+   ├─ AUIVoiceRoomView      			// VoiceRoom room container view, used to splice various basic components and bind them to services
+   ├─ AUIVoiceRoomService    			// VoiceRoom Room Service, used to create various basic services and initialize RTC/RTM/IM, etc
+   └─ Binder                   			// Business binding module that associates UI Components with Service
 ```
 
 ## Requirements
@@ -42,10 +37,6 @@ This document mainly introduces how to quickly run through the AUIVoiceRoom exam
 
 ### 2. Running the Example
 - Clone or download  source code
-- Obtain Agora SDK
-  Download [the rtc sdk with rtm 2.0](https://download.agora.io/null/Agora_Native_SDK_for_Android_rel.v4.1.1.30_49294_FULL_20230512_1606_264137.zip) and then unzip it to the directions belows:
-  [AUIKit/Android/auikit/libs](../AUIKit/Android/auikit/libs) : agora-rtc-sdk.jar
-  [AUIKit/Android/auikit/src/main/jniLibs](../AUIKit/Android/auikit/src/main/jniLibs) : so(arm64-v8a/armeabi-v7a/x86/x86_64)
 
 - Please fill in the domain name of the business server in the [**local.properties**](/local.properties) file of the project
 

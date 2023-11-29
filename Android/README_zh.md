@@ -10,17 +10,13 @@
 
 ## 目录结构
 ```
-┌─ Example                    // Demo代码集成目录
+┌─ app-voice                   // Demo代码集成目录
 │  ├─ VoiceRoomListActivity			// 主要提供 VoiceRoom 的房间列表页面
 │  └─ VoiceRoomSettingActivity  	// 主要提供 VoiceRoom 的房间设置页面
-├─ AUIScenesKit               	// 场景业务组装模块，目前只包含VoiceRoom
-│  ├─ AUIVoiceRoomView       		// VoiceRoom房间容器View，用于拼接各个基础组件以及基础组件与Service的绑定
-│  ├─ AUIVoiceRoomService    		// VoiceRoom房间Service，用于创建各个基础Service以及RTC/RTM/IM等的初始化
-│  └─ Binder                  		// 把UI Components和Service关联起来的业务绑定模块
-└─ AUiKit                       // 包含基础组件和基础服务
-   ├─ Service                   	// 相关基础组件服务类，包括麦位以及申请邀请上麦、点歌器、聊天服务、送礼服务、用户管理、合唱等
-   ├─ UI Widgets                	// 基础UI组件，支持通过配置文件进行一键换肤
-   └─ UI Components             	// 相关基础业务UI模块，包括麦位、申请邀请、聊天、送礼等，这些UI模块不包含任何业务逻辑，是纯UI模块
+└─ asceneskit               	// 场景业务组装模块，目前只包含VoiceRoom
+   ├─ AUIVoiceRoomView       		// VoiceRoom房间容器View，用于拼接各个基础组件以及基础组件与Service的绑定
+   ├─ AUIVoiceRoomService    		// VoiceRoom房间Service，用于创建各个基础Service以及RTC/RTM/IM等的初始化
+   └─ Binder                  		// 把UI Components和Service关联起来的业务绑定模块
 ```
 
 ## 环境准备
@@ -40,17 +36,11 @@
 ### 2. 项目运行
 - 克隆或者直接下载项目源码
 
-- 获取声网sdk
-  下载[包含RTM 2.0的RTC SDK最新版本](https://download.agora.io/null/Agora_Native_SDK_for_Android_rel.v4.1.1.30_49294_FULL_20230512_1606_264137.zip)并将文件解压到以下目录
-  [AUIKit/Android/auikit/libs](../AUIKit/Android/auikit/libs) : agora-rtc-sdk.jar
-  [AUIKit/Android/src/main/jniLibs](../AUIKit/Android/auikit/src/main/jniLibs) : so(arm64-v8a/armeabi-v7a/x86/x86_64)
 
 - 在项目的[**local.properties**](/local.properties)里配置业务服务器域名
 
   ![图片](https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/github_readme/uikit/config_serverhost_android.png)
 
-
-- 在项目的[**local.properties**](/local.properties)里配置业务服务器域名
 ```
 SERVER_HOST== “Your SERVER_HOST”
 ```

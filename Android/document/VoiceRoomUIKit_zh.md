@@ -14,21 +14,12 @@ VoiceRoomUIKit 是一个语聊房场景组件，提供房间管理和拉起语�
 - [asceneskit](../asceneskit)
 
 
-**在Setting.gradle文件中添加对AScenesKit和AUIKit的依赖**
+**在Setting.gradle文件中添加对AScenesKit**
 
 ```gradle
-
-  rootProject.name = "AUIKitVoiceRoom"
-  def uiKitPath = new File(settingsDir, '../AUIKit/Android/auikit')
-  if(!uiKitPath.exists()){
-    throw new RuntimeException("Please run `git submodule update --init` in AUIKitVoiceRoom root direction.")
-  }
-
-  include ':auikit'
-  project(':auikit').projectDir = uiKitPath
   include ':asceneskit'
-  
 ```
+
 
 ### 2. Initialize VoiceRoomUIKit
 ```kotlin
