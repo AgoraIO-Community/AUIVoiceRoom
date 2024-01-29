@@ -37,7 +37,10 @@
             </intent-filter>
         </activity>
 
-
+        <activity
+            android:name=".kit.VoiceRoomActivity"
+            android:windowSoftInputMode="adjustNothing"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".kit.VoiceRoomSettingActivity"

@@ -11,7 +11,6 @@ import io.agora.auikit.model.AUIUserThumbnailInfo
 import io.agora.auikit.service.IAUIInvitationService
 import io.agora.auikit.service.IAUIMicSeatService
 import io.agora.auikit.service.IAUIUserService
-import io.agora.auikit.service.imp.AUIInvitationServiceImplResp
 import io.agora.auikit.ui.action.AUIActionUserInfo
 import io.agora.auikit.ui.action.AUIActionUserInfoList
 import io.agora.auikit.ui.action.impI.AUIApplyDialog
@@ -28,7 +27,6 @@ class AUIInvitationBinder constructor(
     IAUIUserService.AUIUserRespObserver, IAUIMicSeatService.AUIMicSeatRespObserver {
     private var activity: FragmentActivity?
     private var mVoiceService:AUIVoiceRoomService
-    private var invitationImpl:AUIInvitationServiceImplResp
     private var invitationService:IAUIInvitationService
     private val applyList = mutableListOf<AUIUserInfo?>()
     private var applyDialog:AUIApplyDialog?=null
@@ -42,12 +40,11 @@ class AUIInvitationBinder constructor(
 
     init {
         this.mVoiceService = voiceService
-        this.invitationService = voiceService.getInvitationService()
-        this.invitationImpl = invitationService as AUIInvitationServiceImplResp
+        this.invitationService = voiceService.invitationService
         this.activity = activity
-        this.userService = voiceService.getUserService()
+        this.userService = voiceService.userService
 
-        val roomOwner = voiceService.getRoomInfo().roomOwner
+        val roomOwner = voiceService.roomInfo?.owner
         val owner = AUIUserInfo()
         owner.userName = roomOwner?.userName.toString()
         owner.userId = roomOwner?.userId.toString()
@@ -57,15 +54,15 @@ class AUIInvitationBinder constructor(
     }
 
     override fun bind() {
-        invitationImpl.registerRespObserver(this)
-        mVoiceService.getUserService().registerRespObserver(this)
-        mVoiceService.getMicSeatsService().registerRespObserver(this)
+        invitationService.registerRespObserver(this)
+        mVoiceService.userService.registerRespObserver(this)
+        mVoiceService.micSeatService.registerRespObserver(this)
     }
 
     override fun unBind() {
-        invitationImpl.unRegisterRespObserver(this)
-        mVoiceService.getUserService().unRegisterRespObserver(this)
-        mVoiceService.getMicSeatsService().unRegisterRespObserver(this)
+        invitationService.unRegisterRespObserver(this)
+        mVoiceService.userService.unRegisterRespObserver(this)
+        mVoiceService.micSeatService.unRegisterRespObserver(this)
     }
 
     // 显示申请列表
@@ -91,7 +88,7 @@ class AUIInvitationBinder constructor(
                     position: Int
                 ) {
                     if (user?.userId != null && applyIndex != null){
-                        mVoiceService.getInvitationService().acceptApply(
+                        mVoiceService.invitationService.acceptApply(
                             user.userId,
                             applyIndex
                         ) {
@@ -154,7 +151,7 @@ class AUIInvitationBinder constructor(
             setInvitationDialogListener(object : AUIInvitationDialogEventListener {
                 override fun onInvitedItemClick(view: View, invitedIndex: Int, user: AUIActionUserInfo?) {
                     if (user != null){
-                        mVoiceService.getInvitationService().sendInvitation(
+                        mVoiceService.invitationService.sendInvitation(
                             user.userId,
                             invitedIndex
                         ) {
@@ -186,7 +183,7 @@ class AUIInvitationBinder constructor(
                     }
                 )
                 setPositiveButton(context.getString(R.string.voice_room_confirm)) {
-                    mVoiceService.getInvitationService().acceptInvitation(userId,micIndex
+                    mVoiceService.invitationService.acceptInvitation(userId,micIndex
                     ) { e->
                         if (e == null){
                             Log.d("apex","同意上麦邀请成功")
@@ -195,7 +192,7 @@ class AUIInvitationBinder constructor(
                     dismiss()
                 }
                 setNegativeButton( context.getString(R.string.voice_room_reject)) {
-                    mVoiceService.getInvitationService().rejectInvitation(userId){ e ->
+                    mVoiceService.invitationService.rejectInvitation(userId){ e ->
                         if (e == null){
                             Log.d("apex","拒绝上麦邀请成功")
                         }
@@ -253,7 +250,7 @@ class AUIInvitationBinder constructor(
         mMemberMap.values.toList().forEach {  user ->
             // 在麦位数据和所有成员数据中 查找共有的uid
             val uid = mSeatMap.entries.find { it.value == user?.userId }?.value
-            if (user?.userId != uid && user?.userId != mVoiceService.getRoomInfo().roomOwner?.userId){
+            if (user?.userId != uid && user?.userId != mVoiceService.roomInfo?.owner?.userId){
                 currentMemberList.add(user)
             }
         }

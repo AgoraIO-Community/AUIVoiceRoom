@@ -32,12 +32,12 @@ class AUIChatBottomBarBinder constructor(
     IAUIMicSeatService.AUIMicSeatRespObserver,
     IAUIInvitationService.AUIInvitationRespObserver {
 
-    private val roomInfo = voiceService.getRoomInfo()
-    private val userService = voiceService.getUserService()
-    private val micSeatsService = voiceService.getMicSeatsService()
-    private val invitationService = voiceService.getInvitationService()
-    private val imManagerService = voiceService.getIMManagerService()
-    private val chatManager = voiceService.getChatManager()
+    private val roomInfo = voiceService.roomInfo ?: throw RuntimeException("RoomInfo is null!")
+    private val userService = voiceService.userService
+    private val micSeatsService = voiceService.micSeatService
+    private val invitationService = voiceService.invitationService
+    private val imManagerService = voiceService.imManagerService
+    private val chatManager = voiceService.chatManager
 
     private var listener: AUISoftKeyboardHeightChangeListener? = null
     private var roomContext = AUIRoomContext.shared()
@@ -151,15 +151,15 @@ class AUIChatBottomBarBinder constructor(
             }
         }
         if (localUserSeat != null) {
-            if (localUserSeat.muteAudio == 1){
+            if (localUserSeat.muteAudio){
                 Toast.makeText(
-                    roomContext.commonConfig.context,
-                    roomContext.commonConfig.context.getString(io.agora.asceneskit.R.string.voice_room_owner_mute_seat)
+                    roomContext.requireCommonConfig().context,
+                    roomContext.requireCommonConfig().context.getString(io.agora.asceneskit.R.string.voice_room_owner_mute_seat)
                     ,Toast.LENGTH_SHORT
                 ).show()
             }
             val userInfo = userService.getUserInfo(userId)
-            val mMute = (localUserSeat.muteAudio == 1) || (userInfo?.muteAudio == 1)
+            val mMute = localUserSeat.muteAudio || (userInfo?.muteAudio == 1)
             mVolumeMap[userId]?.let { setLocalMute(it, mMute) }
         }
     }
@@ -173,7 +173,7 @@ class AUIChatBottomBarBinder constructor(
             voiceService.setupLocalStreamOn(true)
             val micSeatInfo = micSeatsService.getMicSeatInfo(seatIndex)
             val mUserInfo = userService.getUserInfo(localUserId)
-            val isMute = (micSeatInfo?.muteAudio == 1) || (mUserInfo?.muteAudio == 1)
+            val isMute = micSeatInfo?.muteAudio ?: false || (mUserInfo?.muteAudio == 1)
             setLocalMute(seatIndex, isMute)
         }
     }

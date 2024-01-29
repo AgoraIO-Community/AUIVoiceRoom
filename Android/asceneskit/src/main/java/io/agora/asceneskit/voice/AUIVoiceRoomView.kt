@@ -7,7 +7,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
-import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
 import io.agora.asceneskit.R
 import io.agora.asceneskit.databinding.VoiceRoomViewBinding
@@ -27,7 +26,7 @@ import io.agora.auikit.utils.AUILogger
 import io.agora.auikit.utils.ThreadManager
 
 class AUIVoiceRoomView : FrameLayout,
-    IAUIRoomManager.AUIRoomManagerRespObserver,
+    AUIVoiceRoomObserver,
     IAUIMicSeatService.AUIMicSeatRespObserver {
     private val mRoomViewBinding = VoiceRoomViewBinding.inflate(LayoutInflater.from(context))
     private val mBinders = mutableListOf<IAUIBindable>()
@@ -46,14 +45,8 @@ class AUIVoiceRoomView : FrameLayout,
             setTitle("房间已销毁")
             setMessage("请返回房间列表 ")
             setPositiveButton("我知道了") {
-                mVoiceService?.let {
-                    it.getRoomManager().exitRoom(it.getRoomInfo().roomId){error ->
-                        if (error == null){
-                            AUILogger.logger().d("AUIVoiceRoomView", "DestroyDialog exitRoom suc ...")
-                            mOnRoomDestroyEvent?.invoke()
-                        }
-                    }
-                }
+                mVoiceService?.exit()
+                mOnRoomDestroyEvent?.invoke()
                 dismiss()
             }
             setCancelable(false)
@@ -72,38 +65,26 @@ class AUIVoiceRoomView : FrameLayout,
 
     fun bindService(service: AUIVoiceRoomService) {
         mVoiceService = service
-        imManagerService = service.getIMManagerService() as AUIIMManagerServiceImpl
-        service.getRoomManager().registerRespObserver(this)
-        service.getMicSeatsService().registerRespObserver(this)
+        imManagerService = service.imManagerService as AUIIMManagerServiceImpl
+        service.observableHelper.subscribeEvent(this)
+        service.micSeatService.registerRespObserver(this)
 
-        setUpRoomStyle(service.getRoomInfo())
-
-        service.enterRoom {
-            post {
-                Toast.makeText(context, "Enter room failed : ${it.code}", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-        service.joinRtcRoom {
-            post {
-                Toast.makeText(context, "joinRtcRoom failed : ${it.code}", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-        viewBinderConnected(service)
+        val roomInfo = service.roomInfo ?: throw RuntimeException("RoomInfo is null")
+        setUpRoomStyle(roomInfo)
+        viewBinderConnected(service, roomInfo)
         getSoftKeyboardHeight()
     }
 
-    private fun viewBinderConnected(service:AUIVoiceRoomService){
+    private fun viewBinderConnected(service:AUIVoiceRoomService, roomInfo: AUIRoomInfo){
         /** 获取礼物列表 初始化礼物Binder */
-        service.getGiftService().getGiftsFromService(object : AUIGiftListCallback{
+        service.giftService.getGiftsFromService(object : AUIGiftListCallback{
             override fun onResult(error: AUIException?, giftList: List<AUIGiftTabEntity>) {
                 auiGiftBarrageBinder = AUIGiftBarrageBinder(
                     activity,
                     mRoomViewBinding.giftView,
                     giftList,
-                    service.getGiftService(),
-                    service.getChatManager()
+                    service.giftService,
+                    service.chatManager
                 )
                 auiGiftBarrageBinder?.let {
                     it.bind()
@@ -112,14 +93,14 @@ class AUIVoiceRoomView : FrameLayout,
             }
         })
 
-        service.getChatManager().saveWelcomeMsg(context.getString(R.string.voice_room_welcome))
+        service.chatManager.saveWelcomeMsg(context.getString(R.string.voice_room_welcome))
 
         val chatListBinder = AUIChatListBinder(
-            service.getRoomInfo(),
+            roomInfo,
             mRoomViewBinding.chatListView,
             mRoomViewBinding.chatBottomBar,
-            service.getChatManager(),
-            service.getIMManagerService(),
+            service.chatManager,
+            service.imManagerService,
         )
         chatListBinder.let {
             it.bind()
@@ -128,7 +109,7 @@ class AUIVoiceRoomView : FrameLayout,
 
         val roomInfoBinder = AUIRoomInfoBinder(
             mRoomViewBinding.leftView,
-            service.getRoomInfo(),
+            roomInfo,
             listener = object : AUIRoomInfoBinder.AUIRoomInfoEvent {
                 override fun onBackClickListener(view: View) {
                     AUILogger.logger().d("AUIVoiceRoomView", "AUIRoomInfoBinder onBackClick ...")
@@ -158,19 +139,21 @@ class AUIVoiceRoomView : FrameLayout,
             mBinders.add(it)
         }
 
-        val micSeatsBinder = AUIMicSeatsBindable(
+        val micSeatsBinder = AUIMicSeatsBinder(
             context,
             when (micType) {
                 MicSeatType.EightTag -> {
                     mRoomViewBinding.micSeatsView
                 }
+
                 MicSeatType.NineTag -> {
                     mRoomViewBinding.micSeatsHostView
                 }
+
                 else -> {
                     mRoomViewBinding.micSeatsCircleView
                 }
-            },service
+            }, service
         )
 
         micSeatsBinder.let {
@@ -233,8 +216,8 @@ class AUIVoiceRoomView : FrameLayout,
         super.onDetachedFromWindow()
         AUILogger.logger().d("AUIVoiceRoomView", "onDetachedFromWindow")
 
-        mVoiceService?.getRoomManager()?.unRegisterRespObserver(this)
-        mVoiceService?.getMicSeatsService()?.unRegisterRespObserver(this)
+        mVoiceService?.observableHelper?.unSubscribeEvent(this)
+        mVoiceService?.micSeatService?.unRegisterRespObserver(this)
 
         mBinders.forEach {
             it.unBind()
@@ -246,7 +229,7 @@ class AUIVoiceRoomView : FrameLayout,
         }
     }
 
-    private fun isRoomOwner() = AUIRoomContext.shared().isRoomOwner(mVoiceService?.getRoomInfo()?.roomId)
+    private fun isRoomOwner() = AUIRoomContext.shared().isRoomOwner(mVoiceService?.roomInfo?.roomId)
 
     private fun getSoftKeyboardHeight(){
         ThreadManager.getInstance().runOnMainThreadDelay({
@@ -294,14 +277,16 @@ class AUIVoiceRoomView : FrameLayout,
 
     override fun onRoomDestroy(roomId: String) {
         AUILogger.logger().d("AUIVoiceRoomView", "onRoomDestroy $roomId")
-        if (roomId == mVoiceService?.getRoomInfo()?.roomId){
+        if (roomId == mVoiceService?.roomInfo?.roomId){
             mDestroyDialog.show()
         }
     }
 
-    override fun onRoomUserBeKicked(roomId: String?, userId: String?) {
+
+    override fun onRoomUserBeKicked(roomId: String, userId: String) {
+        super.onRoomUserBeKicked(roomId, userId)
         AUILogger.logger().d("AUIVoiceRoomView", "onRoomUserBeKicked $roomId $userId")
-        if (roomId == mVoiceService?.getRoomInfo()?.roomId){
+        if (roomId == mVoiceService?.roomInfo?.roomId){
             AUIAlertDialog(context).apply {
                 setTitle("您已被踢出房间")
                 setPositiveButton("确认") {

@@ -10,27 +10,20 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import io.agora.asceneskit.R;
 import io.agora.asceneskit.voice.AUIVoiceRoomService;
-import io.agora.auikit.model.AUIChooseMusicModel;
-import io.agora.auikit.model.AUIChoristerModel;
 import io.agora.auikit.model.AUIMicSeatInfo;
 import io.agora.auikit.model.AUIMicSeatStatus;
 import io.agora.auikit.model.AUIRoomContext;
 import io.agora.auikit.model.AUIUserInfo;
 import io.agora.auikit.model.AUIUserThumbnailInfo;
-import io.agora.auikit.service.IAUIChorusService;
 import io.agora.auikit.service.IAUIInvitationService;
-import io.agora.auikit.service.IAUIJukeboxService;
 import io.agora.auikit.service.IAUIMicSeatService;
 import io.agora.auikit.service.IAUIUserService;
 import io.agora.auikit.service.callback.AUICallback;
-import io.agora.auikit.service.callback.AUIChooseSongListCallback;
-import io.agora.auikit.service.callback.AUIChoristerListCallback;
 import io.agora.auikit.service.callback.AUIException;
 import io.agora.auikit.ui.basic.AUIAlertDialog;
 import io.agora.auikit.ui.micseats.IMicSeatDialogView;
@@ -40,43 +33,33 @@ import io.agora.auikit.ui.micseats.MicSeatStatus;
 import io.agora.rtc2.IRtcEngineEventHandler;
 import io.agora.rtc2.RtcEngine;
 
-public class AUIMicSeatsBindable extends IRtcEngineEventHandler implements
+public class AUIMicSeatsBinder extends IRtcEngineEventHandler implements
         IAUIBindable,
         IMicSeatsView.ActionDelegate,
         IAUIMicSeatService.AUIMicSeatRespObserver,
-        IAUIChorusService.AUIChorusRespObserver,
-        IAUIJukeboxService.AUIJukeboxRespObserver,
         IAUIUserService.AUIUserRespObserver {
     private final IMicSeatsView micSeatsView;
     private final IAUIUserService userService;
     private final IAUIMicSeatService micSeatService;
-    private final IAUIJukeboxService jukeboxService;
-    private final IAUIChorusService chorusService;
     private final IAUIInvitationService invitationService;
-    private final AUIVoiceRoomService mVoiceService;
     private AUIRoomContext roomContext;
     private Handler mMainHandler;
-    private String mLeadSingerId = "";
     private RtcEngine mRtcEngine;
     private Map<Integer, String> mSeatMap = new HashMap();
     private Map<String,Integer> mVolumeMap = new HashMap();
     private Context context;
     private AUIAlertDialog auiAlertDialog;
 
-    private LinkedList<String> mAccompanySingers = new LinkedList<String>();
 
-    public AUIMicSeatsBindable(
+    public AUIMicSeatsBinder(
             Context context,
             IMicSeatsView micSeatsView,
             AUIVoiceRoomService voiceService) {
-        this.mVoiceService = voiceService;
         this.userService = voiceService.getUserService();
         this.micSeatsView = micSeatsView;
-        this.micSeatService = voiceService.getMicSeatsService();
-        this.jukeboxService = voiceService.getJukeboxService();
-        this.chorusService = voiceService.getChorusService();
+        this.micSeatService = voiceService.getMicSeatService();
         this.invitationService = voiceService.getInvitationService();
-        this.mRtcEngine = voiceService.getMRtcEngine();
+        this.mRtcEngine = voiceService.getRtcEngine();
         this.roomContext = AUIRoomContext.shared();
         this.context = context;
         mSeatMap.put(0,roomContext.getRoomOwner(micSeatService.getChannelName()));
@@ -95,32 +78,8 @@ public class AUIMicSeatsBindable extends IRtcEngineEventHandler implements
         mMainHandler = new Handler(Looper.getMainLooper());
         userService.registerRespObserver(this);
         micSeatService.registerRespObserver(this);
-        jukeboxService.registerRespObserver(this);
-        chorusService.registerRespObserver(this);
         micSeatsView.setMicSeatActionDelegate(this);
         mRtcEngine.addHandler(this);
-
-        jukeboxService.getAllChooseSongList(new AUIChooseSongListCallback() {
-            @Override
-            public void onResult(@Nullable AUIException error, @Nullable List<AUIChooseMusicModel> songList) {
-                if (songList != null && songList.size() != 0) {
-                    AUIChooseMusicModel song = songList.get(0);
-                    mLeadSingerId = song.owner.userId;
-                    runOnUiThread(() -> updateChorusTag() );
-                }
-            }
-        });
-        chorusService.getChoristersList(new AUIChoristerListCallback() {
-            @Override
-            public void onResult(@Nullable AUIException error, @Nullable List<AUIChoristerModel> songList) {
-                for (AUIChoristerModel song : songList) {
-                    mAccompanySingers.add(song.userId);
-                }
-                if (mAccompanySingers.size() != 0) {
-                    runOnUiThread(() -> updateChorusTag() );
-                }
-            }
-        });
     }
 
     @Override
@@ -129,10 +88,12 @@ public class AUIMicSeatsBindable extends IRtcEngineEventHandler implements
         mMainHandler = null;
         userService.unRegisterRespObserver(this);
         micSeatService.unRegisterRespObserver(this);
-        jukeboxService.unRegisterRespObserver(this);
-        chorusService.unRegisterRespObserver(this);
 
-        mRtcEngine.removeHandler(this);
+        try {
+            mRtcEngine.removeHandler(this);
+        } catch (Exception e) {
+            // do nothing
+        }
         mRtcEngine.registerAudioFrameObserver(null);
 
         micSeatsView.setMicSeatActionDelegate(null);
@@ -147,10 +108,6 @@ public class AUIMicSeatsBindable extends IRtcEngineEventHandler implements
         }
     }
     /** IAUIMicSeatService.AUIMicSeatRespDelegate implements. */
-    @Override
-    public void onSeatListChange(List<AUIMicSeatInfo> seatInfoList) {
-        IAUIMicSeatService.AUIMicSeatRespObserver.super.onSeatListChange(seatInfoList);
-    }
 
     @Override
     public void onAnchorEnterSeat(int seatIndex, @NonNull AUIUserThumbnailInfo userInfo) {
@@ -228,53 +185,19 @@ public class AUIMicSeatsBindable extends IRtcEngineEventHandler implements
             seatView.setMicSeatState(MicSeatStatus.locked);
         }
 
-        boolean isAudioMute = (micSeatInfo.muteAudio != 0);
+        boolean isAudioMute = micSeatInfo.muteAudio;
         if (userInfo != null) {
             isAudioMute = isAudioMute || (userInfo.muteAudio == 1);
         }
         seatView.setAudioMuteVisibility(isAudioMute ? View.VISIBLE : View.GONE);
 
-        boolean isVideoMute = (micSeatInfo.muteVideo != 0);
+        boolean isVideoMute = micSeatInfo.muteVideo;
         seatView.setVideoMuteVisibility(isVideoMute ? View.VISIBLE : View.GONE);
 
         if (micSeatInfo.user != null) {
             seatView.setTitleText(micSeatInfo.user.userName);
             seatView.setUserAvatarImageUrl(micSeatInfo.user.userAvatar);
-
-            if (micSeatInfo.user.userId.equals(mLeadSingerId)) {
-                seatView.setChorusMicOwnerType(IMicSeatItemView.ChorusType.LeadSinger);
-            } else if (mAccompanySingers.contains(micSeatInfo.user.userId)) {
-                seatView.setChorusMicOwnerType(IMicSeatItemView.ChorusType.SecondarySinger);
-            } else {
-                seatView.setChorusMicOwnerType(IMicSeatItemView.ChorusType.None);
-            }
-        }
-    }
-
-    private void setLeadSingerId(String str) {
-        if (str.equals(mLeadSingerId)) {
-            return;
-        }
-        mLeadSingerId = str;
-        updateChorusTag();
-    }
-
-    private void updateChorusTag() {
-        IMicSeatItemView[] seatViewList = micSeatsView.getMicSeatItemViewList();
-        for (int i = 0; i < seatViewList.length; i++) {
-            AUIMicSeatInfo micSeatInfo = micSeatService.getMicSeatInfo(i);
-            IMicSeatItemView itemView = seatViewList[i];
-            if (micSeatInfo.user == null || micSeatInfo.user.userId.isEmpty()) {
-                itemView.setChorusMicOwnerType(IMicSeatItemView.ChorusType.None);
-                continue;
-            }
-            if (micSeatInfo.user.userId.equals(mLeadSingerId)) {
-                itemView.setChorusMicOwnerType(IMicSeatItemView.ChorusType.LeadSinger);
-            } else if (mAccompanySingers.contains(micSeatInfo.user.userId)) {
-                itemView.setChorusMicOwnerType(IMicSeatItemView.ChorusType.SecondarySinger);
-            } else {
-                itemView.setChorusMicOwnerType(IMicSeatItemView.ChorusType.None);
-            }
+            seatView.setChorusMicOwnerType(IMicSeatItemView.ChorusType.None);
         }
     }
 
@@ -282,7 +205,7 @@ public class AUIMicSeatsBindable extends IRtcEngineEventHandler implements
     @Override
     public boolean onClickSeat(int index, IMicSeatDialogView dialogView) {
         AUIMicSeatInfo seatInfo = micSeatService.getMicSeatInfo(index);
-        if (seatInfo == null ||  seatInfo.user == null){ return true;}
+        if (seatInfo == null ||  seatInfo.user == null){ return false;}
         AUIUserInfo userInfo = userService.getUserInfo(seatInfo.user.userId);
         if (userInfo != null) {
             dialogView.setUserInfo(userInfo.userName);
@@ -303,14 +226,14 @@ public class AUIMicSeatsBindable extends IRtcEngineEventHandler implements
         if (isRoomOwner) {
             if (isEmptySeat) {
                 dialogView.addInvite((seatInfo.seatStatus != AUIMicSeatStatus.locked));
-                dialogView.addMuteAudio((seatInfo.muteAudio != 0));
+                dialogView.addMuteAudio(seatInfo.muteAudio);
                 dialogView.addCloseSeat((seatInfo.seatStatus == AUIMicSeatStatus.locked));
             } else {
                 if (isCurrentUser) {
-                    dialogView.addMuteAudio((seatInfo.muteAudio != 0));
+                    dialogView.addMuteAudio(seatInfo.muteAudio);
                 } else {
                     dialogView.addKickSeat();
-                    dialogView.addMuteAudio((seatInfo.muteAudio != 0));
+                    dialogView.addMuteAudio(seatInfo.muteAudio);
                     dialogView.addCloseSeat((seatInfo.seatStatus == AUIMicSeatStatus.locked));
                 }
             }
@@ -319,12 +242,17 @@ public class AUIMicSeatsBindable extends IRtcEngineEventHandler implements
                 if (inSeat) {
                     return false;
                 } else {
-                    dialogView.addEnterSeat((seatInfo.seatStatus != AUIMicSeatStatus.locked));
+                    boolean seatUnLocked = seatInfo.seatStatus != AUIMicSeatStatus.locked;
+                    if (seatUnLocked) {
+                        dialogView.addEnterSeat(true);
+                    } else {
+                        return false;
+                    }
                 }
             } else {
                 if (isCurrentUser) {
                     dialogView.addLeaveSeat();
-                    dialogView.addMuteAudio((seatInfo.muteAudio != 0));
+                    dialogView.addMuteAudio(seatInfo.muteAudio);
                 } else {
                     return false;
                 }
@@ -388,61 +316,7 @@ public class AUIMicSeatsBindable extends IRtcEngineEventHandler implements
         micSeatService.onClickInvited(index);
     }
 
-    /** IAUIMicSeatService.AUIChorusRespDelegate implements. */
-    @Override
-    public void onChoristerDidEnter(AUIChoristerModel chorister) {
-        if (mAccompanySingers.contains(chorister.userId)) {
-            return;
-        }
-        mAccompanySingers.add(chorister.userId);
-        updateChorusTag();
-    }
 
-    @Override
-    public void onChoristerDidLeave(AUIChoristerModel chorister) {
-        if (mAccompanySingers.contains(chorister.userId)) {
-            mAccompanySingers.remove(chorister.userId);
-            updateChorusTag();
-        }
-    }
-
-    @Override
-    public void onSingerRoleChanged(int oldRole, int newRole) {
-
-    }
-
-    @Override
-    public void onChoristerDidChanged() {
-
-    }
-    /** IAUIMicSeatService.AUIJukeboxRespDelegate implements. */
-    @Override
-    public void onAddChooseSong(@NonNull AUIChooseMusicModel song) {
-
-    }
-
-    @Override
-    public void onRemoveChooseSong(@NonNull AUIChooseMusicModel song) {
-
-    }
-
-    @Override
-    public void onUpdateChooseSong(@NonNull AUIChooseMusicModel song) {
-
-
-    }
-
-    @Override
-    public void onUpdateAllChooseSongs(@NonNull List<AUIChooseMusicModel> songs) {
-        if (songs.size() != 0) {
-            AUIChooseMusicModel song = songs.get(0);
-            mAccompanySingers.clear();
-            setLeadSingerId(song.owner.userId);
-        } else {
-            mAccompanySingers.clear();
-            setLeadSingerId("");
-        }
-    }
     /** IAUIUserService.AUIUserRespDelegate implements. */
     @Override
     public void onRoomUserSnapshot(@NonNull String roomId, @Nullable List<AUIUserInfo> userList) {
