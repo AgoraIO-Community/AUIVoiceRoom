@@ -67,47 +67,44 @@ class AUIInvitationBinder constructor(
 
     // 显示申请列表
     fun showApplyDialog(){
-        if (applyDialog == null){
-            applyDialog = AUIApplyDialog()
-        }
-        val applyInfo = AUIActionUserInfoList(mutableListOf<AUIActionUserInfo?>().apply {
-            addAll(applyList.map { userInfo ->
-                AUIActionUserInfo(userInfo?.userId ?: "", userInfo?.userName ?: "", userInfo?.userAvatar ?: "", userInfo?.micIndex ?: 0)
+        var dialog = applyDialog
+        if (dialog == null){
+            dialog = AUIApplyDialog()
+            dialog.refreshApplyData(applyList.map { userInfo ->
+                AUIActionUserInfo(
+                    userInfo?.userId ?: "",
+                    userInfo?.userName ?: "",
+                    userInfo?.userAvatar ?: "",
+                    userInfo?.micIndex ?: 0
+                )
             })
-        })
-        applyDialog?.apply {
-            arguments = Bundle().apply {
-                putSerializable(AUIApplyDialog.KEY_ROOM_APPLY_BEAN, applyInfo)
-                putInt(AUIApplyDialog.KEY_CURRENT_ITEM, 0)
-            }
-            setApplyDialogListener(object : AUIApplyDialogEventListener {
-                override fun onApplyItemClick(
-                    view: View,
-                    applyIndex: Int?,
-                    user: AUIActionUserInfo?,
-                    position: Int
-                ) {
-                    if (user?.userId != null && applyIndex != null){
-                        mVoiceService.invitationService.acceptApply(
-                            user.userId,
-                            applyIndex
-                        ) {
-                            if (it == null){
-                                Log.d("apex","房主同意上麦申请 成功")
-                                if (position >=0){
-                                    applyList.removeAt(position)
-                                    applyDialog?.refreshApplyData(mutableListOf<AUIActionUserInfo?>().apply {
-                                        addAll(applyList.map { userInfo ->
-                                            AUIActionUserInfo(userInfo?.userId ?: "", userInfo?.userName ?: "", userInfo?.userAvatar ?: "", userInfo?.micIndex ?: 0)
-                                        })
-                                    })
-                                }
+            applyDialog = dialog
+        }
+        dialog.setApplyDialogListener(object : AUIApplyDialogEventListener {
+            override fun onApplyItemClick(
+                view: View,
+                applyIndex: Int?,
+                user: AUIActionUserInfo?,
+                position: Int
+            ) {
+                if (user?.userId != null && applyIndex != null){
+                    mVoiceService.invitationService.acceptApply(
+                        user.userId,
+                        applyIndex
+                    ) {
+                        if (it == null){
+                            Log.d("apex","房主同意上麦申请 成功")
+                            if (position >=0){
+                                applyList.removeAt(position)
+                                applyDialog?.refreshApplyData(applyList.map { userInfo ->
+                                    AUIActionUserInfo(userInfo?.userId ?: "", userInfo?.userName ?: "", userInfo?.userAvatar ?: "", userInfo?.micIndex ?: 0)
+                                })
                             }
                         }
                     }
                 }
-            })
-        }
+            }
+        })
         activity?.supportFragmentManager?.let {
             applyDialog?.show(
                 it, "AUIApplyDialog"
@@ -115,31 +112,35 @@ class AUIInvitationBinder constructor(
         }
     }
 
-    override fun onApplyListUpdate(userList: ArrayList<AUIUserInfo?>) {
-        applyUserList = userList
+    override fun onApplyListUpdate(userList: List<AUIUserInfo>?) {
+        super.onApplyListUpdate(userList)
+        applyUserList = ArrayList(userList ?: emptyList())
         applyList.clear()
-        userList.forEach { it1 ->
-            val userInfo = mMemberMap[it1?.userId]
-            userInfo?.micIndex = it1?.micIndex
+        userList?.forEach { user ->
+            val userInfo = mMemberMap[user.userId]
+            userInfo?.micIndex = user.micIndex
             userInfo?.let {
                 applyList.add(it)
             }
         }
-        applyDialog?.refreshApplyData(mutableListOf<AUIActionUserInfo?>().apply {
-            addAll(applyList.map { userInfo ->
-                AUIActionUserInfo(userInfo?.userId ?: "", userInfo?.userName ?: "", userInfo?.userAvatar ?: "", userInfo?.micIndex ?: 0)
-            })
+        applyDialog?.refreshApplyData(applyList.map { userInfo ->
+            AUIActionUserInfo(userInfo?.userId ?: "", userInfo?.userName ?: "", userInfo?.userAvatar ?: "", userInfo?.micIndex ?: 0)
         })
     }
 
+    override fun onApplyAccepted(userId: String, seatIndex: Int) {
+        super.onApplyAccepted(userId, seatIndex)
+        if(userId == mVoiceService.micSeatService.roomContext.currentUserInfo.userId){
+            mVoiceService.micSeatService.enterSeat(seatIndex){}
+        }
+    }
+
+
     //显示邀请列表
     fun showInvitationDialog(index:Int){
-        val invitationInfo = AUIActionUserInfoList()
-        invitationInfo.userList = mutableListOf<AUIActionUserInfo?>().apply {
-            currentMemberList.map { userInfo ->
-                AUIActionUserInfo(userInfo?.userId ?: "", userInfo?.userName ?: "", userInfo?.userAvatar ?: "", userInfo?.micIndex ?: 0)
-            }
-        }
+        val invitationInfo = AUIActionUserInfoList(currentMemberList.map { userInfo ->
+            AUIActionUserInfo(userInfo?.userId ?: "", userInfo?.userName ?: "", userInfo?.userAvatar ?: "", userInfo?.micIndex ?: 0)
+        })
         invitationInfo.invitedIndex = index
         Log.e("apex","onShowInvited $index $invitationInfo")
         invitationDialog = AUIInvitationDialog()
@@ -171,6 +172,9 @@ class AUIInvitationBinder constructor(
     }
 
     override fun onReceiveInvitation(userId: String, micIndex: Int) {
+        if(userId != mVoiceService.micSeatService.roomContext.currentUserInfo.userId){
+            return
+        }
         // 收到上麦邀请
         activity?.let {
             AUIAlertDialog(it).apply {
@@ -201,6 +205,13 @@ class AUIInvitationBinder constructor(
                 }
                 show()
             }
+        }
+    }
+
+    override fun onInviteeAccepted(userId: String, seatIndex: Int) {
+        super.onInviteeAccepted(userId, seatIndex)
+        if(userId == mVoiceService.micSeatService.roomContext.currentUserInfo.userId){
+            mVoiceService.micSeatService.enterSeat(seatIndex){}
         }
     }
 
@@ -254,12 +265,8 @@ class AUIInvitationBinder constructor(
                 currentMemberList.add(user)
             }
         }
-        invitationDialog?.refreshInvitationData(mutableListOf<AUIActionUserInfo?>().apply {
-            addAll(
-                currentMemberList.map { userInfo ->
-                    AUIActionUserInfo(userInfo?.userId ?: "", userInfo?.userName ?: "", userInfo?.userAvatar ?: "", userInfo?.micIndex ?: 0)
-                }
-            )
+        invitationDialog?.refreshInvitationData(currentMemberList.map { userInfo ->
+            AUIActionUserInfo(userInfo?.userId ?: "", userInfo?.userName ?: "", userInfo?.userAvatar ?: "", userInfo?.micIndex ?: 0)
         })
     }
 
@@ -272,10 +279,8 @@ class AUIInvitationBinder constructor(
                 applyList.add(it)
             }
         }
-        applyDialog?.refreshApplyData(mutableListOf<AUIActionUserInfo?>().apply {
-            addAll(applyList.map { userInfo ->
-                AUIActionUserInfo(userInfo?.userId ?: "", userInfo?.userName ?: "", userInfo?.userAvatar ?: "", userInfo?.micIndex ?: 0)
-            })
+        applyDialog?.refreshApplyData(applyList.map { userInfo ->
+            AUIActionUserInfo(userInfo?.userId ?: "", userInfo?.userName ?: "", userInfo?.userAvatar ?: "", userInfo?.micIndex ?: 0)
         })
     }
 

@@ -218,7 +218,7 @@ class AUIChatBottomBarBinder constructor(
         }
     }
 
-    override fun onApplyListUpdate(userList: ArrayList<AUIUserInfo>?) {
+    override fun onApplyListUpdate(userList: List<AUIUserInfo>?) {
         chatBottomBarView.setShowMoreStatus(isRoomOwner, true)
     }
 

@@ -27,6 +27,7 @@ import io.agora.auikit.utils.AUILogger
 import io.agora.auikit.utils.AgoraEngineCreator
 import io.agora.auikit.utils.GsonTools
 import io.agora.auikit.utils.ObservableHelper
+import io.agora.auikit.utils.ThreadManager
 import io.agora.rtc2.ChannelMediaOptions
 import io.agora.rtc2.Constants
 import io.agora.rtc2.RtcEngine
@@ -268,11 +269,15 @@ class AUIVoiceRoomService constructor(
             roomConfig.rtmToken
         ) { error ->
             if (error != null) {
-                completion.invoke(AUIException(AUIException.ERROR_CODE_RTM, "error: $error"))
+                ThreadManager.getInstance().runOnMainThread {
+                    completion.invoke(AUIException(AUIException.ERROR_CODE_RTM, "error: $error"))
+                }
                 return@login
             }
             enterRoomCompletion = {
-                completion.invoke(null)
+                ThreadManager.getInstance().runOnMainThread {
+                    completion.invoke(null)
+                }
             }
 
             if (roomInfo == null) {
@@ -286,7 +291,17 @@ class AUIVoiceRoomService constructor(
                 }
             }
 
-            AUIRoomContext.shared().getArbiter(channelName)?.acquire()
+            AUIRoomContext.shared().getArbiter(channelName)?.acquire(){ lockError ->
+                if(lockError != null && enterRoomCompletion != null){
+                    enterRoomCompletion = null
+                    isRoomDestroyed = true
+                    ThreadManager.getInstance().runOnMainThread {
+                        completion.invoke(AUIException(AUIException.ERROR_CODE_RTM, "error: $lockError"))
+                    }
+                    return@acquire
+                }
+            }
+
             rtmManager.subscribeError(rtmErrorRespObserver)
             rtmManager.subscribeLock(channelName, observer = rtmLockRespObserver)
             rtmManager.subscribe(channelName) { subscribeError ->
@@ -302,8 +317,10 @@ class AUIVoiceRoomService constructor(
                 subscribeSuccess = true
             }
 
-            joinRtcChannel(){
-
+            joinRtcChannel { joinError ->
+                ThreadManager.getInstance().runOnMainThread {
+                    completion.invoke(AUIException(AUIException.ERROR_CODE_RTM, "error: $joinError"))
+                }
             }
         }
     }
@@ -470,6 +487,7 @@ class AUIVoiceRoomService constructor(
         }
         micSeatService.deInitService { }
         imManagerService.deInitService { }
+        invitationService.deInitService { }
         rtmManager.cleanBatchMetadata(
             channelName,
             remoteKeys = listOf(kRoomInfoAttrKey),

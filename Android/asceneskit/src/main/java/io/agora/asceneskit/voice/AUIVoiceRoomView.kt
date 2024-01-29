@@ -45,7 +45,6 @@ class AUIVoiceRoomView : FrameLayout,
             setTitle("房间已销毁")
             setMessage("请返回房间列表 ")
             setPositiveButton("我知道了") {
-                mVoiceService?.exit()
                 mOnRoomDestroyEvent?.invoke()
                 dismiss()
             }
