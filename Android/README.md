@@ -46,7 +46,7 @@ This document mainly introduces how to quickly run through the AUIVoiceRoom exam
 SERVER_HOST= （Domain name of the business server）
 ```
 
-> Agora Test Domain: https://service.agora.io/uikit-voiceroom
+> Agora Test Domain: https://service.shengwang.cn/uikit-voiceroom
 
 - Run the project with Android Studio to begin your experience.
 

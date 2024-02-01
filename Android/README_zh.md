@@ -45,7 +45,7 @@
 SERVER_HOST== “Your SERVER_HOST”
 ```
 
-> 声网测试域名： https://service.agora.io/uikit-voiceroom
+> 声网测试域名： https://service.shengwang.cn/uikit-voiceroom
 
 
 - 用 Android Studio 运行项目即可开始您的体验
