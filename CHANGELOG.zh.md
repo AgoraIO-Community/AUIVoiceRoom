@@ -1,6 +1,9 @@
 
 [English](CHANGELOG.md) | 中文
 
+## [0.3.5](https://github.com/AgoraIO-Community/AUIVoiceRoom/releases/tag/0.3.5)
+- 更新测试域名为'shengwang.cn'。
+
 ## [0.3.4](https://github.com/AgoraIO-Community/AUIVoiceRoom/releases/tag/0.3.4)
 - 更新集成文档。
 

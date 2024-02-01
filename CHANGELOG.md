@@ -1,6 +1,9 @@
 
 English | [中文](CHANGELOG.zh.md)
 
+## [0.3.5](https://github.com/AgoraIO-Community/AUIVoiceRoom/releases/tag/0.3.5)
+- Update the test host url to "shengwang.cn".
+
 ## [0.3.4](https://github.com/AgoraIO-Community/AUIVoiceRoom/releases/tag/0.3.4)
 - Update Integration Documents.
 
