@@ -1,20 +1,18 @@
 # VoiceRoomUIKit
 
-*English | [中文](VoiceRoomUIKit_zh.md)*
-
-VoiceRoomUIKit is a voice chat room scene component, which provides room management and the ability to pull up the voice chat room scene page. Developers can use this component to quickly build a chat room application.
-
+VoiceRoomUIKit 是一个语聊房场景组件，提供房间管理和拉起语聊房场景页面的能力。 开发者可以使用该组件快速构建一个语聊房应用。
 
 ## Quick Started
-> Please make sure you have successfully run the project according to this [tutorial](../Example/AUIKitVoiceRoom/README.md) before integrating.。
+> 在集成之前，请确保您已根据此[教程](../Example/AUIKitVoiceRoom/README.md) 成功运行项目。
 
 ### 1. Add Source Code
 
-**Copy the following source code into your own project：**
+**将以下源码复制到自己的项目中：**
 
 - [asceneskit](../asceneskit)
 
-**Add dependencies on AScenesKit in the Setting.gradle file**
+
+**在Setting.gradle文件中添加对AScenesKit**
 
 ```gradle
   include ':asceneskit'
@@ -23,7 +21,7 @@ VoiceRoomUIKit is a voice chat room scene component, which provides room managem
 
 ### 2. Initialize VoiceRoomUIKit
 ```kotlin
-//VoiceRoomUIKit Set basic information
+//VoiceRoomUIKit设置基本信息
 
 // Create Common Config
 val config = AUICommonConfig()
@@ -42,7 +40,7 @@ AUIVoiceRoomUikit.init(
 )
 ```
 
-### 3. Get room list
+### 3.获取房间列表
 ```kotlin
 AUIVoiceRoomUikit.getRoomList(
     lastCreateTime,
@@ -52,7 +50,7 @@ AUIVoiceRoomUikit.getRoomList(
 )
 ```
 
-### 4. Create room
+### 4.创建房间
 ```kotlin
 val createRoomInfo = AUICreateRoomInfo()
 createRoomInfo.roomName = roomName
@@ -70,21 +68,17 @@ AUIVoiceRoomUikit.createRoom(
 )
 ```
 
-### 5. Check permissions and Launch room
+### 5. 检查权限 拉起并跳转的房间页面
 ```kotlin
 mPermissionHelp.checkMicPerm(
         {
-            generateToken { config ->
-                AUIVoiceRoomUikit.launchRoom(
-                    lunchType,
-                    roomInfo,
-                    config,
-                    mViewBinding.VoiceRoomView,
-                    AUIVoiceRoomUikit.RoomEventHandler {
+            AUIVoiceRoomUikit.launchRoom(
+                roomInfo,
+                mViewBinding.VoiceRoomView,
+                AUIVoiceRoomUikit.RoomEventHandler {
 
-                    })
-                AUIVoiceRoomUikit.registerRespObserver(this)
-            }
+                })
+            AUIVoiceRoomUikit.registerRespObserver(this)
         },
         {
             finish()
@@ -93,10 +87,10 @@ mPermissionHelp.checkMicPerm(
     )
 ```
 
-### 6. Exit the room
+### 6. 退出房间
 #### 6.1 Proactively exiting
 ```kotlin
-//AUIVoiceChatRoomView provides a closure for onClickOffButton
+//AUIVoiceChatRoomView 提供一个关闭的闭包
 private fun shutDownRoom() {
     roomInfo?.roomId?.let { roomId ->
         AUIVoiceRoomUikit.destroyRoom(roomId)
@@ -106,29 +100,29 @@ private fun shutDownRoom() {
 }
 ```
 
-#### 6.2 Room destruction passive exit
+#### 6.2 房间销毁与自动退出
 Please refer to [Room Destruction] (# 7.1-Room-Destruction)
 
 
-### 7. Exception handling
+### 7. 异常处理
 #### 7.1 Room destruction
 ```kotlin
-//Subscribe to the callback for AUIRoomManagerRespDelegate after VoiceRoomUIKit. shared. launchRoom
+//订阅 VoiceRoomUIKit 后 AUIRoomManagerRespDelegate 的回调。
 mVoiceService.getRoomManager().registerRespObserver(this)
 
-//Unsubscribe when exiting the room
+//退出房间时取消订阅
 mVoiceService?.getRoomManager()?.unRegisterRespObserver(this)
 
-//Process room destruction through onRoomDestroy in the AUIRoomManagerRespDelegate callback method
+//通过AUIRoomManagerRespDelegate回调方法中的onRoomDestroy处理房间销毁
 override fun onRoomDestroy(roomId: String) {
     //Processing room was destroyed
 }
-
+//用户被踢出房间的回调
 override fun onRoomUserBeKicked(roomId: String?, userId: String?) {
     if (roomId == mVoiceService?.getRoomInfo()?.roomId){
         AUIAlertDialog(context).apply {
-            setTitle("You have been kicked out of the room")
-            setPositiveButton("confirm") {
+            setTitle("您已被踢出房间")
+            setPositiveButton("确认") {
                 dismiss()
                 mOnRoomDestroyEvent?.invoke()
             }
@@ -139,6 +133,6 @@ override fun onRoomUserBeKicked(roomId: String?, userId: String?) {
 ```
 
 ## License
-Copyright © Agora Corporation. All rights reserved.
-Licensed under the [MIT license](../LICENSE).
+版权所有 © Agora Corporation。 版权所有。
+根据 [MIT 许可证](../LICENSE) 获得许可。
 
