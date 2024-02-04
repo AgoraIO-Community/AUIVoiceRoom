@@ -29,6 +29,8 @@
 
 - 获取声网 App ID 和 App 证书 -------- [声网 Docs - 解决方案 - 声动语聊 - 快速开始 - 开通服务](https://doc.shengwang.cn/doc/chatroom/android/integration-with-ui/get-started/enable-service)
   
+  > - 登录[声网控制台](https://console.shengwang.cn/)，如果没有账号则注册一个
+  > 
   > - 点击创建应用
   >   
   >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/createaccount/uikit_agora_01.png" width="800" />
@@ -43,6 +45,8 @@
   
 - 配置实时消息RTM
   
+  > - 进入[声网控制台](https://console.shengwang.cn/)
+  > 
   > - 启用实时消息RTM -------- 进入控制台 -> 选择项目 -> 全部产品 -> 基础能力 -> 实时消息 —> 功能配置 -> 启用
   >  
   >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/createaccount/uikit_agora_04.png" width="800" />
@@ -53,7 +57,9 @@
   
 - 获取环信 AppKey、Client ID和Client Secret
   
-  > - 获取项目
+  > - 登录[环信通讯云控制台](https://console.easemob.com/)，如果没有账号则创建一个
+  > 
+  > - 创建项目
   > 
   >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/createaccount/uikit_easemob_01.png" width="800" />
   > 
@@ -63,7 +69,7 @@
   
 - 在项目里配置上面获取到的 App ID、App 证书
   
-  > - 在项目根目录下创建local.properties文件，如果文件已存在则不用重复创建
+  > - 在项目根目录下创建local.properties文件
   >
   > - 填写配置
   > 
