@@ -22,20 +22,15 @@ open class AUIInvitationViewBinder: NSObject {
             invitationDelegate?.unbindRespDelegate(delegate: self)
         }
     }
-    
-    public weak var roomDelegate: AUIRoomManagerDelegate? {
-        didSet {
-            oldValue?.unbindRespDelegate(delegate: self)
-            roomDelegate?.bindRespDelegate(delegate: self)
-        }
-    }
 
-    public func bind(inviteView: IAUIListViewBinderRefresh,applyView: IAUIListViewBinderRefresh, invitationDelegate: AUIInvitationServiceDelegate, roomDelegate: AUIRoomManagerDelegate,receiveApply: @escaping ([String:AUIInvitationCallbackModel]) -> Void) {
+    public func bind(inviteView: IAUIListViewBinderRefresh,
+                     applyView: IAUIListViewBinderRefresh,
+                     invitationDelegate: AUIInvitationServiceDelegate,
+                     receiveApply: @escaping ([String:AUIInvitationCallbackModel]) -> Void) {
         self.newApplyClosure = receiveApply
         self.inviteView = inviteView
         self.applyView = applyView
         self.invitationDelegate = invitationDelegate
-        self.roomDelegate = roomDelegate
         self.invitationDelegate?.bindRespDelegate(delegate: self)
     }
 }
@@ -128,6 +123,10 @@ extension AUIInvitationViewBinder: AUIInvitationRespDelegate {
     
 }
 
+#if DEBUG
+
+#else
+#error("not implemented")
 extension AUIInvitationViewBinder: AUIRoomManagerRespDelegate {
     public func onRoomUserBeKicked(roomId: String, userId: String) {
         
@@ -162,3 +161,4 @@ extension AUIInvitationViewBinder: AUIRoomManagerRespDelegate {
     }
     
 }
+#endif

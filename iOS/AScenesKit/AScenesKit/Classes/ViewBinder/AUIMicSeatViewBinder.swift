@@ -287,7 +287,7 @@ extension AUIMicSeatViewBinder: AUIMicSeatRespDelegate {
         updateMic(with: seatIndex, role: .onlineAudience)
 
         //current user enter seat
-        if user.userId == micSeatDelegate?.getRoomContext().commonConfig?.userId {
+        if user.userId == getLocalUserId() {
             let mediaOption = AgoraRtcChannelMediaOptions()
             mediaOption.clientRoleType = .broadcaster
             mediaOption.publishMicrophoneTrack = true
@@ -308,7 +308,7 @@ extension AUIMicSeatViewBinder: AUIMicSeatRespDelegate {
         updateMic(with: seatIndex, role: .offlineAudience)
  
         //current user enter seat
-        guard user.userId == micSeatDelegate?.getRoomContext().commonConfig?.userId else {
+        guard user.userId == getLocalUserId() else {
             return
         }
         
@@ -394,7 +394,7 @@ extension AUIMicSeatViewBinder {
             videoCanvas.uid = uid
             videoCanvas.view = canvas
             videoCanvas.renderMode = .hidden
-            if userId == self.micSeatDelegate?.getRoomContext().commonConfig?.userId {
+            if userId == getLocalUserId() {
                 rtcEngine.setupLocalVideo(videoCanvas)
             } else {
                 rtcEngine.setupRemoteVideo(videoCanvas)
@@ -468,7 +468,7 @@ extension AUIMicSeatViewBinder: AUIUserRespDelegate {
         userMap[userId]?.muteAudio = mute
         let micSeat = micSeatArray.first { $0.user?.userId ?? "" == userId
         }
-        if userId == self.micSeatDelegate?.getRoomContext().commonConfig?.userId {
+        if userId == getLocalUserId() {
             if let micSeatMute = micSeat?.muteAudio,micSeatMute {
                 self.rtcEngine.muteLocalAudioStream(true)
             } else {
@@ -552,8 +552,7 @@ extension AUIMicSeatViewBinder: AUIChorusRespDelegate {
     }
     
     private func getLocalUserId() -> String? {
-        guard let commonConfig = AUIRoomContext.shared.commonConfig else {return nil}
-        return commonConfig.userId
+        return AUIRoomContext.shared.currentUserInfo.userId
     }
     
     private func updateMic(with index: Int, role: MicRole) {

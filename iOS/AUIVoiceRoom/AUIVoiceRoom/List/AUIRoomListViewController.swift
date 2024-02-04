@@ -88,20 +88,24 @@ final class AUIRoomListViewController: UIViewController {
                 self.view.backgroundColor = UIColor(0x171A1C)
             }
         }
-
     }
     
-    
     private func initEngine() {
-        //设置基础信息到VoiceChatUIKit里
+        // 设置基础信息到KaraokeUIKit里
         let commonConfig = AUICommonConfig()
+        commonConfig.appId = KeyCenter.AppId
+        commonConfig.appCert = KeyCenter.AppCertificate
+        commonConfig.imAppKey = KeyCenter.IMAppKey
+        commonConfig.imClientId = KeyCenter.IMClientId
+        commonConfig.imClientSecret = KeyCenter.IMClientSecret
         commonConfig.host = KeyCenter.HostUrl
-        commonConfig.userId = userInfo.userId
-        commonConfig.userName = userInfo.userName
-        commonConfig.userAvatar = userInfo.userAvatar
-        VoiceChatUIKit.shared.setup(roomConfig: commonConfig,
-                                  rtcEngine: nil,
-                                  rtmClient: nil)
+        let ownerInfo = AUIUserThumbnailInfo()
+        ownerInfo.userId = userInfo.userId
+        ownerInfo.userName = userInfo.userName
+        ownerInfo.userAvatar = userInfo.userAvatar
+        commonConfig.owner = ownerInfo
+        VoiceChatUIKit.shared.setup(commonConfig: commonConfig,
+                                    apiConfig: nil)
     }
     
     private func _layoutButton() {
@@ -145,8 +149,10 @@ final class AUIRoomListViewController: UIViewController {
     }
     
     func onLoadMoreAction() {
-        let lastCreateTime = roomList.last?.createTime
-        VoiceChatUIKit.shared.getRoomInfoList(lastCreateTime: lastCreateTime ?? 0, pageSize: kListCountPerPage, callback: {[weak self] error, list in
+        let lastCreateTime: Int64? = 0//roomList.last?.createTime
+        VoiceChatUIKit.shared.getRoomInfoList(lastCreateTime: lastCreateTime ?? 0,
+                                              pageSize: kListCountPerPage,
+                                              callback: {[weak self] error, list in
             guard let self = self else {return}
             self.roomList += list ?? []
             self.collectionView.reloadData()
@@ -177,20 +183,17 @@ final class AUIRoomListViewController: UIViewController {
                     return
                 }
                 print("create room with name(\(text))")
-                let room = AUICreateRoomInfo()
+                let room = AUIRoomInfo()
+                room.roomId = UUID().uuidString.lowercased()
                 room.roomName = text
-                room.thumbnail = self.userInfo.userAvatar
+//                room.thumbnail = self.userInfo.userAvatar
                 room.micSeatCount = UInt(AUIRoomContext.shared.seatCount)
                 room.micSeatStyle = UInt(AUIRoomContext.shared.seatType.rawValue)
-                VoiceChatUIKit.shared.createRoom(roomInfo: room) { roomInfo in
-                    let vc = RoomViewController()
-                    roomInfo?.micSeatCount = UInt(AUIRoomContext.shared.seatCount)
-                    roomInfo?.micSeatStyle = UInt(AUIRoomContext.shared.seatType.rawValue)
-                    vc.roomInfo = roomInfo
-                    self.navigationController?.pushViewController(vc, animated: true)
-                } failure: { error in
-                    AUIToast.show(text: error.localizedDescription)
-                }
+                room.owner = AUIRoomContext.shared.currentUserInfo
+                let vc = RoomViewController()
+                vc.isCreate = true
+                vc.roomInfo = room
+                self.navigationController?.pushViewController(vc, animated: true)
             })
             .textFieldPlaceholder(color: UIColor(hex: "#919BA1"))
             .textFieldPlaceholder(placeholder: "请输入房间主题")
