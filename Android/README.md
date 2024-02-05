@@ -128,6 +128,7 @@ VoiceRoomUIKit支持对业务功能做定制化修改，其实现放在asceneski
   >   1. 组件通过[Binder](./asceneskit/src/main/java/io/agora/asceneskit/voice/binder)将AUIKit提供的UI组件及Service组件绑定起来以实现业务交互
   >   2. [AUIVoiceRoomService](./asceneskit/src/main/java/io/agora/asceneskit/voice/AUIVoiceRoomService.kt)管理着所有业务service
   >   3. [AUIVoiceRoomView](./asceneskit/src/main/java/io/agora/asceneskit/voice/AUIVoiceRoomView.kt)作为房间总ui入口，管理所有Binder及AUIVoiceRoomService
+  > 
   > 自定义功能核心是修改Binder及AUIVoiceRoomView。
   > 
   > 下面是自定义麦位的参考步骤：
