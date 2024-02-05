@@ -97,7 +97,7 @@
 ---
 ## 部署后台服务（可选）
 
-  > 声网提供公用的后台服务，即https://service.shengwang.cn/uikit，这个服务如果使用自己的AppId可能容易暴露自己的证书，适用于测试环境以及用户量小、安全性要求低的客户。
+  > 声网提供公用的后台服务(https://service.shengwang.cn/uikit)，这个服务如果使用自己的AppId可能容易暴露自己的证书，适用于测试环境以及用户量小、安全性要求低的客户。
   >
   > **如果有更高的要求，可以自己购买服务器并部署后台服务代码，具体教程见 [后台部署](../backend)。**
   >
@@ -115,7 +115,7 @@
 
 ---
 ## 自定义功能
-VoiceRoomUIKit支持对业务功能做定制化修改，其的实现放在asceneskit库里，该库通过maven引入已有的[AUKit](https://github.com/AgoraIO-Community/AUIKit)组件做定制，
+VoiceRoomUIKit支持对业务功能做定制化修改，其实现放在asceneskit库里，该库通过maven引入已有的[AUKit](https://github.com/AgoraIO-Community/AUIKit)组件做定制，
 因此自定义需要先了解AUIKit的接口。AUIKit的接口可以通过AUIKit的[README](https://github.com/AgoraIO-Community/AUIKit/blob/main/Android/README.zh.md)文档进行查看。
 
 下面以麦位为例说明如何自定义asceneskit功能，然后简单说明如何引入AUIKit源码做更深层次的定制。
