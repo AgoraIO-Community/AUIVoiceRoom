@@ -105,7 +105,7 @@
   >   
   >   注意：测试域名和测试AppID都仅供测试使用，不能商用！
   >
-  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/createaccount/uikit_agora_07.png" width="800" />
+  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/createaccount/uikit_agora_07_2.png" width="800" />
 
 - 用 Android Studio 运行项目即可开始您的体验
 
