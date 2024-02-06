@@ -310,10 +310,9 @@ extension AUIVoiceChatRoomService {
         guard let arbiter = AUIRoomContext.shared.getArbiter(channelName: channelName),
               arbiter.isArbiter() else {return}
 
-        micSeatImpl.deinitService?(completion: { err in })
-        chatImplement.deinitService?(completion: { err in })
-//        invitationImplement.deinitService?(completion: { err in
-//        })
+        micSeatImpl.deinitService? { err in }
+        chatImplement.deinitService? { err in }
+        invitationImplement.deinitService { err in }
         
         rtmManager.cleanBatchMetadata(channelName: channelName,
                                       lockName: kRTM_Referee_LockName,

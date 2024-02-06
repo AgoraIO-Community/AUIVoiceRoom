@@ -13,11 +13,19 @@ class AUIUserCellUserData: AUIUserThumbnailInfo, AUIUserCellUserDataProtocol {
 
 extension AUIUserThumbnailInfo {
     func createData(_ seatIndex: Int) -> AUIUserCellUserDataProtocol {
-        let userInfo = AUIUserCellUserData()
-        userInfo.userAvatar = userAvatar
-        userInfo.userId = userId
-        userInfo.userName = userName
-        userInfo.seatIndex = seatIndex
-        return userInfo
+        let userData = AUIUserCellUserData()
+        userData.userAvatar = userAvatar
+        userData.userId = userId
+        userData.userName = userName
+        userData.seatIndex = seatIndex
+        return userData
+    }
+    
+     static func createUser(data: AUIUserCellUserDataProtocol) -> AUIUserThumbnailInfo {
+         let userInfo = AUIUserThumbnailInfo()
+         userInfo.userId = data.userId
+         userInfo.userAvatar = data.userAvatar
+         userInfo.userName = data.userName
+         return userInfo
     }
 }

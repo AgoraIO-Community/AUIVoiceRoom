@@ -9,8 +9,8 @@ import UIKit
 import AUIKitCore
 
 open class AUIInvitationViewBinder: NSObject {
-    
-    private var newApplyClosure: (([String:AUIInvitationCallbackModel]) -> ())?
+    private var userMap: [String: AUIUserInfo] = [:]
+    private var newApplyClosure: (([String: AUIInvitationInfo]) -> ())?
     
     private weak var inviteView: IAUIListViewBinderRefresh?
     
@@ -22,35 +22,39 @@ open class AUIInvitationViewBinder: NSObject {
             invitationDelegate?.unbindRespDelegate(delegate: self)
         }
     }
+    
+    public weak var userDelegate: AUIUserServiceDelegate? {
+        didSet {
+            oldValue?.unbindRespDelegate(delegate: self)
+            userDelegate?.bindRespDelegate(delegate: self)
+        }
+    }
+    
+    public weak var micSeatDelegate: AUIMicSeatServiceDelegate?
 
     public func bind(inviteView: IAUIListViewBinderRefresh,
                      applyView: IAUIListViewBinderRefresh,
-                     invitationDelegate: AUIInvitationServiceDelegate,
-                     receiveApply: @escaping ([String:AUIInvitationCallbackModel]) -> Void) {
+                     invitationService: AUIInvitationServiceDelegate,
+                     micSeatService: AUIMicSeatServiceDelegate,
+                     userService: AUIUserServiceDelegate,
+                     receiveApply: @escaping ([String: AUIInvitationInfo]) -> Void) {
         self.newApplyClosure = receiveApply
         self.inviteView = inviteView
         self.applyView = applyView
-        self.invitationDelegate = invitationDelegate
+        self.invitationDelegate = invitationService
+        self.micSeatDelegate = micSeatService
+        self.userDelegate = userService
         self.invitationDelegate?.bindRespDelegate(delegate: self)
     }
 }
 
 extension AUIInvitationViewBinder: AUIInvitationRespDelegate {
-    
-    public func onApplyAcceptedButFailed(userId: String) {
-        AUIToast.show(text: "\(userId) apply to mic failed!")
-    }
-    
-    public func onInviteeAcceptedButFailed(userId: String) {
-        AUIToast.show(text: "\(userId) agree invitation to mic failed!")
-    }
-    
-    public func onReceiveApplyUsersUpdate(users: [String:AUIInvitationCallbackModel]) {
+    public func onReceiveApplyUsersUpdate(users: [String: AUIInvitationInfo]) {
         //TODO: - 全量更新申请列表
         self.newApplyClosure?(users)
     }
     
-    public func onInviteeListUpdate(inviteeList: [String:AUIInvitationCallbackModel]) {
+    public func onInviteeListUpdate(inviteeList: [String: AUIInvitationInfo]) {
         self.inviteView?.refreshUsers(users: [])
     }
     
@@ -120,45 +124,60 @@ extension AUIInvitationViewBinder: AUIInvitationRespDelegate {
         AUIToast.show(text: "房主已取消您的申请！")
     }
     
+    public func onInviteWillAccept(userId: String, 
+                                   seatIndex: Int,
+                                   metaData: NSMutableDictionary) -> NSError? {
+        if let userInfo = userMap[userId] {
+            micSeatDelegate?.pickSeat(seatIndex: seatIndex,
+                                      user: userInfo) { err in
+            }
+        }
+        return nil
+    }
     
+    public func onApplyWillAccept(userId: String, 
+                                  seatIndex: Int,
+                                  metaData: NSMutableDictionary) -> NSError? {
+        if let userInfo = userMap[userId] {
+            micSeatDelegate?.pickSeat(seatIndex: seatIndex,
+                                      user: userInfo) { err in
+            }
+        }
+        return nil
+    }
 }
 
-#if DEBUG
-
-#else
-#error("not implemented")
-extension AUIInvitationViewBinder: AUIRoomManagerRespDelegate {
-    public func onRoomUserBeKicked(roomId: String, userId: String) {
-        
-    }
-    
-    public func onRoomAnnouncementChange(roomId: String, announcement: String) {
-        //TODO: - update room announcement
-    }
-    
+extension AUIInvitationViewBinder: AUIUserRespDelegate {
     public func onRoomUserSnapshot(roomId: String, userList: [AUIUserInfo]) {
-        self.inviteView?.refreshUsers(users: userList)
-    }
-    
-    public func onRoomDestroy(roomId: String) {
-        
-    }
-    
-    public func onRoomInfoChange(roomId: String, roomInfo: AUIRoomInfo) {
-        
+        self.inviteView?.refreshUsers(users: userList.map({ $0.createData(-1)}))
+        userMap.removeAll()
+        userList.forEach { userMap[$0.userId] = $0 }
     }
     
     public func onRoomUserEnter(roomId: String, userInfo: AUIUserInfo) {
         self.inviteView?.filter(userId: userInfo.userId)
+        userMap[userInfo.userId] = userInfo
     }
     
     public func onRoomUserLeave(roomId: String, userInfo: AUIUserInfo) {
         self.inviteView?.filter(userId: userInfo.userId)
+        userMap[userInfo.userId] = nil
     }
     
     public func onRoomUserUpdate(roomId: String, userInfo: AUIUserInfo) {
         self.inviteView?.filter(userId: userInfo.userId)
+        userMap[userInfo.userId] = userInfo
     }
     
+    public func onUserAudioMute(userId: String, mute: Bool) {
+        
+    }
+    
+    public func onUserVideoMute(userId: String, mute: Bool) {
+        
+    }
+    
+    public func onUserBeKicked(roomId: String, userId: String) {
+        
+    }
 }
-#endif

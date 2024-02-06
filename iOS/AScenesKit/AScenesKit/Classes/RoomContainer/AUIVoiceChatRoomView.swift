@@ -186,9 +186,11 @@ import SwiftTheme
         service.bindRespDelegate(delegate: self)
         
         //绑定Service
-        micSeatBinder.bindVoiceChat(micSeatView: micSeatView, eventsDelegate: self,
-                           micSeatService: service.micSeatImpl,
-                                    userService: service.userImpl) { [weak self] onMic,mute in
+        micSeatBinder.bindVoiceChat(micSeatView: micSeatView, 
+                                    eventsDelegate: self,
+                                    micSeatService: service.micSeatImpl,
+                                    userService: service.userImpl, 
+                                    invitationService: service.invitationImplement) { [weak self] onMic,mute in
             self?.chatView.updateBottomBarState(onMic: onMic)
             self?.chatView.updateBottomBarSelected(index: 1, selected: mute)
         }
@@ -209,7 +211,9 @@ import SwiftTheme
         
         invitationBinder.bind(inviteView: self.invitationView,
                               applyView: self.applyView,
-                              invitationDelegate: service.invitationImplement) { [weak self] in
+                              invitationService: service.invitationImplement,
+                              micSeatService: service.micSeatImpl,
+                              userService: service.userImpl) { [weak self] in
             self?.requestUsers(users: $0)
         }
         invitationView.addActionHandler(actionHandler: self)
@@ -340,7 +344,7 @@ extension AUIVoiceChatRoomView: AUIMoreOperationViewEventsDelegate {
 
 extension AUIVoiceChatRoomView: AUIUserOperationEventsDelegate {
     
-    private func requestUsers(users: [String:AUIInvitationCallbackModel]) {
+    private func requestUsers(users: [String: AUIInvitationInfo]) {
         guard let channelName = self.service?.channelName else { return }
         if !AUIRoomContext.shared.isRoomOwner(channelName: channelName) { return }
         if users.keys.count <= 0 { return }
@@ -355,7 +359,7 @@ extension AUIVoiceChatRoomView: AUIUserOperationEventsDelegate {
                 self.userBinder.onRoomUserSnapshot(roomId: channelName, userList: userInfos)
                 let applyUsers = self.filterMicUsers().map({
                     if $0.userId == users[$0.userId]?.userId ?? "" {
-                        $0.seatIndex = users[$0.userId]?.payload?.seatNo ?? 0
+                        $0.seatIndex = users[$0.userId]?.seatNo ?? 0
                     }
                     return $0
                 })
