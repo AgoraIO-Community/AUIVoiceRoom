@@ -2,11 +2,11 @@
 
 VoiceRoomUIKit 是一个语聊房场景组件，提供房间管理和拉起语聊房场景页面的能力。 开发者可以使用该组件快速构建一个语聊房应用。
 
-## Quick Started
+## 快速集成
   
-  > 在集成之前，请确保您已根据此[教程](../Example/AUIKitVoiceRoom/README.md) 成功运行项目。
+  > 在集成之前，请确保您已根据此[教程](..) 成功运行项目。
 
-### 1. Add Source Code
+### 1. 添加源码
 
 **将以下源码复制到自己的项目中：**
 
@@ -20,24 +20,25 @@ VoiceRoomUIKit 是一个语聊房场景组件，提供房间管理和拉起语�
 ```
 
 
-### 2. Initialize VoiceRoomUIKit
+### 2. 初始化 VoiceRoomUIKit
 ```kotlin
-//VoiceRoomUIKit设置基本信息
-
-// Create Common Config
 val config = AUICommonConfig()
-config.context = application
-config.userId = mUserId
-config.userName = "user_$mUserId"
-config.userAvatar = randomAvatar()
+config.context = this
+config.appId = BuildConfig.AGORA_APP_ID
+config.appCert = BuildConfig.AGORA_APP_CERT
 config.host = BuildConfig.SERVER_HOST
-
-// init AUiKit
+config.imAppKey = BuildConfig.IM_APP_KEY
+config.imClientId = BuildConfig.IM_CLIENT_ID
+config.imClientSecret = BuildConfig.IM_CLIENT_SECRET
+// Randomly generate local user information
+config.owner = AUIUserThumbnailInfo().apply {
+  userId = RandomUtils.randomUserId()
+  userName = RandomUtils.randomUserName()
+  userAvatar = RandomUtils.randomAvatar()
+}
 AUIVoiceRoomUikit.init(
-    config = config, // must
-    rtmClient = null, // option
-    rtcEngineEx = null, // option
-    ktvApi = null// option
+  config,
+  AUIAPIConfig()
 )
 ```
 
@@ -51,62 +52,40 @@ AUIVoiceRoomUikit.getRoomList(
 )
 ```
 
-### 4.创建房间
+### 4.房主创建并进入房间
 ```kotlin
-val createRoomInfo = AUICreateRoomInfo()
-createRoomInfo.roomName = roomName
-createRoomInfo.micSeatCount = seatCount
-createRoomInfo.micSeatStyle = seatStyle
 AUIVoiceRoomUikit.createRoom(
-    createRoomInfo,
-    success = { roomInfo ->
-        gotoRoomDetailPage(AUIVoiceRoomUikit.LaunchType.CREATE,roomInfo)
-    },
-    failure = {
-        Toast.makeText(this@VoiceRoomListActivity, "Create room failed!", Toast.LENGTH_SHORT)
-            .show()
+  roomInfo,
+  roomConfig,
+  mViewBinding.VoiceRoomView,
+  completion = { error, _ ->
+    if (error != null) {
+      shutDownRoom()
     }
+  }
 )
 ```
 
-### 5. 检查权限 拉起并跳转的房间页面
+### 5. 观众进入房间
 ```kotlin
-mPermissionHelp.checkMicPerm(
-        {
-            AUIVoiceRoomUikit.launchRoom(
-                roomInfo,
-                mViewBinding.VoiceRoomView,
-                AUIVoiceRoomUikit.RoomEventHandler {
-
-                })
-            AUIVoiceRoomUikit.registerRespObserver(this)
-        },
-        {
-            finish()
-        },
-        true
-    )
+AUIVoiceRoomUikit.launchRoom(
+  roomInfo,
+  roomConfig,
+  mViewBinding.VoiceRoomView,
+  completion = { error, _ ->
+    if (error != null) {
+      shutDownRoom()
+    }
+  }
+)
 ```
 
 ### 6. 退出房间
-#### 6.1 Proactively exiting
 ```kotlin
-//AUIVoiceChatRoomView 提供一个关闭的闭包
-private fun shutDownRoom() {
-    roomInfo?.roomId?.let { roomId ->
-        AUIVoiceRoomUikit.destroyRoom(roomId)
-        AUIVoiceRoomUikit.unRegisterRespObserver(this@VoiceRoomActivity)
-    }
-    finish()
-}
+AUIVoiceRoomUikit.destroyRoom(roomId)
 ```
 
-#### 6.2 房间销毁与自动退出
-Please refer to [Room Destruction] (# 7.1-Room-Destruction)
-
-
 ### 7. 异常处理
-#### 7.1 Room destruction
 ```kotlin
 //订阅 VoiceRoomUIKit 后 AUIRoomManagerRespDelegate 的回调。
 mVoiceService.getRoomManager().registerRespObserver(this)
@@ -118,6 +97,7 @@ mVoiceService?.getRoomManager()?.unRegisterRespObserver(this)
 override fun onRoomDestroy(roomId: String) {
     //Processing room was destroyed
 }
+
 //用户被踢出房间的回调
 override fun onRoomUserBeKicked(roomId: String?, userId: String?) {
     if (roomId == mVoiceService?.getRoomInfo()?.roomId){
@@ -130,6 +110,19 @@ override fun onRoomUserBeKicked(roomId: String?, userId: String?) {
             show()
         }
     }
+}
+
+// Token即将过期回调
+override fun onTokenPrivilegeWillExpire(roomId: String) {
+  super.onTokenPrivilegeWillExpire(roomId)
+  AUIVoiceRoomUikit.generateToken(roomId,
+    onSuccess = {
+      AUIVoiceRoomUikit.renewToken(roomId, it)
+    },
+    onFailure = {
+      AUILogger.logger()
+        .e("VoiceRoomActivity", "onTokenPrivilegeWillExpire generateToken error $it")
+    })
 }
 ```
 
