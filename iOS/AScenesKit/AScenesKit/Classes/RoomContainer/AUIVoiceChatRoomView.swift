@@ -44,7 +44,7 @@ import SwiftTheme
     
     private lazy var micSeatView: AUIMicSeatView = {
         let frame = CGRect(x: 16, y: AStatusBarHeight + 74, width: self.bounds.size.width - 16 * 2, height: 324)
-        let type = AUIMicSeatViewLayoutType(rawValue: self.roomInfo!.micSeatStyle) ?? .eight
+        let type = AUIMicSeatViewLayoutType(rawValue: self.roomInfo?.micSeatStyle ?? 0) ?? .eight
         let view = AUIMicSeatView(frame: frame, layout: self.layout(type: type))
         return view
     }()

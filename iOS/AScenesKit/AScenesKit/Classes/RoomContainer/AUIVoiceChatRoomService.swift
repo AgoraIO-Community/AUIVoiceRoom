@@ -295,8 +295,9 @@ extension AUIVoiceChatRoomService: AgoraRtcEngineDelegate {
 // room manager handler
 extension AUIVoiceChatRoomService {
     private func cleanUserInfo(channelName: String, userId: String) {
-        
-        AUIRoomContext.shared.getArbiter(channelName: channelName)?.release()
+        if userId == AUIRoomContext.shared.currentUserInfo.userId {
+            AUIRoomContext.shared.getArbiter(channelName: channelName)?.release()
+        }
         //TODO: 仲裁者暂无
         guard AUIRoomContext.shared.getArbiter(channelName: channelName)?.isArbiter() ?? false else {return}
         guard let idx = micSeatImpl.getMicSeatIndex?(userId: userId), idx >= 0 else {return}
