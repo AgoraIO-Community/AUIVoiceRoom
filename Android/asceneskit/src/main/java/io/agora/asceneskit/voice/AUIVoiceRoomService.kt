@@ -88,7 +88,14 @@ class AUIVoiceRoomService constructor(
             option.publishCameraTrack = !mute
             rtcEngine.updateChannelMediaOptions(option)
         }
+
+        override fun onLocalUserKickedOut(roomId: String) {
+            super.onLocalUserKickedOut(roomId)
+            exit()
+        }
     }
+
+
 
     private val rtmErrorRespObserver = object : AUIRtmErrorRespObserver {
         override fun onTokenPrivilegeWillExpire(channelName: String?) {
@@ -113,16 +120,6 @@ class AUIVoiceRoomService constructor(
             super.onConnectionStateChanged(channelName, state, reason)
             if (reason == RtmConstants.RtmConnectionChangeReason.getValue(RtmConstants.RtmConnectionChangeReason.REJOIN_SUCCESS)) {
                 AUIRoomContext.shared().getArbiter(this@AUIVoiceRoomService.channelName)?.acquire()
-            }
-            if (state == RtmConstants.RtmConnectionState.getValue(RtmConstants.RtmConnectionState.FAILED)
-                && reason == RtmConstants.RtmConnectionChangeReason.getValue(RtmConstants.RtmConnectionChangeReason.BANNED_BY_SERVER)
-            ) {
-                observableHelper.notifyEventHandlers {
-                    it.onRoomUserBeKicked(
-                        this@AUIVoiceRoomService.channelName,
-                        AUIRoomContext.shared().currentUserInfo.userId
-                    )
-                }
             }
         }
     }
@@ -182,6 +179,15 @@ class AUIVoiceRoomService constructor(
                 super.onLockEvent(event)
                 Log.d(TAG, "onLockEvent event: $event")
             }
+
+            override fun onConnectionStateChanged(
+                channelName: String?,
+                state: RtmConstants.RtmConnectionState?,
+                reason: RtmConstants.RtmConnectionChangeReason?
+            ) {
+                super.onConnectionStateChanged(channelName, state, reason)
+                Log.d(TAG, "RtmClient.create >> onConnectionStateChanged channelName=$channelName, state=$state, reason=$reason")
+            }
         }).build()
     )
 
@@ -195,7 +201,7 @@ class AUIVoiceRoomService constructor(
 
     val chatManager = AUIChatManager(channelName, AUIRoomContext.shared())
 
-    val userService: IAUIUserService = AUIUserServiceImpl(channelName, rtmManager).apply {
+    val userService: IAUIUserService = AUIUserServiceImpl(channelName, rtmManager, rtcEngine).apply {
         registerRespObserver(userRespObserver)
     }
 

@@ -30,6 +30,7 @@ import io.agora.auikit.ui.micseats.IMicSeatDialogView;
 import io.agora.auikit.ui.micseats.IMicSeatItemView;
 import io.agora.auikit.ui.micseats.IMicSeatsView;
 import io.agora.auikit.ui.micseats.MicSeatStatus;
+import io.agora.auikit.utils.AUILogger;
 import io.agora.rtc2.IRtcEngineEventHandler;
 import io.agora.rtc2.RtcEngine;
 
@@ -79,7 +80,13 @@ public class AUIMicSeatsBinder extends IRtcEngineEventHandler implements
         userService.registerRespObserver(this);
         micSeatService.registerRespObserver(this);
         micSeatsView.setMicSeatActionDelegate(this);
-        mRtcEngine.addHandler(this);
+        try {
+            mRtcEngine.addHandler(this);
+        } catch (Exception e) {
+            // try : NullPointerException: Attempt to invoke virtual method
+            // 'void io.agora.rtc2.internal.RtcEngineImpl.addHandler(io.agora.rtc2.IAgoraEventHandler)'
+            // on a null object reference
+        }
     }
 
     @Override
@@ -358,6 +365,13 @@ public class AUIMicSeatsBinder extends IRtcEngineEventHandler implements
     public void onUserVideoMute(@NonNull String userId, boolean mute) {
 
     }
+
+    @Override
+    public void onUserOffline(int uid, int reason) {
+        super.onUserOffline(uid, reason);
+        AUILogger.Companion.logger().d("AUIMicSeatsBinder", "onUserOffline >> uid=" + uid + ", reason=" + reason);
+    }
+
 
     @Override
     public void onAudioVolumeIndication(AudioVolumeInfo[] speakers, int totalVolume) {

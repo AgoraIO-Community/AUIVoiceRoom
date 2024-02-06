@@ -163,6 +163,18 @@ class VoiceRoomActivity : AppCompatActivity(), AUIVoiceRoomObserver {
         }
     }
 
+    override fun onTokenPrivilegeWillExpire(roomId: String) {
+        super.onTokenPrivilegeWillExpire(roomId)
+        AUIVoiceRoomUikit.generateToken(roomId,
+            onSuccess = {
+                AUIVoiceRoomUikit.renewToken(roomId, it)
+            },
+            onFailure = {
+                AUILogger.logger()
+                    .e("VoiceRoomActivity", "onTokenPrivilegeWillExpire generateToken error $it")
+            })
+    }
+
     private fun shutDownRoom() {
         AUILogger.logger().d("VoiceRoomActivity", "shutDownRoom ...")
         val roomId = roomInfo.roomId
