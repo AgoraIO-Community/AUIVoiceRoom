@@ -132,11 +132,11 @@ AUIKit的接口可以通过AUIKit的[README](https://github.com/AgoraIO-Communit
   > 
   > - 在setting.gradle里配置AUIKit源码路径，该路径可以是相对于setting.gradle所在目录的相对路径
   >   
-  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/karaoke/karaoke_android_custome_05.png" width="800" />
+  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/voicechat_android_custom_01.png" width="800" />
   > 
   > - 点击Android Studio的Sync按钮同步项目文件，然后左侧切到Project模式，即可看到AUIKit源码
   > 
-  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/karaoke/karaoke_android_custome_06.png" width="800" />
+  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/voicechat_android_custom_02.png" width="800" />
 
 ### UI定制
 VoiceRoomUIKit的UI是基于AUIKit的UI组件进行实现，而AIKit提供了一套UI主题样式，因此VoiceRoomUIKit UI样式是通过扩展AUIKit组件主题来实现的。
@@ -156,11 +156,11 @@ AUIKit组件的主题样式说明见[README](https://github.com/AgoraIO-Communit
   > 
   > - 定位到在AndroidManifest里配置的主题
   > 
-  >    <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/karaoke/karaoke_android_custome_09.png" width="800" />
+  >    <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/voicechat_android_custom_03.png" width="800" />
   >
   > - 通过上面主题定位打开对应的[themes.xml](./asceneskit/src/main/java/io/agora/asceneskit/voice/res-voice/values/themes.xml)文件
   >
-  >    <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/karaoke/karaoke_android_custome_10.png" width="800" />
+  >    <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/voicechat_android_custom_04.png" width="800" />
   > 
   > - 定义好麦位组件的style
   > 
@@ -195,15 +195,15 @@ AUIKit组件的主题样式说明见[README](https://github.com/AgoraIO-Communit
   >
   > - 找到麦位的attrs.xml，在里面添加背景色属性
   >
-  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/karaoke/karaoke_android_custome_11.png" width="800" />
+  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/voicechat_android_custom_05.png" width="800" />
   >
   > - 找到麦位自定义View及其布局
   > 
-  >    <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/karaoke/karaoke_android_custome_12.png" width="800" />
+  >    <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/voicechat_android_custom_06.png" width="800" />
   >
   > - 在麦位view布局里使用上面定义的背景色属性
   >   
-  >    <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/karaoke/karaoke_android_custome_13.png" width="800" />
+  >    <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/voicechat_android_custom_07.png" width="800" />
   >
   > - 主题属性自定义完成后即可按基础定制的步骤来使用这个新增属性
 
@@ -223,21 +223,21 @@ VoiceRoomUIKit的业务服务是基于AUIKit的Service组件进行实现。AUIKi
   >
   >- 查看[voice_room_view.xml](./asceneskit/src/main/java/io/agora/asceneskit/voice/res/layout/voice_room_view.xml)布局找到麦位控件
   >
-  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/karaoke/karaoke_android_custome_01.png" width="800" />
+  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/voicechat_android_custom_08.png" width="800" />
   >
   > - 根据麦位控件ID在AUIVoiceRoomView里找到[对应的Binder实现](./asceneskit/src/main/java/io/agora/asceneskit/voice/binder/AUIMicSeatsBinder.java)。
   >
-  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/karaoke/karaoke_android_custome_02.png" width="800" />
+  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/voicechat_android_custom_09.png" width="800" />
   >
   > - 将麦位相关的AUIKit ui组件实例及service组件实例通过构造方法传入麦位Binder里
   >
-  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/karaoke/karaoke_android_custome_03.png" width="800" />
+  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/voicechat_android_custom_10.png" width="800" />
   >
   > - 在麦位Binder的bind方法里设置service事件监听、获取service数据及初始化ui等初始化操作
   >
   > - 在麦位Binder的unBind方法里取消service事件监听等释放操作
   >
-  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/karaoke/karaoke_android_custome_04.png" width="800" />
+  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/voicechat_android_custom_11.png" width="800" />
 
 #### 自定义房间管理
 
@@ -268,7 +268,7 @@ VoiceRoomUIKit的业务服务是基于AUIKit的Service组件进行实现。AUIKi
   > 
   > - 将[AUIVoiceRoomUikit.kt](./app-voice/src/main/java/io/agora/app/voice/kit/AUIVoiceRoomUikit.kt)中的RoomManager替换成自己的RoomManager
   > 
-  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/karaoke/karaoke_android_custom_14.png" width="800" />
+  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/voicechat_android_custom_12.png" width="800" />
 
 ---
 ## 常见问题
