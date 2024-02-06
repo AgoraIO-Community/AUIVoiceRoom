@@ -210,7 +210,7 @@ AUIKit组件的主题样式说明见[README](https://github.com/AgoraIO-Communit
 ### 业务功能定制
 VoiceRoomUIKit的业务服务是基于AUIKit的Service组件进行实现。AUIKit提供了一系列Service组件供上层使用，具体可以[AUIKit Service文档](https://github.com/AgoraIO-Community/AUIKit/blob/main/Android/doc/AUIKit-Service.md)。下面介绍VoiceRoomUIKit如何做基础定制，以及如何实现自己的房间管理。
 
-#### 基础定制
+#### binder 和 service 使用
 
   > 在做自定义前，需要知道几点：
   >   1. 组件通过[Binder](./asceneskit/src/main/java/io/agora/asceneskit/voice/binder)将AUIKit提供的UI组件及Service组件绑定起来以实现业务交互
