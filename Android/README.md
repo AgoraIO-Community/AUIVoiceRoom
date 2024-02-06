@@ -1,11 +1,11 @@
-# AUIVoiceRoom Android 示例工程快速跑通
+# AUIVoiceRoom Android
 
-本文档主要介绍如何快速跑通 AUIVoiceRoom 示例工程，体验在线语聊房场景，包括麦位管理、用户管理、申请邀请管理、聊天管理、礼物管理等，更详细的介绍，请参考[AUIKit](https://github.com/AgoraIO-Community/AUIKit/blob/main/Android/README.zh.md)
+本文档主要介绍如何快速跑通 AUIVoiceRoom 示例工程 及 自定义功能。体验在线语聊房场景，包括麦位管理、用户管理、申请邀请管理、聊天管理、礼物管理等，更详细的介绍，请参考[AUIKit](https://github.com/AgoraIO-Community/AUIKit/blob/main/Android/README.zh.md)
 
 ---
 ## 架构图
 
-<img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/uikit_structure_chart_voicechat_0.2.0.png.png" width="800" />
+<img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/uikit_structure_chart_voicechat_1.0.0.png" width="800" />
 
 ---
 ## 目录结构
@@ -71,44 +71,43 @@
   > 
   >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/createaccount/uikit_easemob_02.png" width="800" />
   
+- 获取后台服务域名
+
+  > 本项目依赖一个后台服务，该后台服务主要提供下面几个功能：
+  > - 房间管理
+  > - Token生成
+  > - 环信IM聊天房创建
+  > - Rtm踢人
+  >
+  > 后台代码完全开源，部署教程见[后台部署](../backend)，部署完即可拿到后台服务域名。
+  > 
+  > **如果开发者不想或者不熟悉怎么部署后台服务，在已经获取到上面配置的App ID、App 证书等后，可以使用声网提供的测试域名：https://service.shengwang.cn/uikit**
+  > 
+  > **但是注意这个域名仅供测试，不能商用！**
+  
 - 在项目里配置上面获取到的 App ID、App 证书等
   
   > - 在项目根目录下创建local.properties文件
   >
-  > - 填写配置
+  > - 将上面步骤获得的配置填写在local.properties文件里
   >
   >   ~~~xml
-  >   # Backend service host
-  >   SERVER_HOST=https://service.shengwang.cn/uikit
-  >     
-  >   AGORA_APP_ID=<=Your App ID=>
-  >   AGORA_APP_CERT=<=Your App Certifaction=>
-  >   IM_APP_KEY=<=Your IM App Key=>
-  >   IM_CLIENT_ID=<=Your IM Client ID=>
-  >   IM_CLIENT_SECRET=<=Your IM Client Secret=>
+  >   # 注意：声网测试域名https://service.shengwang.cn/uikit仅供测试验证AppID等配置使用，不能商用！
+  >   SERVER_HOST=<=您的后台服务域名 或者 https://service.shengwang.cn/uikit=>
+  >   AGORA_APP_ID=<=您的声网AppID=>
+  >   AGORA_APP_CERT=<=您的声网App证书=>
+  >   IM_APP_KEY=<=您的环信IM AppKey=>
+  >   IM_CLIENT_ID=<=您的环信IM Client ID=>
+  >   IM_CLIENT_SECRET=<=您的环信IM Client Secret=>
   >   ~~~
   > 
-  > - 如果没有按上面步骤获取声网AppID等，可按下图配置使用声网提供的测试App ID：925dd81d763a42919862fee9f3f204a7
+  > - 如果没有按上面步骤获取声网AppID等，可使用 **声网测试域名** 和 **测试App ID：925dd81d763a42919862fee9f3f204a7**，如下图所示配置：
+  >   
+  >   注意：测试域名和测试AppID都仅供测试使用，不能商用！
   >
-  >    <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/createaccount/uikit_agora_07.png" width="800" />
+  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/createaccount/uikit_agora_07.png" width="800" />
 
 - 用 Android Studio 运行项目即可开始您的体验
-
----
-## 部署后台服务（可选）
-
-  > 声网提供公用的后台服务：https://service.shengwang.cn/uikit
-  > 
-  > 这个服务如果使用自己的AppId可能容易暴露自己的证书，适用于测试环境以及用户量小、安全性要求低的客户。
-  >
-  > **如果有更高的要求，可以自己购买服务器并部署后台服务代码，具体教程见 [后台部署](../backend)。**
-  >
-  > 在部署完自己服务后，将自己后台服务域名配置在项目根目录下的local.properties文件里:
-  >
-  > ~~~xml
-  > # Backend service host
-  > SERVER_HOST=<=Youe backen service host=>
-  > ~~~
 
 ---
 ## 快速集成
@@ -117,39 +116,11 @@
 
 ---
 ## 自定义功能
-VoiceRoomUIKit支持对业务功能做定制化修改，其实现放在asceneskit库里，该库通过maven引入已有的[AUKit](https://github.com/AgoraIO-Community/AUIKit)组件做定制，
-因此自定义需要先了解AUIKit的接口。AUIKit的接口可以通过AUIKit的[README](https://github.com/AgoraIO-Community/AUIKit/blob/main/Android/README.zh.md)文档进行查看。
+VoiceRoomUIKit支持对UI及业务功能做定制化修改，其实现放在asceneskit库里，该库通过maven引入已有的[AUKit](https://github.com/AgoraIO-Community/AUIKit)组件做定制，因此自定义需要先了解AUIKit的接口。
 
-下面以麦位为例说明如何自定义asceneskit功能，然后简单说明如何引入AUIKit源码做更深层次的定制。
+AUIKit的接口可以通过AUIKit的[README](https://github.com/AgoraIO-Community/AUIKit/blob/main/Android/README.md)文档进行查看。
 
-### 自定义asceneskit功能（以麦位为例）
-
-  > 在做自定义前，需要知道几点：
-  >   1. 组件通过[Binder](./asceneskit/src/main/java/io/agora/asceneskit/voice/binder)将AUIKit提供的UI组件及Service组件绑定起来以实现业务交互
-  >   2. [AUIVoiceRoomService](./asceneskit/src/main/java/io/agora/asceneskit/voice/AUIVoiceRoomService.kt)管理着所有业务service
-  >   3. [AUIVoiceRoomView](./asceneskit/src/main/java/io/agora/asceneskit/voice/AUIVoiceRoomView.kt)作为房间总ui入口，管理所有Binder及AUIVoiceRoomService
-  > 
-  > 自定义功能核心是修改Binder及AUIVoiceRoomView。
-  > 
-  > 下面是自定义麦位的参考步骤：
-  >
-  > - 查看[voice_room_view.xml](./asceneskit/src/main/java/io/agora/asceneskit/voice/res/layout/voice_room_view.xml)布局找到麦位控件
-  >   
-  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/karaoke/karaoke_android_custome_01.png" width="800" />
-  >
-  > - 根据麦位控件ID在AUIVoiceRoomView里找到[对应的Binder实现](./asceneskit/src/main/java/io/agora/asceneskit/voice/binder/AUIMicSeatsBinder.java)。
-  >   
-  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/karaoke/karaoke_android_custome_02.png" width="800" />
-  > 
-  > - 将麦位相关的AUIKit ui组件实例及service组件实例通过构造方法传入麦位Binder里
-  >   
-  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/karaoke/karaoke_android_custome_03.png" width="800" />
-  > 
-  > - 在麦位Binder的bind方法里设置service事件监听、获取service数据及初始化ui等初始化操作
-  > 
-  > - 在麦位Binder的unBind方法里取消service事件监听等释放操作
-  > 
-  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/karaoke/karaoke_android_custome_04.png" width="800" />
+为了更方便地介绍如何做基础及高阶定制，下面先介绍如何引入AUIKit源码，然后再从UI和业务逻辑分别说明如何做定制。
 
 ### 引入AUIKit源码
 
@@ -166,14 +137,138 @@ VoiceRoomUIKit支持对业务功能做定制化修改，其实现放在asceneski
   > - 点击Android Studio的Sync按钮同步项目文件，然后左侧切到Project模式，即可看到AUIKit源码
   > 
   >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/karaoke/karaoke_android_custome_06.png" width="800" />
-  >
-  > - 选择要自定义的service接口，如麦位接口，自己实现这个接口然后替换已有的麦位实现类
+
+### UI定制
+VoiceRoomUIKit的UI是基于AUIKit的UI组件进行实现，而AIKit提供了一套UI主题样式，因此VoiceRoomUIKit UI样式是通过扩展AUIKit组件主题来实现的。
+
+AUIKit组件的主题样式说明见[README](https://github.com/AgoraIO-Community/AUIKit/blob/main/Android/doc/AUIKit-UI.md)。
+
+另外，VoiceRoomUIKit提供了两套默认主题，[Theme.VoiceRoom](./asceneskit/src/main/java/io/agora/asceneskit/voice/res/values/theme.xml)和[Theme.VoiceRoom.Voice](./asceneskit/src/main/java/io/agora/asceneskit/voice/res-voice/values/themes.xml)，
+`Theme.VoiceRoom`使用的是AUIKit中UI组件的默认主题，`Theme.VoiceRoom.Voice`是对默认主题做修改后的主题。
+
+下面介绍`Theme.VoiceRoom.Voice`是如何定制主题的，然后再进阶介绍如何自定义新的主题属性
+
+#### 基础定制
+
+  > 基础定制主要是介绍如何在主题里对特定ui组件的属性进行修改以达到所要的效果，其中ui组件的可修改主题属性见[AUIKit文档](https://github.com/AgoraIO-Community/AUIKit/blob/main/Android/doc/AUIKit-UI.md)。
   > 
-  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/karaoke/karaoke_android_custome_07.png" width="800" />
-  >
-  > - 在AUIVoiceRoomService里将service替换成自己的麦位实现类
+  > 下面以麦位背景图为例来介绍如何做定制：
   > 
-  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/karaoke/karaoke_android_custome_08.png" width="800" />
+  > - 定位到在AndroidManifest里配置的主题
+  > 
+  >    <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/karaoke/karaoke_android_custome_09.png" width="800" />
+  >
+  > - 通过上面主题定位打开对应的[themes.xml](./asceneskit/src/main/java/io/agora/asceneskit/voice/res-voice/values/themes.xml)文件
+  >
+  >    <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/karaoke/karaoke_android_custome_10.png" width="800" />
+  > 
+  > - 定义好麦位组件的style
+  > 
+  > ~~~xml
+  > <!-- 继承默认麦位style(AUIMicSeatItem.Appearance)修改 -->
+  > <style name="AUIMicSeatItem.Appearance.My">
+  >     <!-- 自己的麦位背景图 -->
+  >     <item name="aui_micSeatItem_seatBackground">@drawable/ktv_ic_seat</item>
+  > </style>
+  > ~~~
+  > 
+  > - 在主题里配置麦位样式
+  > 
+  > ~~~xml
+  > <resources>
+  >  <style name="Theme.VoiceRoom.Voice" parent="Theme.AUIKit.Dark">
+  >      ...
+  >      <!-- 麦位组件 -->
+  >      <item name="aui_micSeatItem_appearance">@style/AUIMicSeatItem.Appearance.My</item>
+  >  </style>
+  > </resources>
+  > ~~~
+  > 
+  > - 配置好运行项目即可看到效果
+
+#### 高级定制
+
+  > 高级定制主要适用于主题属性无法满足UI定制化需求，此时需要自己对AUIKit组件进行属性扩展。
+  > 要对AUIKit ui组件添加属性，需要先参考前面章节引入AUIKit源码，然后直接在AUIKit源码上进行修改。
+  > 
+  > 下面以麦位背景色来介绍如何添加新属性，以及如何在代码里获取到主题属性值并调整ui:
+  >
+  > - 找到麦位的attrs.xml，在里面添加背景色属性
+  >
+  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/karaoke/karaoke_android_custome_11.png" width="800" />
+  >
+  > - 找到麦位自定义View及其布局
+  > 
+  >    <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/karaoke/karaoke_android_custome_12.png" width="800" />
+  >
+  > - 在麦位view布局里使用上面定义的背景色属性
+  >   
+  >    <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/karaoke/karaoke_android_custome_13.png" width="800" />
+  >
+  > - 主题属性自定义完成后即可按基础定制的步骤来使用这个新增属性
+
+### 业务功能定制
+VoiceRoomUIKit的业务服务是基于AUIKit的Service组件进行实现。AUIKit提供了一系列Service组件供上层使用，具体可以[AUIKit Service文档](https://github.com/AgoraIO-Community/AUIKit/blob/main/Android/doc/AUIKit-Service.md)。下面介绍VoiceRoomUIKit如何做基础定制，以及如何实现自己的房间管理。
+
+#### 基础定制
+
+  > 在做自定义前，需要知道几点：
+  >   1. 组件通过[Binder](./asceneskit/src/main/java/io/agora/asceneskit/voice/binder)将AUIKit提供的UI组件及Service组件绑定起来以实现业务交互
+  >   2. [AUIVoiceRoomService](./asceneskit/src/main/java/io/agora/asceneskit/voice/AUIVoiceRoomService.kt)管理着所有业务service
+  >   3. [AUIVoiceRoomView](./asceneskit/src/main/java/io/agora/asceneskit/voice/AUIVoiceRoomView.kt)作为房间总ui入口，管理所有Binder及AUIVoiceRoomService
+  >
+  > 自定义功能核心是修改Binder及AUIVoiceRoomView。
+  >
+  > 下面是自定义麦位的参考步骤：
+  >
+  >- 查看[voice_room_view.xml](./asceneskit/src/main/java/io/agora/asceneskit/voice/res/layout/voice_room_view.xml)布局找到麦位控件
+  >
+  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/karaoke/karaoke_android_custome_01.png" width="800" />
+  >
+  > - 根据麦位控件ID在AUIVoiceRoomView里找到[对应的Binder实现](./asceneskit/src/main/java/io/agora/asceneskit/voice/binder/AUIMicSeatsBinder.java)。
+  >
+  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/karaoke/karaoke_android_custome_02.png" width="800" />
+  >
+  > - 将麦位相关的AUIKit ui组件实例及service组件实例通过构造方法传入麦位Binder里
+  >
+  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/karaoke/karaoke_android_custome_03.png" width="800" />
+  >
+  > - 在麦位Binder的bind方法里设置service事件监听、获取service数据及初始化ui等初始化操作
+  >
+  > - 在麦位Binder的unBind方法里取消service事件监听等释放操作
+  >
+  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/karaoke/karaoke_android_custome_04.png" width="800" />
+
+#### 自定义房间管理
+
+  > 在后台服务里提供了一个房间管理，这个房间管理在移动端是由[RoomManager](https://github.com/AgoraIO-Community/AUIKit/blob/main/Android/auikit-service/src/main/java/io/agora/auikit/service/room/AUIRoomManager.kt)进行管理。
+  > RoomManager提供了创建房间、销毁房间、获取房间列表这三个api，但是这仅能满足简单的房间管理需求，如果有更复杂的需求就需要自行开发房间管理服务。或者您已经有自己的房间管理服务，您也可以使用自己的房间管理服务。
+  > 
+  > 下面说明如何自定义房间管理：
+  > 
+  >- 确认后台有独立的三个后台接口：创建房间、销毁房间 以及 获取房间列表。
+  >   并且房间信息里必须包含房主的用户信息：用户名、用户ID 和 用户头像。
+  > 
+  > - 实现您的RoomManager，并包含以下三个接口
+  > 
+  > ~~~kotlin
+  > // 创建房间
+  > fun createRoom(
+  >      roomInfo: AUIRoomInfo,
+  >      callback: AUICreateRoomCallback?
+  >  )
+  > // 销毁房间
+  > fun destroyRoom(
+  >      roomId: String,
+  >      callback: AUICallback?
+  >  )
+  > // 获取房间列表
+  > fun getRoomInfoList(lastCreateTime: Long?, pageSize: Int, callback: AUIRoomListCallback?)
+  > ~~~
+  > 
+  > - 将[AUIVoiceRoomUikit.kt](./app-voice/src/main/java/io/agora/app/voice/kit/AUIVoiceRoomUikit.kt)中的RoomManager替换成自己的RoomManager
+  > 
+  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/karaoke/karaoke_android_custom_14.png" width="800" />
 
 ---
 ## 常见问题
