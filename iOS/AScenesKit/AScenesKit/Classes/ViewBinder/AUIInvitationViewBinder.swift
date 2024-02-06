@@ -15,6 +15,7 @@ open class AUIInvitationViewBinder: NSObject {
     private weak var inviteView: IAUIListViewBinderRefresh?
     
     private weak var applyView: IAUIListViewBinderRefresh?
+    private var seatIndexMap: [Int: String] = [:]
     
     public weak var invitationDelegate: AUIInvitationServiceDelegate? {
         didSet {
@@ -30,7 +31,12 @@ open class AUIInvitationViewBinder: NSObject {
         }
     }
     
-    public weak var micSeatDelegate: AUIMicSeatServiceDelegate?
+    public weak var micSeatDelegate: AUIMicSeatServiceDelegate? {
+        didSet {
+            oldValue?.unbindRespDelegate(delegate: self)
+            micSeatDelegate?.bindRespDelegate(delegate: self)
+        }
+    }
 
     public func bind(inviteView: IAUIListViewBinderRefresh,
                      applyView: IAUIListViewBinderRefresh,
@@ -127,6 +133,11 @@ extension AUIInvitationViewBinder: AUIInvitationRespDelegate {
     public func onInviteWillAccept(userId: String, 
                                    seatIndex: Int,
                                    metaData: NSMutableDictionary) -> NSError? {
+        //先查询是否可以上麦
+        if let _ = seatIndexMap[seatIndex] {
+            return AUICommonError.micSeatNotIdle.toNSError()
+        }
+        
         if let userInfo = userMap[userId] {
             micSeatDelegate?.pickSeat(seatIndex: seatIndex,
                                       user: userInfo) { err in
@@ -138,6 +149,11 @@ extension AUIInvitationViewBinder: AUIInvitationRespDelegate {
     public func onApplyWillAccept(userId: String, 
                                   seatIndex: Int,
                                   metaData: NSMutableDictionary) -> NSError? {
+        //先查询是否可以上麦
+        if let _ = seatIndexMap[seatIndex] {
+            return AUICommonError.micSeatNotIdle.toNSError()
+        }
+        
         if let userInfo = userMap[userId] {
             micSeatDelegate?.pickSeat(seatIndex: seatIndex,
                                       user: userInfo) { err in
@@ -180,4 +196,28 @@ extension AUIInvitationViewBinder: AUIUserRespDelegate {
     public func onUserBeKicked(roomId: String, userId: String) {
         
     }
+}
+
+extension AUIInvitationViewBinder: AUIMicSeatRespDelegate {
+    public func onAnchorEnterSeat(seatIndex: Int, user: AUIUserThumbnailInfo) {
+        seatIndexMap[seatIndex] = user.userId
+    }
+    
+    public func onAnchorLeaveSeat(seatIndex: Int, user: AUIUserThumbnailInfo) {
+        seatIndexMap[seatIndex] = nil
+    }
+    
+    public func onSeatAudioMute(seatIndex: Int, isMute: Bool) {
+        
+    }
+    
+    public func onSeatVideoMute(seatIndex: Int, isMute: Bool) {
+        
+    }
+    
+    public func onSeatClose(seatIndex: Int, isClose: Bool) {
+        
+    }
+    
+    
 }
