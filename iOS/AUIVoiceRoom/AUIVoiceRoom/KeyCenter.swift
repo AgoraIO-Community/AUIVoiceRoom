@@ -52,5 +52,5 @@ struct KeyCenter {
      后端微服务域名
      */
     static var HostUrl: String = <#Your Host Url#>
-//    static var HostUrl: String = "https://service.shengwang.cn/uikit-karaoke-v2" //该域名仅限体验使用，请勿用户正式商用环境
+//    static var HostUrl: String = "https://service.shengwang.cn/uikit-v2" //该域名仅限体验使用，请勿用户正式商用环境
 }

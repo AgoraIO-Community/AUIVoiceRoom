@@ -11,6 +11,7 @@ import AUIKitCore
 import AgoraRtcKit
 import AgoraRtmKit
 
+private let kSceneId = "VoiceRoomUIKit"
 @objcMembers
 public class VoiceChatUIKit: NSObject {
     public static let shared: VoiceChatUIKit = VoiceChatUIKit()
@@ -29,9 +30,14 @@ public class VoiceChatUIKit: NSObject {
         self.apiConfig = apiConfig
     }
     
-    public func getRoomInfoList(lastCreateTime: Int64, pageSize: Int, callback: @escaping AUIRoomListCallback) {
+    public func getRoomInfoList(lastCreateTime: Int64, 
+                                pageSize: Int,
+                                callback: @escaping AUIRoomListCallback) {
         checkSetupAndCommonConfig()
-        roomManager.getRoomInfoList(lastCreateTime: lastCreateTime, pageSize: pageSize, callback: callback)
+        roomManager.getRoomInfoList(sceneId: kSceneId,
+                                    lastCreateTime: lastCreateTime,
+                                    pageSize: pageSize,
+                                    callback: callback)
     }
     
     public func createRoom(roomInfo: AUIRoomInfo,
@@ -47,7 +53,7 @@ public class VoiceChatUIKit: NSObject {
         let date = Date()
         isRoomDestroy = false
         dispatchGroup.enter()
-        roomManager.createRoom(room: roomInfo) {error, info in
+        roomManager.createRoom(sceneId: kSceneId, room: roomInfo) {error, info in
             roomError = error
             aui_info("(roomManager)createRoom: \(Int64(-date.timeIntervalSinceNow * 1000)) ms", tag: "Benchmark")
             dispatchGroup.leave()
@@ -104,7 +110,9 @@ public class VoiceChatUIKit: NSObject {
         checkSetupAndCommonConfig()
         self.unbindRespDelegate(delegate: self)
         if isRoomOwner || isRoomDestroy {
-            roomManager.destroyRoom(roomId: roomId, callback: { _ in
+            roomManager.destroyRoom(sceneId: kSceneId,
+                                    roomId: roomId,
+                                    callback: { _ in
             })
         }
         isRoomOwner = false
