@@ -21,9 +21,18 @@ struct KeyCenter {
      声网APP证书
      Agora 提供 App certificate 用以生成 Token。您可以在您的服务器部署并生成，或者使用控制台生成临时的 Token。
      进入声网控制台(https://console.shengwang.cn/)，创建一个带证书鉴权的项目，进入项目配置页，即可看到APP证书。
-     注意：如果项目没有开启证书鉴权，这个字段留空。
+     注意：如果项目没有开启证书鉴权或者使用的是体验的AppId，这个字段留空。
      */
     static var AppCertificate: String = ""
+    
+    
+    /*
+     声网BasicAuth
+     Agora 提供 App certificate 用以使用踢人服务。您可以在您的服务器部署并生成，或者使用控制台生成临时的 Token。
+     进入声网控制台(https://console.shengwang.cn/)，创建一个带证书鉴权的项目，进入项目配置页/RESTful Api里，添加密钥，根据密钥创建BasicAuth。
+     注意：如果项目使用的是体验的AppId。
+     */
+    static var AppBasicAuth: String = ""
     
     /*
      环信APPKEY

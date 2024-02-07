@@ -95,6 +95,7 @@ final class AUIRoomListViewController: UIViewController {
         let commonConfig = AUICommonConfig()
         commonConfig.appId = KeyCenter.AppId
         commonConfig.appCert = KeyCenter.AppCertificate
+        commonConfig.basicAuth = KeyCenter.AppBasicAuth
         commonConfig.imAppKey = KeyCenter.IMAppKey
         commonConfig.imClientId = KeyCenter.IMClientId
         commonConfig.imClientSecret = KeyCenter.IMClientSecret
