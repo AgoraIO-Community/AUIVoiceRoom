@@ -36,13 +36,16 @@ open class AUIUserViewBinder: NSObject {
 }
 
 extension AUIUserViewBinder: AUIUserRespDelegate {
-    public func onUserBeKicked(roomId: String, userId: String) {
-//        self.userView?.removeMember(userId: userId)
+    private func cleanUserIdfNeed(roomId: String, userId: String) {
         guard AUIRoomContext.shared.getArbiter(channelName: roomId)?.isArbiter() ?? false else { return }
         _ = micSeatDelegate?.cleanUserInfo?(userId: userId, completion: { err in
         })
         _ = invitationDelegate?.cleanUserInfo?(userId: userId, completion: { err in
         })
+    }
+    public func onUserBeKicked(roomId: String, userId: String) {
+//        self.userView?.removeMember(userId: userId)
+        cleanUserIdfNeed(roomId: roomId, userId: userId)
     }
     
     public func onUserAudioMute(userId: String, mute: Bool) {
@@ -65,6 +68,7 @@ extension AUIUserViewBinder: AUIUserRespDelegate {
     public func onRoomUserLeave(roomId: String, userInfo: AUIUserInfo) {
         aui_info("onRoomUserLeave \(userInfo.userId) \(userInfo.userName)", tag: "AUIUserViewBinder")
         userView?.removeMember(userId: userInfo.userId)
+        cleanUserIdfNeed(roomId: roomId, userId: userInfo.userId)
     }
     
     public func onRoomUserUpdate(roomId: String, userInfo: AUIUserInfo) {

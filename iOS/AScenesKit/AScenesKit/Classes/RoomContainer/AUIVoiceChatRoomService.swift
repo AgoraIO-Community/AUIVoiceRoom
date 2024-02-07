@@ -299,9 +299,9 @@ extension AUIVoiceChatRoomService {
             AUIRoomContext.shared.getArbiter(channelName: channelName)?.release()
         }
         //TODO: 仲裁者暂无
-        guard AUIRoomContext.shared.getArbiter(channelName: channelName)?.isArbiter() ?? false else {return}
-        guard let idx = micSeatImpl.getMicSeatIndex?(userId: userId), idx >= 0 else {return}
-        micSeatImpl.kickSeat(seatIndex: idx) { err in }
+//        guard AUIRoomContext.shared.getArbiter(channelName: channelName)?.isArbiter() ?? false else {return}
+//        guard let idx = micSeatImpl.getMicSeatIndex?(userId: userId), idx >= 0 else {return}
+//        micSeatImpl.kickSeat(seatIndex: idx) { err in }
     }
     
     
