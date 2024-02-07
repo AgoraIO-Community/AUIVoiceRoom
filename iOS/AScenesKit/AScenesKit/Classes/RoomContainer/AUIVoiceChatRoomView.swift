@@ -213,8 +213,8 @@ import SwiftTheme
                               applyView: self.applyView,
                               invitationService: service.invitationImplement,
                               micSeatService: service.micSeatImpl,
-                              userService: service.userImpl) { [weak self] in
-            self?.requestUsers(users: $0)
+                              userService: service.userImpl) { [weak self] _ in
+//            self?.requestUsers(users: $0)
         }
         invitationView.addActionHandler(actionHandler: self)
         applyView.addActionHandler(actionHandler: self)
@@ -261,9 +261,6 @@ import SwiftTheme
         }
         return flow
     }
-
-
-
 }
 
 extension AUIVoiceChatRoomView: AUIMicSeatCircleLayoutDataSource,AUIMicSeatHostAudienceLayoutDataSource {
@@ -330,45 +327,43 @@ extension AUIVoiceChatRoomView: AUIMicSeatViewDelegate {
     public func onMuteVideo(view: AUIMicSeatView, seatIndex: Int, canvas: UIView, isMuteVideo: Bool) {
         self.micSeatBinder.binderMuteVideo(seatIndex: seatIndex, canvas: canvas, isMuteVideo: isMuteVideo)
     }
-    
-    
 }
 
 extension AUIVoiceChatRoomView: AUIMoreOperationViewEventsDelegate {
     public func onItemSelected(entity: AUIMoreOperationCellDataProtocol) {
         AUICommonDialog.hidden()
-        self.applyView.refreshUsers(users: self.filterMicUsers())
+        self.applyView.refreshUsers(users: self.invitationBinder.getApplyUsers())
         AUICommonDialog.show(contentView: self.applyView,theme: AUICommonDialogTheme())
     }
 }
 
 extension AUIVoiceChatRoomView: AUIUserOperationEventsDelegate {
     
-    private func requestUsers(users: [String: AUIInvitationInfo]) {
-        guard let channelName = self.service?.channelName else { return }
-        if !AUIRoomContext.shared.isRoomOwner(channelName: channelName) { return }
-        if users.keys.count <= 0 { return }
-        self.chatView.updateBottomBarRedDot(index: 0,show: true)
-        let userIds = users.keys.map {
-            $0
-        }
-        if userIds.isEmpty { return }
-        self.service?.userImpl.getUserInfoList(roomId: channelName, userIdList: userIds, callback: { [weak self] error, userInfos in
-            guard let self = self else {return}
-            if error == nil, let userInfos = userInfos {
-                self.userBinder.onRoomUserSnapshot(roomId: channelName, userList: userInfos)
-                let applyUsers = self.filterMicUsers().map({
-                    if $0.userId == users[$0.userId]?.userId ?? "" {
-                        $0.seatIndex = users[$0.userId]?.seatNo ?? 0
-                    }
-                    return $0
-                })
-                self.applyView.refreshUsers(users:applyUsers)
-            } else {
-                AUIToast.show(text: "Request application list failed!")
-            }
-        })
-    }
+//    private func requestUsers(users: [String: AUIInvitationInfo]) {
+//        guard let channelName = self.service?.channelName else { return }
+//        if !AUIRoomContext.shared.isRoomOwner(channelName: channelName) { return }
+//        if users.keys.count <= 0 { return }
+//        self.chatView.updateBottomBarRedDot(index: 0,show: true)
+//        let userIds = users.keys.map {
+//            $0
+//        }
+//        if userIds.isEmpty { return }
+//        self.service?.userImpl.getUserInfoList(roomId: channelName, userIdList: userIds, callback: { [weak self] error, userInfos in
+//            guard let self = self else {return}
+//            if error == nil, let userInfos = userInfos {
+//                self.userBinder.onRoomUserSnapshot(roomId: channelName, userList: userInfos)
+//                let applyUsers = self.filterMicUsers().map({
+//                    if $0.userId == users[$0.userId]?.userId ?? "" {
+//                        $0.seatIndex = users[$0.userId]?.seatNo ?? 0
+//                    }
+//                    return $0
+//                })
+//                self.applyView.refreshUsers(users:applyUsers)
+//            } else {
+//                AUIToast.show(text: "Request application list failed!")
+//            }
+//        })
+//    }
     
     public func operationUser(user: AUIUserCellUserDataProtocol,source: AUIUserOperationEventsSource) {
         switch source {

@@ -43,6 +43,12 @@ extension AUIUserViewBinder: AUIUserRespDelegate {
         _ = invitationDelegate?.cleanUserInfo?(userId: userId, completion: { err in
         })
     }
+    
+    private func convertUserData(roomId: String, userInfo: AUIUserInfo) -> AUIUserCellUserDataProtocol {
+        let isOwner = AUIRoomContext.shared.isRoomOwner(channelName: roomId, userId: userInfo.userId)
+        return userInfo.createData(seatIndexMap[userInfo.userId] ?? -1, isOwner)
+    }
+    
     public func onUserBeKicked(roomId: String, userId: String) {
 //        self.userView?.removeMember(userId: userId)
         cleanUserIdfNeed(roomId: roomId, userId: userId)
@@ -56,13 +62,13 @@ extension AUIUserViewBinder: AUIUserRespDelegate {
     
     public func onRoomUserSnapshot(roomId: String, userList: [AUIUserInfo]) {
         aui_info("onRoomUserSnapshot", tag: "AUIUserViewBinder")
-        userView?.updateMembers(members: userList.map({$0.createData(seatIndexMap[$0.userId] ?? -1)}),
-                                channelName: roomId)
+        let members = userList.map({self.convertUserData(roomId: roomId, userInfo: $0)})
+        userView?.updateMembers(members: members, channelName: roomId)
     }
     
     public func onRoomUserEnter(roomId: String, userInfo: AUIUserInfo) {
         aui_info("onRoomUserEnter \(userInfo.userId) \(userInfo.userName)", tag: "AUIUserViewBinder")
-        userView?.appendMember(member: userInfo.createData(seatIndexMap[userInfo.userId] ?? -1))
+        userView?.appendMember(member: convertUserData(roomId: roomId, userInfo: userInfo))
     }
     
     public func onRoomUserLeave(roomId: String, userInfo: AUIUserInfo) {
@@ -73,7 +79,7 @@ extension AUIUserViewBinder: AUIUserRespDelegate {
     
     public func onRoomUserUpdate(roomId: String, userInfo: AUIUserInfo) {
         aui_info("onRoomUserUpdate \(userInfo.userId) \(userInfo.userName)", tag: "AUIUserViewBinder")
-        userView?.updateMember(member: userInfo.createData(seatIndexMap[userInfo.userId] ?? -1))
+        userView?.updateMember(member: convertUserData(roomId: roomId, userInfo: userInfo))
     }
 }
 

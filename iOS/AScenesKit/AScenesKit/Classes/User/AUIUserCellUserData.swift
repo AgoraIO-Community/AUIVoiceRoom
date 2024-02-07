@@ -9,15 +9,17 @@ import AUIKitCore
 
 class AUIUserCellUserData: AUIUserThumbnailInfo, AUIUserCellUserDataProtocol {
     var seatIndex: Int = -1
+    var isOwner: Bool = false
 }
 
 extension AUIUserThumbnailInfo {
-    func createData(_ seatIndex: Int) -> AUIUserCellUserDataProtocol {
+    func createData(_ seatIndex: Int, _ isOwner: Bool = false) -> AUIUserCellUserDataProtocol {
         let userData = AUIUserCellUserData()
         userData.userAvatar = userAvatar
         userData.userId = userId
         userData.userName = userName
         userData.seatIndex = seatIndex
+        userData.isOwner = isOwner
         return userData
     }
     

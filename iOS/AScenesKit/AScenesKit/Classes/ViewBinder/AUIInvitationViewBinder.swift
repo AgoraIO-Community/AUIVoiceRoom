@@ -10,12 +10,13 @@ import AUIKitCore
 
 open class AUIInvitationViewBinder: NSObject {
     private var userMap: [String: AUIUserInfo] = [:]
-    private var newApplyClosure: (([String: AUIInvitationInfo]) -> ())?
+//    private var newApplyClosure: (([String: AUIInvitationInfo]) -> ())?
     
     private weak var inviteView: IAUIListViewBinderRefresh?
     
     private weak var applyView: IAUIListViewBinderRefresh?
     private var seatIndexMap: [Int: String] = [:]
+    private var applyInfos: [AUIInvitationInfo] = []
     
     public weak var invitationDelegate: AUIInvitationServiceDelegate? {
         didSet {
@@ -43,8 +44,8 @@ open class AUIInvitationViewBinder: NSObject {
                      invitationService: AUIInvitationServiceDelegate,
                      micSeatService: AUIMicSeatServiceDelegate,
                      userService: AUIUserServiceDelegate,
-                     receiveApply: @escaping ([String: AUIInvitationInfo]) -> Void) {
-        self.newApplyClosure = receiveApply
+                     receiveApply: @escaping ([AUIInvitationInfo]) -> Void) {
+//        self.newApplyClosure = receiveApply
         self.inviteView = inviteView
         self.applyView = applyView
         self.invitationDelegate = invitationService
@@ -52,15 +53,27 @@ open class AUIInvitationViewBinder: NSObject {
         self.userDelegate = userService
         self.invitationDelegate?.bindRespDelegate(delegate: self)
     }
+    
+    func getApplyUsers() -> [AUIUserCellUserData] {
+        let userDatas = applyInfos.compactMap({ info in
+            var data: AUIUserCellUserData? = nil
+            guard let user = self.userMap[info.userId] else { return data }
+            data = user.createData(info.seatNo) as? AUIUserCellUserData
+            return data
+        })
+        return userDatas
+    }
 }
 
 extension AUIInvitationViewBinder: AUIInvitationRespDelegate {
-    public func onReceiveApplyUsersUpdate(users: [String: AUIInvitationInfo]) {
+    public func onReceiveApplyUsersUpdate(applyList: [AUIInvitationInfo]) {
         //TODO: - 全量更新申请列表
-        self.newApplyClosure?(users)
+//        self.newApplyClosure?(users)
+        applyInfos = applyList
+//        self.applyView.refreshUsers(users:applyUsers)
     }
     
-    public func onInviteeListUpdate(inviteeList: [String: AUIInvitationInfo]) {
+    public func onInviteeListUpdate(inviteeList: [AUIInvitationInfo]) {
         self.inviteView?.refreshUsers(users: [])
     }
     
