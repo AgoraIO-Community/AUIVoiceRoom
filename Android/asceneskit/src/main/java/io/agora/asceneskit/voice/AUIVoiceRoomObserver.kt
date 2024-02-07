@@ -34,11 +34,4 @@ interface AUIVoiceRoomObserver {
      */
     fun onRoomAnnouncementChange(roomId: String, announcement: String) {}
 
-    /**
-     * 房间用户被踢出房间
-     *
-     * @param roomId 房间id
-     * @param userId 用户id
-     */
-    fun onRoomUserBeKicked(roomId: String,userId: String) {}
 }

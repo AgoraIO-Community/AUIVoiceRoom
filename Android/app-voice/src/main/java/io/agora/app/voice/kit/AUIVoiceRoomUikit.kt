@@ -19,7 +19,7 @@ import io.agora.auikit.utils.AUILogger
 import retrofit2.Response
 
 object AUIVoiceRoomUikit {
-
+    private val mSceneId = "VoiceRoomUIKit"
     private var mAPIConfig: AUIAPIConfig? = null
     private val mRoomManager = AUIRoomManager()
     private val mServices = mutableMapOf<String, AUIVoiceRoomService>()
@@ -59,6 +59,8 @@ object AUIVoiceRoomUikit {
     ) {
         checkSetupAndCommonConfig()
         mRoomManager.getRoomInfoList(
+            AUIRoomContext.shared().mCommonConfig?.appId?: "",
+            mSceneId,
             startTime, pageSize
         ) { error, roomList ->
             if (error == null) {
@@ -83,9 +85,12 @@ object AUIVoiceRoomUikit {
             completion.invoke(AUIException(AUIException.ERROR_CODE_ROOM_EXITED, ""), null)
             return
         }
-        mRoomManager.createRoom(roomInfo) { error, roomInfo ->
+        mRoomManager.createRoom(
+            AUIRoomContext.shared().mCommonConfig?.appId ?: "",
+            mSceneId,
+            roomInfo
+        ) { error, roomInfo ->
             AUILogger.logger().d(
-                tag = "KaraokeUiKit",
                 message = "Create room >> error=$error, roomInfo=$roomInfo"
             )
         }
@@ -128,6 +133,7 @@ object AUIVoiceRoomUikit {
             roomConfig
         )
         mServices[roomInfo.roomId] = roomService
+        roomService.observableHelper.subscribeEvent(voiceRoom)
         // 加入房间
         roomService.enter { error ->
             if (error == null) {

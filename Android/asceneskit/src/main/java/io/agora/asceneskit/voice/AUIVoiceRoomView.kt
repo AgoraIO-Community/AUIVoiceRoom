@@ -130,6 +130,11 @@ class AUIVoiceRoomView : FrameLayout,
                     AUILogger.logger().d("AUIVoiceRoomView", "AUIRoomMembersBinder onCloseClick ...")
                     mOnClickShutDown?.invoke()
                 }
+
+                override fun onLocalUserKickedOut() {
+                    super.onLocalUserKickedOut()
+                    showKickedOutDialog()
+                }
             }
         )
 
@@ -282,18 +287,14 @@ class AUIVoiceRoomView : FrameLayout,
     }
 
 
-    override fun onRoomUserBeKicked(roomId: String, userId: String) {
-        super.onRoomUserBeKicked(roomId, userId)
-        AUILogger.logger().d("AUIVoiceRoomView", "onRoomUserBeKicked $roomId $userId")
-        if (roomId == mVoiceService?.roomInfo?.roomId){
-            AUIAlertDialog(context).apply {
-                setTitle("您已被踢出房间")
-                setPositiveButton("确认") {
-                    dismiss()
-                    mOnRoomDestroyEvent?.invoke()
-                }
-                show()
+    private fun showKickedOutDialog() {
+        AUIAlertDialog(context).apply {
+            setTitle("您已被踢出房间")
+            setPositiveButton("确认") {
+                dismiss()
+                mOnRoomDestroyEvent?.invoke()
             }
+            show()
         }
     }
 

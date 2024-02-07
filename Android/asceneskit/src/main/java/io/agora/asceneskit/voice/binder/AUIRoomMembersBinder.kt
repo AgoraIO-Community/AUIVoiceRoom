@@ -3,7 +3,6 @@ package io.agora.asceneskit.voice.binder
 import android.content.Context
 import android.util.Log
 import android.view.View
-import io.agora.asceneskit.voice.AUIVoiceRoomObserver
 import io.agora.asceneskit.voice.AUIVoiceRoomService
 import io.agora.auikit.model.AUIRoomContext
 import io.agora.auikit.model.AUIRoomInfo
@@ -20,12 +19,11 @@ import io.agora.auikit.ui.member.listener.AUIRoomMembersActionListener
 class AUIRoomMembersBinder constructor(
     context: Context,
     memberView: IAUIRoomMembersView,
-    private val voiceService: AUIVoiceRoomService,
+    voiceService: AUIVoiceRoomService,
     listener: AUIRoomMemberEvent?,
 ) : IAUIBindable,
     IAUIUserService.AUIUserRespObserver,
     AUIRoomMembersActionListener,
-    AUIVoiceRoomObserver,
     IAUIMicSeatService.AUIMicSeatRespObserver {
 
     private var userService: IAUIUserService?
@@ -64,14 +62,12 @@ class AUIRoomMembersBinder constructor(
         micSeats?.registerRespObserver(this)
         userService?.registerRespObserver(this)
         memberView?.setMemberActionListener(this)
-        voiceService.observableHelper.subscribeEvent(this)
     }
 
     override fun unBind() {
         userService?.unRegisterRespObserver(this)
         micSeats?.unRegisterRespObserver(this)
         memberView?.setMemberActionListener(null)
-        voiceService.observableHelper.unSubscribeEvent(this)
     }
 
     override fun onMemberRankClickListener(view: View) {
@@ -101,16 +97,16 @@ class AUIRoomMembersBinder constructor(
                     val userId = user?.userId?.toInt()
                     if (isOwner) {
                         userId?.let {
-                            // TODO 踢人（非麦位，是在用户列表里踢人，此处应该是userService里的一个方法）
-//                            voiceService.kickUser(roomInfo?.roomId, it) { it1 ->
-//                                if (it1 == null) {
-//                                    mMemberMap.remove(it.toString())
-//                                    updateMemberView()
-//                                    Log.d("AUIRoomMembersBinder", "onKickClick suc")
-//                                } else {
-//                                    Log.d("AUIRoomMembersBinder", "onKickClick fail ${it1.message}")
-//                                }
-//                            }
+                            // 踢人（非麦位，是在用户列表里踢人，此处应该是userService里的一个方法）
+                            userService?.kickUser(it.toString()){ error->
+                                if (error == null) {
+                                    mMemberMap.remove(it.toString())
+                                    updateMemberView()
+                                    Log.d("AUIRoomMembersBinder", "onKickClick suc")
+                                } else {
+                                    Log.d("AUIRoomMembersBinder", "onKickClick fail ${error.message}")
+                                }
+                            }
                         }
                     }
                 } catch (e: Exception) {
@@ -169,6 +165,11 @@ class AUIRoomMembersBinder constructor(
         }
     }
 
+    override fun onLocalUserKickedOut(roomId: String) {
+        super.onLocalUserKickedOut(roomId)
+        listener?.onLocalUserKickedOut()
+    }
+
     private fun updateMemberView() {
         memberView?.setMemberData(mMemberMap.values.toList().map {
             MemberInfo(it?.userId ?: "", it?.userName ?: "", it?.userAvatar ?: "")
@@ -178,15 +179,10 @@ class AUIRoomMembersBinder constructor(
         }, mSeatMap)
     }
 
-    override fun onRoomUserBeKicked(roomId: String, userId: String) {
-        if (roomId == roomInfo?.roomId) {
-            mMemberMap.remove(userId)
-            updateMemberView()
-        }
-    }
-
     interface AUIRoomMemberEvent {
         fun onCloseClickListener(view: View) {}
+
+        fun onLocalUserKickedOut(){}
     }
 
 }
