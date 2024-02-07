@@ -10,6 +10,7 @@ import Foundation
 import AUIKitCore
 import AgoraRtcKit
 import AgoraRtmKit
+import AScenesKit
 
 private let kSceneId = "VoiceRoomUIKit"
 @objcMembers
@@ -114,7 +115,7 @@ public class VoiceChatUIKit: NSObject {
                                     roomId: roomId,
                                     callback: { _ in
             })
-            service?.destroy()
+            service?.destroy(callback: { _ in })
         } else {
             service?.exit { _ in }
         }
