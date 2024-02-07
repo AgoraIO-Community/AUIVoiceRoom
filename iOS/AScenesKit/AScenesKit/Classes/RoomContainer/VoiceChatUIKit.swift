@@ -114,6 +114,9 @@ public class VoiceChatUIKit: NSObject {
                                     roomId: roomId,
                                     callback: { _ in
             })
+            service?.destroy()
+        } else {
+            service?.exit { _ in }
         }
         isRoomOwner = false
 //        rtmClient?.logout()
