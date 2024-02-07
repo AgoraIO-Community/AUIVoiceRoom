@@ -22,23 +22,6 @@ PODS:
     - SwiftyBeaver (~> 1.9.5)
     - YYModel
     - Zip
-  - DoraemonKit (3.1.3):
-    - DoraemonKit/Core (= 3.1.3)
-  - DoraemonKit/Core (3.1.3):
-    - FMDB
-    - GCDWebServer
-    - GCDWebServer/WebDAV
-    - GCDWebServer/WebUploader
-  - FMDB (2.7.5):
-    - FMDB/standard (= 2.7.5)
-  - FMDB/standard (2.7.5)
-  - GCDWebServer (3.5.4):
-    - GCDWebServer/Core (= 3.5.4)
-  - GCDWebServer/Core (3.5.4)
-  - GCDWebServer/WebDAV (3.5.4):
-    - GCDWebServer/Core
-  - GCDWebServer/WebUploader (3.5.4):
-    - GCDWebServer/Core
   - libpag (4.3.48)
   - MJRefresh (3.7.6)
   - ScoreEffectUI (1.0.2)
@@ -55,7 +38,6 @@ DEPENDENCIES:
   - AgoraRtcEngine_Special_iOS (= 4.1.1.20)
   - AScenesKit (from `../AScenesKit`)
   - AUIKitCore (from `../../../AUIKit`)
-  - DoraemonKit
 
 SPEC REPOS:
   trunk:
@@ -64,9 +46,6 @@ SPEC REPOS:
     - AgoraRtcEngine_Special_iOS
     - AgoraRtm_iOS
     - Alamofire
-    - DoraemonKit
-    - FMDB
-    - GCDWebServer
     - libpag
     - MJRefresh
     - ScoreEffectUI
@@ -90,9 +69,6 @@ SPEC CHECKSUMS:
   Alamofire: 3ca42e259043ee0dc5c0cdd76c4bc568b8e42af7
   AScenesKit: 70268c122eb9a7d9184e50dd957fbb8add89e46a
   AUIKitCore: f11c9280ce878c200582ab09ef329e2c88ee446d
-  DoraemonKit: 7448814a80d9ca56bc8db9105c464b7ec2e62623
-  FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
-  GCDWebServer: 2c156a56c8226e2d5c0c3f208a3621ccffbe3ce4
   libpag: ad632e7da859943441195536dcdb8d3bb708ba11
   MJRefresh: 2fe7fb43a5167ceda20bb7e63f130c04fd1814a5
   ScoreEffectUI: bf1195b4d41a73d43c236450b5d7f958989844aa
@@ -102,6 +78,6 @@ SPEC CHECKSUMS:
   YYModel: 2a7fdd96aaa4b86a824e26d0c517de8928c04b30
   Zip: b3fef584b147b6e582b2256a9815c897d60ddc67
 
-PODFILE CHECKSUM: 3e2a9ee4f27c4ed557faafba5b2e82b29057927d
+PODFILE CHECKSUM: e7a64ec5352ea332404a5984fb87c683964a0059
 
 COCOAPODS: 1.12.1
