@@ -38,6 +38,25 @@ extension AUIRoomManagerImpl {
         }
     }
     
+    public func updateRoom(sceneId: String,
+                           room: AUIRoomInfo,
+                           callback: @escaping (NSError?, AUIRoomInfo?) -> ()) {
+        aui_info("updateRoom: \(room.roomName) ", tag: "AUIRoomManagerImpl")
+        
+        let model = AUIRoomUpdateNetworkModel()
+        model.sceneId = sceneId
+        model.roomInfo = room
+        
+        var createRoomError: NSError? = nil
+        var roomInfo: AUIRoomInfo? = nil
+        //update a room from the server
+        model.request { error, resp in
+            createRoomError = error as? NSError
+            roomInfo = resp as? AUIRoomInfo
+            callback(createRoomError, roomInfo)
+        }
+    }
+    
     public func destroyRoom(sceneId: String,
                             roomId: String,
                             callback: @escaping (NSError?) -> ()) {
