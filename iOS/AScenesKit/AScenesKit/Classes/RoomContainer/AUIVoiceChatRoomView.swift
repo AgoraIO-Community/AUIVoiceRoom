@@ -51,7 +51,7 @@ import SwiftTheme
     
     private lazy var micSeatBinder: AUIMicSeatViewBinder = {
         let binder = AUIMicSeatViewBinder(rtcEngine: self.service!.rtcEngine,
-                                          roomInfo: self.roomInfo!)
+                                          roomInfo: self.roomInfo ?? AUIRoomInfo())
         return binder
     }()
 
