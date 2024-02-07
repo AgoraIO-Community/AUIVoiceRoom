@@ -57,7 +57,8 @@ class RoomViewController: UIViewController {
             let roomId = roomInfo?.roomId ?? ""
             generateToken(channelName: roomId,
                           roomConfig: roomConfig,
-                          completion: { error in
+                          completion: {[weak self] error in
+                guard let self = self else {return}
                 if let error = error {
                     self.navigationController?.popViewController(animated: true)
                     AUIToast.show(text: error.localizedDescription)
@@ -73,26 +74,29 @@ class RoomViewController: UIViewController {
                         return
                     }
                     self.roomInfo = roomInfo
-                    // 订阅房间被销毁回调
-                    VoiceChatUIKit.shared.bindRespDelegate(delegate: self)
                 }
+                
+                // 订阅房间被销毁回调
+                VoiceChatUIKit.shared.bindRespDelegate(delegate: self)
             })
         } else {
             let roomId = roomInfo?.roomId ?? ""
             generateToken(channelName: roomId,
                           roomConfig: roomConfig) {[weak self] err  in
+                guard let self = self else {return}
                 VoiceChatUIKit.shared.enterRoom(roomId: roomId,
                                                 roomConfig: roomConfig,
-                                                chatView: voiceRoomView) { roomInfo, error in
+                                                chatView: voiceRoomView) {[weak self] roomInfo, error in
                     guard let self = self else {return}
                     if let error = error {
                         self.navigationController?.popViewController(animated: true)
                         AUIToast.show(text: error.localizedDescription)
                         return
                     }
-                    // 订阅房间被销毁回调
-                    VoiceChatUIKit.shared.bindRespDelegate(delegate: self)
                 }
+                
+                // 订阅房间被销毁回调
+                VoiceChatUIKit.shared.bindRespDelegate(delegate: self)
             }
         }
     }
@@ -177,10 +181,6 @@ extension RoomViewController: AUIVoiceChatRoomServiceRespDelegate {
         AUICommonDialog.hidden()
         self.voiceRoomView?.onBackAction()
         self.navigationController?.popViewController(animated: true)
-    }
-    
-    func onRoomAnnouncementChange(roomId: String, announcement: String) {
-        
     }
     
     func onRoomDestroy(roomId: String) {

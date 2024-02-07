@@ -277,6 +277,12 @@ extension AUIVoiceChatRoomService: AgoraRtcEngineDelegate {
    
     public func rtcEngine(_ engine: AgoraRtcEngineKit, didOccurError errorCode: AgoraErrorCode) {
         aui_error("didOccurError: \(errorCode.rawValue)", tag: "AUIVoiceChatRoomService")
+        
+        guard errorCode == .clientIsBannedByServer else {
+            return
+        }
+        notifyBeKicked()
+        
         rtcJoinClousure?(AUICommonError.rtcError(Int32(errorCode.rawValue)).toNSError())
         rtcJoinClousure = nil
     }
@@ -289,6 +295,12 @@ extension AUIVoiceChatRoomService: AgoraRtcEngineDelegate {
     
     public func rtcEngine(_ engine: AgoraRtcEngineKit, reportAudioVolumeIndicationOfSpeakers speakers: [AgoraRtcAudioVolumeInfo], totalVolume: Int) {
         reportAudioVolumeIndicationOfSpeakers?(speakers, totalVolume)
+    }
+    
+    public func rtcEngine(_ engine: AgoraRtcEngineKit, connectionChangedTo state: AgoraConnectionState, reason: AgoraConnectionChangedReason) {
+        guard state == .failed, reason == .reasonBannedByServer else { return }
+        
+        notifyBeKicked()
     }
 }
 
@@ -465,13 +477,18 @@ extension AUIVoiceChatRoomService {
         rtmManager.logout()
         leaveRtcChannel()
     }
+    
+    private func notifyBeKicked() {
+        for obj in self.respDelegates.allObjects {
+            obj.onRoomUserBeKicked?(roomId: channelName, userId: AUIRoomContext.shared.currentUserInfo.userId)
+        }
+    }
 }
 
 extension AUIVoiceChatRoomService: AUIUserRespDelegate {
     public func onUserBeKicked(roomId: String, userId: String) {
         self.beKickedClosure?()
     }
-    
     
     public func onRoomUserSnapshot(roomId: String, userList: [AUIUserInfo]) {
         self.userSnapshotList = userList
@@ -551,12 +568,8 @@ extension AUIVoiceChatRoomService: AUIRtmErrorProxyDelegate {
         if reason == .changedRejoinSuccess {
             AUIRoomContext.shared.getArbiter(channelName: channelName)?.acquire()
         }
-        guard state == .failed, reason == .changedBannedByServer else {
-            return
-        }
+        guard state == .failed, reason == .changedBannedByServer, channelName == self.channelName else { return }
         
-        for obj in self.respDelegates.allObjects {
-            obj.onRoomUserBeKicked?(roomId: channelName, userId: AUIRoomContext.shared.currentUserInfo.userId)
-        }
+        notifyBeKicked()
     }
 }
