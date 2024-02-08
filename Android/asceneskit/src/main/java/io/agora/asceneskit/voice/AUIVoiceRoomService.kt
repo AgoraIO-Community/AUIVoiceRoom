@@ -1,7 +1,6 @@
 package io.agora.asceneskit.voice
 
 import android.util.Log
-import com.google.gson.reflect.TypeToken
 import io.agora.auikit.model.AUIRoomConfig
 import io.agora.auikit.model.AUIRoomContext
 import io.agora.auikit.model.AUIRoomInfo
@@ -22,7 +21,6 @@ import io.agora.auikit.service.imp.AUIUserServiceImpl
 import io.agora.auikit.service.rtm.AUIRtmErrorRespObserver
 import io.agora.auikit.service.rtm.AUIRtmLockRespObserver
 import io.agora.auikit.service.rtm.AUIRtmManager
-import io.agora.auikit.service.rtm.AUIRtmPayload
 import io.agora.auikit.utils.AUILogger
 import io.agora.auikit.utils.AgoraEngineCreator
 import io.agora.auikit.utils.GsonTools
@@ -243,6 +241,9 @@ class AUIVoiceRoomService constructor(
             rtmManager,
             AUIRoomContext.shared().currentUserInfo.userId
         )
+        AUIRoomContext.shared().setNtpTimeSource {
+            return@setNtpTimeSource rtcEngine.ntpWallTimeInMs
+        }
     }
 
     fun create(
@@ -288,12 +289,17 @@ class AUIVoiceRoomService constructor(
 
             if (roomInfo == null) {
                 rtmManager.getMetadata(roomId) { _, metadata ->
-                    val payloadInfo = GsonTools.toBean<AUIRtmPayload<AUIRoomInfo>>(
+                    val voiceRoomInfo = GsonTools.toBean(
                         metadata?.metadataItems?.find { it.key == kRoomInfoAttrKey }?.value,
-                        object : TypeToken<AUIRtmPayload<AUIRoomInfo>>() {}.type
-                    )
-                    payloadInfo?.payload?.roomId = payloadInfo?.roomId ?: ""
-                    roomInfo = payloadInfo?.payload ?: AUIRoomInfo()
+                        AUIVoiceRoomInfo::class.java
+                    ) ?: return@getMetadata
+                    roomInfo = AUIRoomInfo().apply {
+                        this.roomId = voiceRoomInfo.roomId
+                        roomName = voiceRoomInfo.payload.roomName
+                        owner = voiceRoomInfo.payload.owner
+                        micSeatCount = voiceRoomInfo.micSeatCount
+                        micSeatStyle = voiceRoomInfo.micSeatStyle.toString()
+                    }
                 }
             }
 
@@ -428,9 +434,12 @@ class AUIVoiceRoomService constructor(
     }
 
     private fun initRoom(completion: (AUIException?) -> Unit) {
-        val basicInfo = AUIRtmPayload<AUIRoomInfo>(
-            channelName,
-            payload = roomInfo
+        val roomInfo = roomInfo?:return
+        val basicInfo = AUIVoiceRoomInfo(
+            roomInfo.micSeatCount,
+            roomInfo.micSeatStyle.toInt(),
+            roomInfo.roomId,
+            roomInfo
         )
 
         val basicInfoStr = GsonTools.beanToString(basicInfo)
@@ -536,6 +545,11 @@ class AUIVoiceRoomService constructor(
         }
     }
 
-
+    data class AUIVoiceRoomInfo(
+        val micSeatCount: Int,
+        val micSeatStyle: Int,
+        val roomId: String,
+        val payload: AUIRoomInfo
+    )
 
 }

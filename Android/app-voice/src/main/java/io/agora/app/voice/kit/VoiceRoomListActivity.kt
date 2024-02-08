@@ -131,6 +131,7 @@ class VoiceRoomListActivity: AppCompatActivity() {
         config.context = this
         config.appId = BuildConfig.AGORA_APP_ID
         config.appCert = BuildConfig.AGORA_APP_CERT
+        config.basicAuth = BuildConfig.AGORA_BASIC_AUTH
         config.host = BuildConfig.SERVER_HOST
         config.imAppKey = BuildConfig.IM_APP_KEY
         config.imClientId = BuildConfig.IM_CLIENT_ID
