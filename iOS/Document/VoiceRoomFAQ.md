@@ -1,28 +1,27 @@
-# VoiceRoom FAQ
-
-*English | [中文](VoiceRoomFAQ_zh.md)*
-
-## 1 Console error -10301：
-
-- Need to contact sales to activate RTM presence permission for appId
+# 语聊房常见问题解答
 
 
-## 2 When the scene page is opened, an error is reported that the IM initialization failed or the creation and joining of the chat room failed.
+## 1 控制台错误-10301：
 
-- Need to contact technical support to view related issues [support@agora.io](mailto:support@agora.io)
-
-
-## 3 Which IM product does the VoiceRoom room use to provide chat services? Can I choose my own supplier?
-
-At present, the IM service provider of the chat room is AgoraChat, which does not support replacement for the time being, and will support replacement in later iterations.
-
-## 4 When using the same userId to join the rtm rtc channel, the returned user id is inconsistent
-
-Please join the rtc channel before joining the rtm channel, the user ui called back in the rtc sdk proxy will be consistent with the channel userId you joined.
+- 需要联系销售激活 appId 的 RTM 存在权限
 
 
-## 5 How to contact Agora for assistance when encountering difficulties in integration
+## 2 打开场景页面报错IM初始化失败或者创建加入聊天室失败。
 
-1: If you are already using the Agora service or in the process of docking, you can contact the sales or service of the docking
+- 需要联系技术支持查看相关问题[sales@agora.io](mailto:sales@agora.io)
 
-2：Send an email to [support@agora.io](mailto:support@agora.io) Consultation
+
+## 3 VoiceRoom聊天室使用哪个IM产品提供聊天服务？ 我可以选择自己的供应商吗？
+
+目前聊天室的IM服务商为AgoraChat，暂时不支持更换，后期迭代会支持更换。
+
+## 4 使用同一个userId加入rtm rtc channel时返回的用户id不一致问题
+
+请先加入rtc channel后再加入rtm channel，rtc sdk代理中回调的用户ui就会与加入的channel userId 一致
+
+
+## 5 集成遇到困难如何联系声网寻求帮助
+
+1：如果您已经在使用声网服务或正在对接中，可联系对接销售或服务
+
+2：发送邮件至[support@agora.
