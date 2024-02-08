@@ -62,18 +62,8 @@ public class AUIMicSeatViewBinder: NSObject {
             userDelegate?.bindRespDelegate(delegate: self)
         }
     }
-    private weak var musicDelegate: AUIMusicServiceDelegate? {
-        didSet {
-            musicDelegate?.unbindRespDelegate(delegate: self)
-            musicDelegate?.bindRespDelegate(delegate: self)
-        }
-    }
-    private weak var chorusDelegate: AUIChorusServiceDelegate? {
-        didSet {
-            chorusDelegate?.unbindRespDelegate(delegate: self)
-            chorusDelegate?.bindRespDelegate(delegate: self)
-        }
-    }
+    
+    private weak var invitationDelegate: AUIInvitationServiceDelegate?
     
     public convenience init(rtcEngine: AgoraRtcEngineKit,roomInfo: AUIRoomInfo) {
         self.init()
@@ -88,24 +78,24 @@ public class AUIMicSeatViewBinder: NSObject {
     public func bind(micSeatView: IAUIMicSeatView,
                      micSeatService: AUIMicSeatServiceDelegate,
                      userService: AUIUserServiceDelegate,
-                     musicSeatService: AUIMusicServiceDelegate,
-                     chorusService: AUIChorusServiceDelegate) {
+                     invitationDelegate: AUIInvitationServiceDelegate) {
         self.micSeatView = micSeatView
         self.micSeatDelegate = micSeatService
         self.userDelegate = userService
-        self.musicDelegate = musicSeatService
-        self.chorusDelegate = chorusService
+        self.invitationDelegate = invitationDelegate
     }
     
     public func bindVoiceChat(micSeatView: IAUIMicSeatView,
                               eventsDelegate: AUIMicSeatViewEventsDelegate,
                               micSeatService: AUIMicSeatServiceDelegate,
                               userService: AUIUserServiceDelegate,
+                              invitationService: AUIInvitationServiceDelegate,
                               currenUserMicStateClosure: @escaping (Bool,Bool) -> ()) {
         self.micSeatView = micSeatView
         self.eventsDelegate = eventsDelegate
         self.micSeatDelegate = micSeatService
         self.userDelegate = userService
+        self.invitationDelegate = invitationService
         self.currentUserMicState = currenUserMicStateClosure
     }
     
@@ -269,9 +259,22 @@ public class AUIMicSeatViewBinder: NSObject {
         
         return items
     }
+    
+    private func getLocalUserId() -> String? {
+        return AUIRoomContext.shared.currentUserInfo.userId
+    }
 }
 
 extension AUIMicSeatViewBinder: AUIMicSeatRespDelegate {
+    public func onSeatWillLeave(userId: String, metaData: NSMutableDictionary) -> NSError? {
+//        if let err = micSeatDelegate?.cleanUserInfo?(userId: userId, metaData: metaData) {
+//            return err
+//        }
+        invitationDelegate?.cleanUserInfo?(userId: userId, completion: { err in
+        })
+        
+        return nil
+    }
     
     public func onAnchorEnterSeat(seatIndex: Int, user: AUIUserThumbnailInfo) {
         aui_info("onAnchorEnterSeat seat: \(seatIndex)", tag: "AUIMicSeatViewBinder")
@@ -284,10 +287,8 @@ extension AUIMicSeatViewBinder: AUIMicSeatRespDelegate {
         micSeatArray[seatIndex] = micSeat
         micSeatView?.refresh(index: seatIndex)
   
-        updateMic(with: seatIndex, role: .onlineAudience)
-
         //current user enter seat
-        if user.userId == micSeatDelegate?.getRoomContext().commonConfig?.userId {
+        if user.userId == getLocalUserId() {
             let mediaOption = AgoraRtcChannelMediaOptions()
             mediaOption.clientRoleType = .broadcaster
             mediaOption.publishMicrophoneTrack = true
@@ -304,11 +305,9 @@ extension AUIMicSeatViewBinder: AUIMicSeatRespDelegate {
         micSeat.user = nil
         micSeatArray[seatIndex] = micSeat
         micSeatView?.refresh(index: seatIndex)
-
-        updateMic(with: seatIndex, role: .offlineAudience)
  
         //current user enter seat
-        guard user.userId == micSeatDelegate?.getRoomContext().commonConfig?.userId else {
+        guard user.userId == getLocalUserId() else {
             return
         }
         
@@ -364,7 +363,6 @@ extension AUIMicSeatViewBinder: AUIMicSeatRespDelegate {
 
 //MARK: AUIMicSeatViewDelegate
 extension AUIMicSeatViewBinder {
-    
     public func binderClickItem(seatIndex: Int) {
         let micSeat = micSeatArray[seatIndex]
 
@@ -394,7 +392,7 @@ extension AUIMicSeatViewBinder {
             videoCanvas.uid = uid
             videoCanvas.view = canvas
             videoCanvas.renderMode = .hidden
-            if userId == self.micSeatDelegate?.getRoomContext().commonConfig?.userId {
+            if userId == getLocalUserId() {
                 rtcEngine.setupLocalVideo(videoCanvas)
             } else {
                 rtcEngine.setupRemoteVideo(videoCanvas)
@@ -468,7 +466,7 @@ extension AUIMicSeatViewBinder: AUIUserRespDelegate {
         userMap[userId]?.muteAudio = mute
         let micSeat = micSeatArray.first { $0.user?.userId ?? "" == userId
         }
-        if userId == self.micSeatDelegate?.getRoomContext().commonConfig?.userId {
+        if userId == getLocalUserId() {
             if let micSeatMute = micSeat?.muteAudio,micSeatMute {
                 self.rtcEngine.muteLocalAudioStream(true)
             } else {
@@ -497,70 +495,4 @@ extension AUIMicSeatViewBinder: AUIUserRespDelegate {
             }
         }
     }
-}
-
-//MARK: AUIMusicRespDelegate
-extension AUIMicSeatViewBinder: AUIMusicRespDelegate {
-    public func onAddChooseSong(song: AUIChooseMusicModel) {
-        
-    }
-    
-    public func onRemoveChooseSong(song: AUIChooseMusicModel) {
-        
-    }
-    
-    public func onUpdateChooseSong(song: AUIChooseMusicModel) {
-        
-    }
-    
-    public func onUpdateAllChooseSongs(songs: [AUIChooseMusicModel]) {
-        guard let topSong = songs.first else {
-            //没有歌曲的话 在麦的用户都要变成onlineAudience
-            let _ = micSeatArray.map {[weak self] in
-                if ($0.user != nil) {
-                    self?.updateMic(with: Int($0.seatIndex), role: .onlineAudience)
-                }
-            }
-            return
-        }
-        guard let index = getMicIndex(with: topSong.userId ?? "") else {return}
-        updateMic(with: index, role: .mainSinger)
-    }
-    
-    
-}
-
-//MARK: AUIChorusRespDelegate
-extension AUIMicSeatViewBinder: AUIChorusRespDelegate {
-    public func onChoristerDidEnter(chorister: AUIChoristerModel) {
-        //获取需要更新的麦位UI
-        guard let index =  getMicIndex(with: chorister.userId) else {return}
-        updateMic(with: index, role: .coSinger)
-    }
-    
-    public func onChoristerDidLeave(chorister: AUIChoristerModel) {
-        //获取需要更新的麦位UI
-        guard let index =  getMicIndex(with: chorister.userId) else {return}
-        updateMic(with: index, role: .onlineAudience)
-    }
-    
-    private func getMicIndex(with userId: String) -> Int? {
-        return micSeatArray
-            .filter { $0.user?.userId == userId }
-            .map { Int($0.seatIndex) }
-            .first
-    }
-    
-    private func getLocalUserId() -> String? {
-        guard let commonConfig = AUIRoomContext.shared.commonConfig else {return nil}
-        return commonConfig.userId
-    }
-    
-    private func updateMic(with index: Int, role: MicRole) {
-        let micSeat = micSeatArray[index]
-        micSeat.micRole = role
-        micSeatArray[index] = micSeat
-        micSeatView?.refresh(index: index)
-    }
-
 }

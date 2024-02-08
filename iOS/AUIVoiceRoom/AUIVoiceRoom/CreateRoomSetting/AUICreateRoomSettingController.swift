@@ -7,9 +7,6 @@
 
 import UIKit
 import AUIKitCore
-#if DEBUG
-    import DoraemonKit
-#endif
  
 final class AUICreateRoomSettingController: UIViewController,UITextFieldDelegate {
     
@@ -73,16 +70,6 @@ final class AUICreateRoomSettingController: UIViewController,UITextFieldDelegate
         UINavigationBar.appearance().tintColor = .white
         self.navigationController?.setNavigationBarHidden(false, animated: false)
         self.background.image(UIImage(named: "bg_img_of_\(AUIRoomContext.shared.themeIdx == 0 ? "light":"dark")_mode"))
-        let tap = UITapGestureRecognizer(target: self, action: #selector(showDebug))
-        tap.numberOfTapsRequired = 3
-        tap.numberOfTouchesRequired = 1
-        self.background.addGestureRecognizer(tap)
-    }
-    
-    @objc private func showDebug() {
-#if DEBUG
-    DoraemonManager.shareInstance().showDoraemon()
-#endif
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -94,9 +81,6 @@ final class AUICreateRoomSettingController: UIViewController,UITextFieldDelegate
         super.viewDidLoad()
         self.view.backgroundColor = .white
         self.view.addSubViews([self.background,self.seats,self.seatTypeSegment,self.themes,self.modeSegment])
-    #if DEBUG
-        DoraemonManager.shareInstance().install()
-    #endif
         // Do any additional setup after loading the view.
     }
 
