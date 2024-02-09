@@ -3,6 +3,7 @@ package io.agora.asceneskit.voice.binder
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
 import io.agora.asceneskit.R
 import io.agora.asceneskit.voice.AUIVoiceRoomService
@@ -11,6 +12,7 @@ import io.agora.auikit.model.AUIUserThumbnailInfo
 import io.agora.auikit.service.IAUIInvitationService
 import io.agora.auikit.service.IAUIMicSeatService
 import io.agora.auikit.service.IAUIUserService
+import io.agora.auikit.service.callback.AUIException
 import io.agora.auikit.ui.action.AUIActionUserInfo
 import io.agora.auikit.ui.action.AUIActionUserInfoList
 import io.agora.auikit.ui.action.impI.AUIApplyDialog
@@ -94,12 +96,9 @@ class AUIInvitationBinder constructor(
                     ) {
                         if (it == null){
                             Log.d("apex","房主同意上麦申请 成功")
-                            if (position >=0){
-                                applyList.removeAt(position)
-                                applyDialog?.refreshApplyData(applyList.map { userInfo ->
-                                    AUIActionUserInfo(userInfo?.userId ?: "", userInfo?.userName ?: "", userInfo?.userAvatar ?: "", userInfo?.micIndex ?: 0)
-                                })
-                            }
+                            Toast.makeText(view.context, "同意上麦申请成功", Toast.LENGTH_SHORT).show()
+                        }else{
+                            Toast.makeText(view.context, "同意上麦申请失败", Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -128,11 +127,25 @@ class AUIInvitationBinder constructor(
         })
     }
 
-    override fun onApplyAccepted(userId: String, seatIndex: Int) {
-        super.onApplyAccepted(userId, seatIndex)
-        if(userId == mVoiceService.micSeatService.roomContext.currentUserInfo.userId){
-            mVoiceService.micSeatService.enterSeat(seatIndex){}
+    override fun onApplyWillAccept(userId: String, seatIndex: Int): AUIException? {
+        if (mSeatMap[seatIndex]?.isNotEmpty() == true) {
+            return AUIException(AUIException.ERROR_CODE_SEAT_NOT_IDLE, "")
         }
+        userService.getUserInfo(userId)?.let {
+            mVoiceService.micSeatService.pickSeat(seatIndex, it) {}
+        }
+        return super.onApplyWillAccept(userId, seatIndex)
+    }
+
+    override fun onInviteWillAccept(userId: String, seatIndex: Int): AUIException? {
+        if (mSeatMap[seatIndex]?.isNotEmpty() == true) {
+            return AUIException(AUIException.ERROR_CODE_SEAT_NOT_IDLE, "")
+        }
+        userService.getUserInfo(userId)?.let {
+            mVoiceService.micSeatService.pickSeat(seatIndex, it) {}
+        }
+
+        return super.onInviteWillAccept(userId, seatIndex)
     }
 
 
@@ -208,12 +221,6 @@ class AUIInvitationBinder constructor(
         }
     }
 
-    override fun onInviteeAccepted(userId: String, seatIndex: Int) {
-        super.onInviteeAccepted(userId, seatIndex)
-        if(userId == mVoiceService.micSeatService.roomContext.currentUserInfo.userId){
-            mVoiceService.micSeatService.enterSeat(seatIndex){}
-        }
-    }
 
     /** IAUiUserService.AUiUserRespDelegate */
     override fun onRoomUserEnter(roomId: String, userInfo: AUIUserInfo) {
@@ -252,6 +259,7 @@ class AUIInvitationBinder constructor(
         if (mSeatMap[seatIndex].equals(userInfo.userId)) {
             mSeatMap.remove(seatIndex)
         }
+        invitationService.cleanUserInfo(userInfo.userId){}
         filterCurrentMember()
     }
 

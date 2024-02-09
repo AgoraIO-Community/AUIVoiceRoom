@@ -151,10 +151,18 @@ object AUIVoiceRoomUikit {
 
     fun destroyRoom(roomId: String) {
         if (AUIRoomContext.shared().isRoomOwner(roomId)) {
-            mRoomManager.destroyRoom(roomId) {}
+            mRoomManager.destroyRoom(
+                AUIRoomContext.shared().mCommonConfig?.appId ?: "",
+                mSceneId,
+                roomId
+            ) {}
             mServices[roomId]?.destroy()
         } else if (mServices[roomId]?.exit() == true) {
-            mRoomManager.destroyRoom(roomId) {}
+            mRoomManager.destroyRoom(
+                AUIRoomContext.shared().mCommonConfig?.appId ?: "",
+                mSceneId,
+                roomId
+            ) {}
         }
         mServices.remove(roomId)
     }

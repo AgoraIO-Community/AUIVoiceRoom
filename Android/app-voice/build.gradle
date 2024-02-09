@@ -16,12 +16,13 @@ android {
         def properties = new Properties()
         properties.load(rootProject.file("local.properties").newDataInputStream())
 
-        final def SERVER_HOST = properties.getProperty("SERVER_HOST")
-        final def AGORA_APP_ID = properties.getProperty("AGORA_APP_ID")
-        final def AGORA_APP_CERT = properties.getProperty("AGORA_APP_CERT")
-        final def IM_APP_KEY = properties.getProperty("IM_APP_KEY")
-        final def IM_CLIENT_ID = properties.getProperty("IM_CLIENT_ID")
-        final def IM_CLIENT_SECRET = properties.getProperty("IM_CLIENT_SECRET")
+        final def SERVER_HOST = properties.getProperty("SERVER_HOST") ?: ""
+        final def AGORA_APP_ID = properties.getProperty("AGORA_APP_ID") ?: ""
+        final def AGORA_APP_CERT = properties.getProperty("AGORA_APP_CERT") ?: ""
+        final def AGORA_BASIC_AUTH = properties.getProperty("AGORA_BASIC_AUTH") ?: ""
+        final def IM_APP_KEY = properties.getProperty("IM_APP_KEY") ?: ""
+        final def IM_CLIENT_ID = properties.getProperty("IM_CLIENT_ID") ?: ""
+        final def IM_CLIENT_SECRET = properties.getProperty("IM_CLIENT_SECRET") ?: ""
         if (SERVER_HOST.isEmpty()) {
             throw new GradleException("请在 local.properties 中配置完整的 SERVER_HOST")
         }
@@ -32,6 +33,7 @@ android {
         buildConfigField "String", "SERVER_HOST", "\"$SERVER_HOST\""
         buildConfigField "String", "AGORA_APP_ID", "\"$AGORA_APP_ID\""
         buildConfigField "String", "AGORA_APP_CERT", "\"$AGORA_APP_CERT\""
+        buildConfigField "String", "AGORA_BASIC_AUTH", "\"$AGORA_BASIC_AUTH\""
         buildConfigField "String", "IM_APP_KEY", "\"$IM_APP_KEY\""
         buildConfigField "String", "IM_CLIENT_ID", "\"$IM_CLIENT_ID\""
         buildConfigField "String", "IM_CLIENT_SECRET", "\"$IM_CLIENT_SECRET\""

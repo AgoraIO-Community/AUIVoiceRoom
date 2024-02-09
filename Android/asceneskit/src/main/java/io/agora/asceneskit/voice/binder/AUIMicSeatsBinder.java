@@ -212,10 +212,14 @@ public class AUIMicSeatsBinder extends IRtcEngineEventHandler implements
     @Override
     public boolean onClickSeat(int index, IMicSeatDialogView dialogView) {
         AUIMicSeatInfo seatInfo = micSeatService.getMicSeatInfo(index);
-        if (seatInfo == null ||  seatInfo.user == null){ return false;}
-        AUIUserInfo userInfo = userService.getUserInfo(seatInfo.user.userId);
-        if (userInfo != null) {
-            dialogView.setUserInfo(userInfo.userName);
+        if (seatInfo == null){ return false;}
+        if(seatInfo.user != null){
+            AUIUserInfo userInfo = userService.getUserInfo(seatInfo.user.userId);
+            if (userInfo != null) {
+                dialogView.setUserInfo(userInfo.userId);
+                dialogView.setUserAvatar(userInfo.userAvatar);
+                dialogView.setUserName(userInfo.userName);
+            }
         }
         boolean isEmptySeat = (seatInfo.user == null || seatInfo.user.userId.length() == 0);
         boolean isCurrentUser = seatInfo.user != null && seatInfo.user.userId.equals(micSeatService.getRoomContext().currentUserInfo.userId);
