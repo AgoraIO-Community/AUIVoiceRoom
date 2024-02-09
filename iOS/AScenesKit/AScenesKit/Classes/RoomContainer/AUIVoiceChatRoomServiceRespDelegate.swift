@@ -11,7 +11,9 @@ import AUIKitCore
 /// 房间操作对应的响应
 @objc public protocol AUIVoiceChatRoomServiceRespDelegate: NSObjectProtocol {
     
-    @objc optional func onTokenPrivilegeWillExpire(channelName: String?)
+    /// 房间即将过期
+    /// - Parameter roomId: 房间id
+    @objc optional func onTokenPrivilegeWillExpire(roomId: String?)
 
     /// 房间被销毁的回调
     /// - Parameter roomId: 房间id

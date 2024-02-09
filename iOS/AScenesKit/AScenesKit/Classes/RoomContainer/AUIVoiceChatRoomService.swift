@@ -544,7 +544,7 @@ extension AUIVoiceChatRoomService: AUIRtmErrorProxyDelegate {
     public func onTokenPrivilegeWillExpire(channelName: String?) {
         aui_info("onTokenPrivilegeWillExpire: \(channelName ?? "")", tag: kSertviceTag)
         for obj in self.respDelegates.allObjects {
-            obj.onTokenPrivilegeWillExpire?(channelName: channelName)
+            obj.onTokenPrivilegeWillExpire?(roomId: channelName)
         }
     }
     

@@ -17,6 +17,7 @@ open class AUIInvitationViewBinder: NSObject {
     private weak var applyView: IAUIListViewBinderRefresh?
     private var seatIndexMap: [Int: String] = [:]
     private var applyInfos: [AUIInvitationInfo] = []
+    private var inviteAlertView: AUIAlertView?
     
     public weak var invitationDelegate: AUIInvitationServiceDelegate? {
         didSet {
@@ -78,6 +79,7 @@ extension AUIInvitationViewBinder: AUIInvitationRespDelegate {
     }
     
     public func onReceiveNewInvitation(userId: String, seatIndex: Int) {
+        inviteAlertView =
         AUIAlertView
             .theme_defaultAlert()
             .contentTextAligment(textAlignment: .center)
@@ -96,7 +98,6 @@ extension AUIInvitationViewBinder: AUIInvitationRespDelegate {
                     AUIToast.show(text: error == nil ? "拒绝邀请成功":"拒绝邀请失败")
                 })
             }).show()
-    
     }
     
     public func onInviteeAccepted(userId: String) {
@@ -111,6 +112,7 @@ extension AUIInvitationViewBinder: AUIInvitationRespDelegate {
     
     public func onInvitationCancelled(userId: String) {
         AUIToast.show(text: "用户\(userId)的邀请已取消！")
+        inviteAlertView?.hidden()
     }
     
     public func onReceiveNewApply(userId: String, seatIndex: Int) {
