@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
 import io.agora.asceneskit.R
 import io.agora.asceneskit.voice.AUIVoiceRoomService
+import io.agora.auikit.model.AUIRoomContext
 import io.agora.auikit.model.AUIUserInfo
 import io.agora.auikit.model.AUIUserThumbnailInfo
 import io.agora.auikit.service.IAUIInvitationService
@@ -96,9 +97,9 @@ class AUIInvitationBinder constructor(
                     ) {
                         if (it == null){
                             Log.d("apex","房主同意上麦申请 成功")
-                            Toast.makeText(view.context, "同意上麦申请成功", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(view.context, R.string.voice_room_apply_accept_success, Toast.LENGTH_SHORT).show()
                         }else{
-                            Toast.makeText(view.context, "同意上麦申请失败", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(view.context, R.string.voice_room_apply_accept_failed, Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -125,6 +126,13 @@ class AUIInvitationBinder constructor(
         applyDialog?.refreshApplyData(applyList.map { userInfo ->
             AUIActionUserInfo(userInfo?.userId ?: "", userInfo?.userName ?: "", userInfo?.userAvatar ?: "", userInfo?.micIndex ?: 0)
         })
+    }
+
+    override fun onApplyAccepted(userId: String, seatIndex: Int) {
+        super.onApplyAccepted(userId, seatIndex)
+        if(userId == AUIRoomContext.shared().currentUserInfo.userId){
+            Toast.makeText(activity, R.string.voice_room_apply_accepted, Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun onApplyWillAccept(userId: String, seatIndex: Int): AUIException? {
@@ -169,8 +177,10 @@ class AUIInvitationBinder constructor(
                             user.userId,
                             invitedIndex
                         ) {
-                            if (it == null){
-                                Log.d("apex","邀请${user.userId}上麦成功 $invitedIndex 成功")
+                            if (it == null) {
+                                Toast.makeText(context, R.string.voice_room_invite_send_success, Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(context, R.string.voice_room_invite_send_failed, Toast.LENGTH_SHORT).show()
                             }
                         }
                     }

@@ -156,7 +156,7 @@ class VoiceRoomListActivity: AppCompatActivity() {
         roomInfo.thumbnail = RandomUtils.randomAvatar()
         roomInfo.owner = AUIRoomContext.shared().currentUserInfo
         roomInfo.micSeatStyle = seatStyle
-        VoiceRoomActivity.launch(this, true, roomInfo)
+        VoiceRoomActivity.launch(this, true, roomInfo, ThemeId)
     }
 
     private fun fetchRoomList(){
@@ -242,7 +242,7 @@ class VoiceRoomListActivity: AppCompatActivity() {
         ) {
             val item = getItem(position)
             holder.binding.tvRoomName.text = item.roomName
-            holder.binding.tvRoomOwner.text = item.owner?.userName ?: "unKnowUser"
+            holder.binding.tvRoomOwner.text = (item.owner?.userName ?: "unKnowUser") + "的房间"
             holder.binding.root.setOnClickListener {
                 this@VoiceRoomListActivity.gotoRoomDetailPage(item) }
 

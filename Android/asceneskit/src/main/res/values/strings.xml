@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="voice_room_invite_send_success">邀请成功</string>
+    <string name="voice_room_invite_send_failed">邀请失败</string>
+    <string name="voice_room_apply_send_success">申请成功</string>
+    <string name="voice_room_apply_send_failed">申请失败</string>
+    <string name="voice_room_apply_accept_success">同意上麦申请成功</string>
+    <string name="voice_room_apply_accept_failed">同意上麦申请失败</string>
+    <string name="voice_room_apply_accepted">房主已接受您的申请</string>
+    <string name="voice_room_kick_user_success">踢人成功</string>
+    <string name="voice_room_kick_sure_tip">确认踢出？踢出后该用户无法再次进入房间</string>
+    <string name="voice_room_kick_by_host">您已被踢出房间</string>
+    <string name="voice_room_tip">提示</string>
+</resources>

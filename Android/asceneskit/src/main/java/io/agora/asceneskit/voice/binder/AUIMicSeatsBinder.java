@@ -3,6 +3,7 @@ package io.agora.asceneskit.voice.binder;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Toast;
 
@@ -23,8 +24,6 @@ import io.agora.auikit.model.AUIUserThumbnailInfo;
 import io.agora.auikit.service.IAUIInvitationService;
 import io.agora.auikit.service.IAUIMicSeatService;
 import io.agora.auikit.service.IAUIUserService;
-import io.agora.auikit.service.callback.AUICallback;
-import io.agora.auikit.service.callback.AUIException;
 import io.agora.auikit.ui.basic.AUIAlertDialog;
 import io.agora.auikit.ui.micseats.IMicSeatDialogView;
 import io.agora.auikit.ui.micseats.IMicSeatItemView;
@@ -141,6 +140,9 @@ public class AUIMicSeatsBinder extends IRtcEngineEventHandler implements
 
     @Override
     public void onSeatAudioMute(int seatIndex, boolean isMute) {
+        if(seatIndex >=  micSeatsView.getMicSeatItemViewList().length){
+            return;
+        }
         IMicSeatItemView seatView = micSeatsView.getMicSeatItemViewList()[seatIndex];
         seatView.setAudioMuteVisibility(isMute ? View.VISIBLE : View.GONE);
     }
@@ -154,6 +156,9 @@ public class AUIMicSeatsBinder extends IRtcEngineEventHandler implements
 
     @Override
     public void onSeatClose(int seatIndex, boolean isClose) {
+        if(seatIndex >=  micSeatsView.getMicSeatItemViewList().length){
+            return;
+        }
         AUIMicSeatInfo seatInfo = micSeatService.getMicSeatInfo(seatIndex);
         IMicSeatItemView seatView = micSeatsView.getMicSeatItemViewList()[seatIndex];
         if (seatInfo.seatStatus == AUIMicSeatStatus.idle) {
@@ -168,17 +173,17 @@ public class AUIMicSeatsBinder extends IRtcEngineEventHandler implements
     }
 
     private void updateSeatView(int seatIndex, @Nullable AUIMicSeatInfo micSeatInfo) {
+        if (seatIndex >= micSeatsView.getMicSeatItemViewList().length) {
+            return;
+        }
         IMicSeatItemView seatView = micSeatsView.getMicSeatItemViewList()[seatIndex];
         if (micSeatInfo == null || micSeatInfo.seatStatus == AUIMicSeatStatus.idle) {
             seatView.setTitleIndex(seatIndex + 1);
-            seatView.setAudioMuteVisibility(View.GONE);
-            seatView.setVideoMuteVisibility(View.GONE);
             seatView.setUserAvatarImageDrawable(null);
             seatView.setChorusMicOwnerType(IMicSeatItemView.ChorusType.None);
-            return;
         }
         AUIUserInfo userInfo = null;
-        if (micSeatInfo.user != null) {
+        if (micSeatInfo != null && micSeatInfo.user != null) {
             userInfo = userService.getUserInfo(micSeatInfo.user.userId);
             if (userInfo != null){
                 mVolumeMap.put(userInfo.userId,seatIndex);
@@ -188,20 +193,20 @@ public class AUIMicSeatsBinder extends IRtcEngineEventHandler implements
         }
         seatView.setRoomOwnerVisibility((seatIndex == 0) ? View.VISIBLE : View.GONE);
 
-        if (micSeatInfo.seatStatus == AUIMicSeatStatus.locked){
+        if (micSeatInfo != null && micSeatInfo.seatStatus == AUIMicSeatStatus.locked){
             seatView.setMicSeatState(MicSeatStatus.locked);
         }
 
-        boolean isAudioMute = micSeatInfo.muteAudio;
+        boolean isAudioMute = micSeatInfo != null && micSeatInfo.muteAudio;
         if (userInfo != null) {
             isAudioMute = isAudioMute || (userInfo.muteAudio == 1);
         }
         seatView.setAudioMuteVisibility(isAudioMute ? View.VISIBLE : View.GONE);
 
-        boolean isVideoMute = micSeatInfo.muteVideo;
+        boolean isVideoMute = micSeatInfo != null && micSeatInfo.muteVideo;
         seatView.setVideoMuteVisibility(isVideoMute ? View.VISIBLE : View.GONE);
 
-        if (micSeatInfo.user != null) {
+        if (micSeatInfo != null && micSeatInfo.user != null && !TextUtils.isEmpty(micSeatInfo.user.userName)) {
             seatView.setTitleText(micSeatInfo.user.userName);
             seatView.setUserAvatarImageUrl(micSeatInfo.user.userAvatar);
             seatView.setChorusMicOwnerType(IMicSeatItemView.ChorusType.None);
@@ -282,14 +287,11 @@ public class AUIMicSeatsBinder extends IRtcEngineEventHandler implements
         auiAlertDialog.setTitle(context.getString(R.string.voice_room_apply_action));
         auiAlertDialog.setMessage(context.getString(R.string.voice_room_apply_micSeat,index+1));
         auiAlertDialog.setPositiveButton(context.getString(R.string.voice_room_confirm), view -> {
-            invitationService.sendApply(index, new AUICallback() {
-                @Override
-                public void onResult(@Nullable AUIException error) {
-                    if (error == null){
-                        Toast.makeText(context, "申请成功!", Toast.LENGTH_SHORT).show();
-                    }else {
-                        Toast.makeText(context, "申请失败!", Toast.LENGTH_SHORT).show();
-                    }
+            invitationService.sendApply(index, error -> {
+                if (error == null){
+                    Toast.makeText(context, R.string.voice_room_apply_send_success, Toast.LENGTH_SHORT).show();
+                }else {
+                    Toast.makeText(context, R.string.voice_room_apply_send_failed, Toast.LENGTH_SHORT).show();
                 }
             });
             auiAlertDialog.dismiss();

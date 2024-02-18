@@ -10,7 +10,7 @@
         <item name="aui_upperRight_member1_Visibility">visible</item>
         <item name="aui_upperRight_member2_Visibility">visible</item>
         <item name="aui_upperRight_member3_Visibility">visible</item>
-        <item name="aui_upperRight_count_Visibility">gone</item>
+        <item name="aui_upperRight_count_Visibility">visible</item>
     </style>
 
 </resources>

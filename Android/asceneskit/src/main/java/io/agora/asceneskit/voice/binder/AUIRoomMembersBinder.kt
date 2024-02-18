@@ -3,6 +3,8 @@ package io.agora.asceneskit.voice.binder
 import android.content.Context
 import android.util.Log
 import android.view.View
+import android.widget.Toast
+import io.agora.asceneskit.R
 import io.agora.asceneskit.voice.AUIVoiceRoomService
 import io.agora.auikit.model.AUIRoomContext
 import io.agora.auikit.model.AUIRoomInfo
@@ -10,6 +12,7 @@ import io.agora.auikit.model.AUIUserInfo
 import io.agora.auikit.model.AUIUserThumbnailInfo
 import io.agora.auikit.service.IAUIMicSeatService
 import io.agora.auikit.service.IAUIUserService
+import io.agora.auikit.ui.basic.AUIAlertDialog
 import io.agora.auikit.ui.basic.AUIBottomDialog
 import io.agora.auikit.ui.member.IAUIRoomMembersView
 import io.agora.auikit.ui.member.MemberInfo
@@ -94,15 +97,16 @@ class AUIRoomMembersBinder constructor(
         dialogMemberView?.setMemberActionListener(object : AUIRoomMemberListView.ActionListener {
             override fun onKickClick(view: View, position: Int, user: MemberInfo?) {
                 try {
-                    val userId = user?.userId?.toInt()
+                    val userId = user?.userId ?: return
                     if (isOwner) {
-                        userId?.let {
-                            // 踢人（非麦位，是在用户列表里踢人，此处应该是userService里的一个方法）
-                            userService?.kickUser(it.toString()){ error->
+                        // 踢人（非麦位，是在用户列表里踢人，此处应该是userService里的一个方法）
+                        showKickSureDialog(context){
+                            userService?.kickUser(userId){ error->
                                 if (error == null) {
-                                    mMemberMap.remove(it.toString())
+                                    mMemberMap.remove(userId)
                                     updateMemberView()
                                     Log.d("AUIRoomMembersBinder", "onKickClick suc")
+                                    Toast.makeText(context, R.string.voice_room_kick_user_success, Toast.LENGTH_SHORT).show()
                                 } else {
                                     Log.d("AUIRoomMembersBinder", "onKickClick fail ${error.message}")
                                 }
@@ -121,8 +125,23 @@ class AUIRoomMembersBinder constructor(
                 show()
             }
         }
-
     }
+
+    private fun showKickSureDialog(context: Context, confirm: ()->Unit) {
+        AUIAlertDialog(context).apply {
+            setTitle(R.string.voice_room_tip)
+            setMessage(context.getString(R.string.voice_room_kick_sure_tip))
+            setPositiveButton(context.getString(R.string.voice_room_confirm)){
+                dismiss()
+                confirm.invoke()
+            }
+            setTitleCloseButton{
+                dismiss()
+            }
+            show()
+        }
+    }
+
 
     /** IAUiUserService.AUiUserRespDelegate */
     override fun onRoomUserEnter(roomId: String, userInfo: AUIUserInfo) {

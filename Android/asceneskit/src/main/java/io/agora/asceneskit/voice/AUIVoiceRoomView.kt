@@ -289,8 +289,9 @@ class AUIVoiceRoomView : FrameLayout,
 
     private fun showKickedOutDialog() {
         AUIAlertDialog(context).apply {
-            setTitle("您已被踢出房间")
-            setPositiveButton("确认") {
+            setTitle(R.string.voice_room_kick_by_host)
+            setCancelable(false)
+            setPositiveButton(context.getString(R.string.voice_room_confirm)) {
                 dismiss()
                 mOnRoomDestroyEvent?.invoke()
             }

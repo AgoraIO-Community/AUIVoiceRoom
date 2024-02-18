@@ -290,7 +290,7 @@ class AUIVoiceRoomService constructor(
             if (roomInfo == null) {
                 rtmManager.getMetadata(roomId) { _, metadata ->
                     val voiceRoomInfo = GsonTools.toBean(
-                        metadata?.metadataItems?.find { it.key == kRoomInfoAttrKey }?.value,
+                        metadata?.get(kRoomInfoAttrKey),
                         AUIVoiceRoomInfo::class.java
                     ) ?: return@getMetadata
                     roomInfo = AUIRoomInfo().apply {
