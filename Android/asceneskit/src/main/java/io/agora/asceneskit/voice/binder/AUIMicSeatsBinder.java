@@ -68,8 +68,7 @@ public class AUIMicSeatsBinder extends IRtcEngineEventHandler implements
         // update view
         IMicSeatItemView[] seatViewList = micSeatsView.getMicSeatItemViewList();
         for (int seatIndex = 0; seatIndex < seatViewList.length; seatIndex++) {
-            AUIMicSeatInfo micSeatInfo = micSeatService.getMicSeatInfo(seatIndex);
-            updateSeatView(seatIndex, micSeatInfo);
+            updateSeatView(seatIndex);
         }
     }
 
@@ -134,7 +133,7 @@ public class AUIMicSeatsBinder extends IRtcEngineEventHandler implements
             mSeatMap.remove(seatIndex);
         }
         mVolumeMap.remove(userInfo.userId);
-        updateSeatView(seatIndex, null);
+        updateSeatView(seatIndex);
         micSeatsView.stopRippleAnimation(seatIndex);
     }
 
@@ -149,8 +148,7 @@ public class AUIMicSeatsBinder extends IRtcEngineEventHandler implements
 
     @Override
     public void onSeatVideoMute(int seatIndex, boolean isMute) {
-        AUIMicSeatInfo seatInfo = micSeatService.getMicSeatInfo(seatIndex);
-        updateSeatView(seatIndex, seatInfo);
+        updateSeatView(seatIndex);
         micSeatsView.stopRippleAnimation(seatIndex);
     }
 
@@ -172,10 +170,11 @@ public class AUIMicSeatsBinder extends IRtcEngineEventHandler implements
         micSeatsView.stopRippleAnimation(seatIndex);
     }
 
-    private void updateSeatView(int seatIndex, @Nullable AUIMicSeatInfo micSeatInfo) {
+    private void updateSeatView(int seatIndex) {
         if (seatIndex >= micSeatsView.getMicSeatItemViewList().length) {
             return;
         }
+        AUIMicSeatInfo micSeatInfo = micSeatService.getMicSeatInfo(seatIndex);
         IMicSeatItemView seatView = micSeatsView.getMicSeatItemViewList()[seatIndex];
         if (micSeatInfo == null || micSeatInfo.seatStatus == AUIMicSeatStatus.idle) {
             seatView.setTitleIndex(seatIndex + 1);
@@ -336,8 +335,7 @@ public class AUIMicSeatsBinder extends IRtcEngineEventHandler implements
         // update view
         IMicSeatItemView[] seatViewList = micSeatsView.getMicSeatItemViewList();
         for (int seatIndex = 0; seatIndex < seatViewList.length; seatIndex++) {
-            AUIMicSeatInfo micSeatInfo = micSeatService.getMicSeatInfo(seatIndex);
-            updateSeatView(seatIndex, micSeatInfo);
+            updateSeatView(seatIndex);
         }
     }
 
@@ -358,13 +356,8 @@ public class AUIMicSeatsBinder extends IRtcEngineEventHandler implements
 
     @Override
     public void onUserAudioMute(@NonNull String userId, boolean mute) {
-        for (int i = 0; i <= micSeatService.getMicSeatSize(); i++) {
-            AUIMicSeatInfo seatInfo = micSeatService.getMicSeatInfo(i);
-            if (seatInfo != null && seatInfo.user != null && seatInfo.user.userId.equals(userId)) {
-                updateSeatView(i, seatInfo);
-                break;
-            }
-        }
+        int micSeatIndex = micSeatService.getMicSeatIndex(userId);
+        updateSeatView(micSeatIndex);
     }
 
     @Override
