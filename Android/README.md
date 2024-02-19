@@ -100,12 +100,6 @@
   >   IM_CLIENT_ID=<=您的环信IM Client ID=>
   >   IM_CLIENT_SECRET=<=您的环信IM Client Secret=>
   >   ~~~
-  > 
-  > - 如果没有按上面步骤获取声网AppID等，可使用 **声网测试域名** 和 **测试App ID：925dd81d763a42919862fee9f3f204a7**，如下图所示配置：
-  >   
-  >   注意：测试域名和测试AppID都仅供测试使用，不能商用！
-  >
-  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/createaccount/uikit_agora_07_2.png" width="800" />
 
 - 用 Android Studio 运行项目即可开始您的体验
 
