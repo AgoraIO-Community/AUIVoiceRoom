@@ -21,7 +21,7 @@ public class VoiceChatUIKit: NSObject {
     private var service: AUIVoiceChatRoomService?
     private var roomId: String?
     private var isRoomOwner: Bool = false
-    private lazy var roomManager: AUIRoomManagerImpl = AUIRoomManagerImpl()
+    private lazy var roomManager: AUIRoomManagerImpl = AUIRoomManagerImpl(sceneId: kSceneId)
     private var isRoomDestroy: Bool = false
     
     public func setup(commonConfig: AUICommonConfig,
@@ -35,8 +35,7 @@ public class VoiceChatUIKit: NSObject {
                                 pageSize: Int,
                                 callback: @escaping AUIRoomListCallback) {
         checkSetupAndCommonConfig()
-        roomManager.getRoomInfoList(sceneId: kSceneId,
-                                    lastCreateTime: lastCreateTime,
+        roomManager.getRoomInfoList(lastCreateTime: lastCreateTime,
                                     pageSize: pageSize,
                                     callback: callback)
     }
@@ -54,7 +53,7 @@ public class VoiceChatUIKit: NSObject {
         let date = Date()
         isRoomDestroy = false
         dispatchGroup.enter()
-        roomManager.createRoom(sceneId: kSceneId, room: roomInfo) {error, info in
+        roomManager.createRoom(room: roomInfo) {error, info in
             roomError = error
             aui_info("(roomManager)createRoom: \(Int64(-date.timeIntervalSinceNow * 1000)) ms", tag: "Benchmark")
             dispatchGroup.leave()
@@ -111,8 +110,7 @@ public class VoiceChatUIKit: NSObject {
         checkSetupAndCommonConfig()
         self.unbindRespDelegate(delegate: self)
         if isRoomOwner || isRoomDestroy {
-            roomManager.destroyRoom(sceneId: kSceneId,
-                                    roomId: roomId,
+            roomManager.destroyRoom(roomId: roomId,
                                     callback: { _ in
             })
             service?.destroy(callback: { _ in })
