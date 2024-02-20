@@ -134,13 +134,13 @@ voiceRoomView.onClickOffButton = { [weak self] in
 
 #### 7.1 房间销毁
 ```swift
-//订阅 VoiceRoomUIKit 后 AUIRoomManagerRespDelegate 的回调。 共享。 发射室
+//订阅 VoiceRoomUIKit 后 AUIVoiceChatRoomServiceRespDelegate 的回调
 VoiceRoomUIKit.shared.bindRespDelegate(delegate: self)
 
 //退出房间时取消订阅
 VoiceRoomUIKit.shared.unbindRespDelegate(delegate: self)
 
-//通过AUIRoomManagerRespDelegate回调方法中的onRoomDestroy处理房间销毁
+//通过AUIVoiceChatRoomServiceRespDelegate回调方法中的onRoomDestroy处理房间销毁
 func onRoomDestroy(roomId: String) {
     //Processing room was destroyed
 }
@@ -298,10 +298,15 @@ func leaveRoom(roomId: String)
 | userName   | String | 用户名   |
 | userAvatar | String | 用户头像 |
 
-### AUIRoomManagerRespDelegate
-```AUIRoomManagerRespDelegate``` 协议用于处理与房间操作相关的各种响应事件。它提供了以下方法，可以由遵循此协议的类来实现，以响应特定的事件。
+### AUIVoiceChatRoomServiceRespDelegate
+```AUIVoiceChatRoomServiceRespDelegate``` 协议用于处理与房间操作相关的各种响应事件。它提供了以下方法，可以由遵循此协议的类来实现，以响应特定的事件。
 
 #### 方法
+  - `onTokenPrivilegeWillExpire(roomId: String?)`
+    房间token即将过期的回调方法
+    - 参数：
+      - ```roomId```: 房间ID。
+    >
   - ```func onRoomDestroy(roomId: String)```
     房间被销毁时调用的回调方法。
     - 参数：
@@ -313,12 +318,7 @@ func leaveRoom(roomId: String)
       - ```roomId```:房间ID。
       - ```roomInfo```:房间信息。
     >
-  - ```func onRoomAnnouncementChange(roomId: String, announcement: String)```
-    房间公告发生变更时调用的方法。
-    - 参数：
-      - ```roomId```: 房间ID。
-      - ```announcement```: 公告变更内容。
-    >
+
 - ```func onRoomUserBeKicked(roomId: String, userId: String)```
     房间用户被踢出房间时调用的方法。
     - 参数：
@@ -326,6 +326,143 @@ func leaveRoom(roomId: String)
       - ```userId```: 用户ID。
 
 ## 自定义功能
+VoiceRoomUIKit支持对UI及业务功能做定制化修改，其实现放在AScenesKit库里，该库通过CocoaPods引入已有的[AUKit](https://github.com/AgoraIO-Community/AUIKit)组件做定制，因此自定义需要先了解AUIKit的接口。
+
+AUIKit的接口可以通过AUIKit的[README](https://github.com/AgoraIO-Community/AUIKit/tree/main/iOS)文档进行查看。
+
+为了更方便地介绍如何做基础及高阶定制，下面先介绍如何引入AUIKit源码，然后再从UI和业务逻辑分别说明如何做定制。
+
+### 引入AUIKit源码
+配置方法如下：
+  > 本项目默认使用CocoaPods引入AUIKit库，但是可以在[Podfile](../AUIVoiceRoom/Podfile)里配置AUIKit源码路径。
+  > 当AUIKit源码路径存在时，使用Xcode编译时会将源码导到项目里并能直接修改。
+  > 配置方法如下：
+  >
+  > - 克隆或者直接下载AUIKit源码
+  >
+  > - 在Podfile里配置AUIKit源码路径，该路径可以是相对于Podfile所在目录的相对路径
+  >
+  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/ios/voicechat_custom_01.png" width="800" />
+  >
+  > - 执行`pod install`后，即可看到AUIKit源码
+  >
+  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/ios/voicechat_custom_02.png" width="800" />
+
+### UI定制
+VoiceRoomUIKit的UI是基于AUIKit的UI组件进行实现，而AIKit提供了一套UI主题样式，因此VoiceRoomUIKit UI样式是通过扩展AUIKit组件主题来实现的。
+
+AUIKit组件的主题样式属性说明见[AUIKit属性](https://github.com/AgoraIO-Community/AUIKit/blob/main/iOS/README.md#widget)。
+
+如何为一组新UI扩展主题请参考[VoiceRoom Theme](./VoiceRoomTheme.md)。
+
+
+另外，VoiceRoomUIKit提供了两套默认主题，[Dark](https://github.com/AgoraIO-Community/AUIKit/tree/main/iOS/AUIKitCore/Resource/auiTheme.bundle/Dark) 和 [Light](https://github.com/AgoraIO-Community/AUIKit/tree/main/iOS/AUIKitCore/Resource/auiTheme.bundle/Light)，
+
+
+下面介绍`Light`是如何定制主题的，然后再进阶介绍如何自定义新的主题属性
+
+#### 基础定制
+> 基础定制主要是介绍如何在主题里对特定ui组件的属性进行修改以达到所要的效果，其中ui组件的可修改主题属性见[AUIKit属性](https://github.com/AgoraIO-Community/AUIKit/blob/main/iOS/README.md#widget)。
+  >
+  > 下面以麦位为例来介绍如何做定制：
+  >
+  > - 定位打开对应的[micSeat.json](https://github.com/AgoraIO-Community/AUIKit/blob/main/iOS/AUIKitCore/Resource/auiTheme.bundle/Dark/theme/micSeat.json)文件
+  >
+  >    <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/ios/voicechat_custom_theme_01.png" width="800" />
+  >
+  > - 拷贝该麦位主题json文件到项目里，例如拷贝到scenekit的对应主题bundle里
+  >
+  >    <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/ios/voicechat_custom_theme_02.png" width="800" />
+  >
+  > - 修改麦位属性，例如
+  >
+  > ~~~json
+  > "SeatItem": {
+  >   ...
+  >   "backgroundColor": "#ff0000",
+  >   ...
+  > }
+  > ~~~
+  >
+  > - 配置好运行项目即可看到效果
+
+#### 高级定制
+ > 高级定制主要适用于主题属性无法满足UI定制化需求，此时需要自己对AUIKit组件进行属性扩展。
+  > 要对AUIKit ui组件添加属性，需要先参考前面章节引入AUIKit源码，然后直接在AUIKit源码上进行修改。
+  >
+  > 下面以麦位背景色来介绍如何添加新属性，以及如何在代码里获取到主题属性值并调整ui:
+  >
+  > - 找到麦位的json文件，在里面添加背景色属性
+  >
+  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/ios/voicechat_custom_theme_03.png" width="800" />
+  >
+  > - 找到麦位自定义View，在麦位view里使用上面定义的背景色属性
+  >
+  >    <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/ios/voicechat_custom_theme_04.png" width="800" />
+  >
+  > - 主题属性自定义完成后即可按基础定制的步骤来使用这个新增属性
+
+
+### 业务功能定制
+VoiceRoomUIKit的业务服务是基于AUIKit的Service组件进行实现。AUIKit提供了一系列Service组件供上层使用，具体可以参考[AUIKit Service文档](https://github.com/AgoraIO-Community/AUIKit/blob/main/iOS/README_zh.md#service)。下面介绍VoiceRoomUIKit如何做基础定制，以及如何实现自己的房间管理。
+
+#### binder 和 service 使用
+
+  > 在做自定义前，需要知道几点：
+  >   1. 组件通过[Binder](../AScenesKit/AScenesKit/Classes/ViewBinder/)将AUIKit提供的UI组件及Service组件绑定起来以实现业务交互
+  >   2. [AUIVoiceChatRoomService](../AScenesKit/AScenesKit/Classes/RoomContainer/AUIVoiceChatRoomService.swift)管理着所有业务service
+  >   3. [AUIVoiceChatRoomView](../AScenesKit/AScenesKit/Classes/RoomContainer/AUIVoiceChatRoomView.swift)作为房间总ui入口，管理所有Binder及AUIVoiceRoomService
+  >
+  > 自定义功能核心是修改Binder及AUIVoiceChatRoomView。
+  >
+  > 下面是自定义麦位的参考步骤：
+  >
+  >- 查看 AUIVoiceChatRoomView 找到麦位控件
+  >
+  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/ios/voicechat_custom_03.png" width="800" />
+  >
+  > - 在AUIVoiceRoomView里找到对应的Binder实现[micSeatBinder](../AScenesKit/AScenesKit/Classes/ViewBinder/AUIMicSeatViewBinder.swift)。
+  >
+  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/ios/voicechat_custom_04.png" width="800" />
+  >
+  > - 将麦位相关的AUIKit ui组件实例及service组件实例通过与麦位Binder进行绑定
+  >
+  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/ios/voicechat_custom_05.png" width="800" />
+  >
+  > - 在麦位Binder的bind方法里设置service事件监听、获取service数据及初始化ui等初始化操作
+  >
+  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/ios/voicechat_custom_06.png" width="800" />
+
+#### 自定义房间管理
+
+  > 在后台服务里提供了一个房间管理，这个房间管理是由[RoomManager](https://github.com/AgoraIO-Community/AUIKit/blob/main/iOS/AUIKitCore/Sources/Service/Impl/AUIRoomManagerImpl.swift)进行实现。
+  > RoomManager提供了创建房间、销毁房间、获取房间列表这三个api，但是这仅能满足简单的房间管理需求，如果有更复杂的需求就需要自行开发房间管理服务。或者您已经有自己的房间管理服务，您也可以使用自己的房间管理服务。
+  >
+  > 下面说明如何自定义房间管理：
+  >
+  >- 确认后台有独立的三个后台接口：创建房间、销毁房间 以及 获取房间列表。
+     >   并且房间信息里必须包含房主的用户信息：用户名、用户ID 和 用户头像。
+  >
+  > - 实现您的RoomManager，并包含以下三个接口
+  >
+  > ~~~swift
+  > // 创建房间
+  > public func createRoom(room: AUIRoomInfo,
+  >                        callback: @escaping (NSError?, AUIRoomInfo?) -> ())
+  >  
+  > // 销毁房间
+  > public func destroyRoom(roomId: String,
+  >                         callback: @escaping (NSError?) -> ())
+  > 
+  > // 获取房间列表
+  > public func getRoomInfoList(lastCreateTime: Int64,
+  >                             pageSize: Int,
+  >                             callback: @escaping AUIRoomListCallback)
+  > ~~~
+  >
+  > - 将[VoiceChatUIKit](../AUIVoiceRoom/AUIVoiceRoom/VoiceChatUIKit.swift)中的RoomManager替换成自己的RoomManager
+  >
+  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/ios/voicechat_custom_07.png" width="800" />
 
 ## License
 版权所有 © Agora Corporation。 版权所有。
