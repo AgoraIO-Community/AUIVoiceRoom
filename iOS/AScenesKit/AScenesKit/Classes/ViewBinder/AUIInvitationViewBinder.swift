@@ -86,7 +86,7 @@ extension AUIInvitationViewBinder: AUIInvitationRespDelegate {
             .isShowCloseButton(isShow: true)
             .title(title: "邀请上麦").content(content: seatIndex != -1 ? "房主邀请您上\(seatIndex+1)号麦": "房主邀请您上麦")
             .titleColor(color: .white)
-            .rightButton(title: "确定").leftButton(title: "拒绝")
+            .rightButton(title: aui_localized("confirm")).leftButton(title: "拒绝")
             .theme_leftButtonBackground(color: "Alert.leftBackgroundColor")
             .theme_rightButtonBackground(color: "CommonColor.primary")
             .rightButtonTapClosure(onTap: {[weak self] text in
@@ -120,7 +120,7 @@ extension AUIInvitationViewBinder: AUIInvitationRespDelegate {
 //        AUIAlertView()
 //            .theme_background(color: "CommonColor.black")
 //            .isShowCloseButton(isShow: true)
-//            .title(title: "申请上麦").content(content: seatIndex != -1 ? "用户\(userId)申请上\(seatIndex)号麦": "用户\(userId)申请上麦")
+//            .title(title: aui_localized("Apply to mic")).content(content: seatIndex != -1 ? "用户\(userId)申请上\(seatIndex)号麦": "用户\(userId)申请上麦")
 //            .titleColor(color: .white)
 //            .rightButton(title: "同意")
 //            .theme_rightButtonBackground(color: "CommonColor.primary")
@@ -205,10 +205,6 @@ extension AUIInvitationViewBinder: AUIUserRespDelegate {
     }
     
     public func onUserVideoMute(userId: String, mute: Bool) {
-        
-    }
-    
-    public func onUserBeKicked(roomId: String, userId: String) {
         
     }
 }

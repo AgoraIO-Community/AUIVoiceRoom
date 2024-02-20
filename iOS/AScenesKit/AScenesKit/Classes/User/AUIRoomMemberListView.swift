@@ -49,7 +49,7 @@ public class AUIRoomMemberUserCell: UITableViewCell {
     }()
     
     lazy var action: UIButton = {
-        UIButton(type: .custom).frame(CGRect(x: self.contentView.frame.width - 80, y: (self.contentView.frame.height-28)/2.0, width: 80, height: 28)).setGradient([UIColor(red: 0, green: 0.62, blue: 1, alpha: 1),UIColor(red: 0.487, green: 0.358, blue: 1, alpha: 1)], [ CGPoint(x: 0, y: 0.25),  CGPoint(x: 1, y: 0.75)]).title("Kick", .normal).textColor(.white, .normal).font(.systemFont(ofSize: 14, weight: .medium)).addTargetFor(self, action: #selector(sendAction), for: .touchUpInside).cornerRadius(14)
+        UIButton(type: .custom).frame(CGRect(x: self.contentView.frame.width - 80, y: (self.contentView.frame.height-28)/2.0, width: 80, height: 28)).setGradient([UIColor(red: 0, green: 0.62, blue: 1, alpha: 1),UIColor(red: 0.487, green: 0.358, blue: 1, alpha: 1)], [ CGPoint(x: 0, y: 0.25),  CGPoint(x: 1, y: 0.75)]).title(aui_localized("kick", bundleName: "auiVoiceChatLocalizable"), .normal).textColor(.white, .normal).font(.systemFont(ofSize: 14, weight: .medium)).addTargetFor(self, action: #selector(sendAction), for: .touchUpInside).cornerRadius(14)
     }()
     
     
@@ -219,7 +219,7 @@ extension AUIRoomMemberListView: UITableViewDelegate, UITableViewDataSource {
         let cell: AUIRoomMemberUserCell = tableView.dequeueReusableCell(withIdentifier: kMemberListCellID, for: indexPath) as! AUIRoomMemberUserCell
         let user = memberList[safe: indexPath.row]
         let seatIdx = seatMap[user?.userId ?? ""] ?? -1
-        let subTitle = seatIdx >= 0 ? String(format: auikaraoke_localized("micSeatDesc1Format"), seatIdx + 1) : ""
+        _ = seatIdx >= 0 ? String(format: auikaraoke_localized("micSeatDesc1Format"), seatIdx + 1) : ""
         cell.actionClosure = { [weak self] user in
             guard let `self` = self,let kickUser = user else { return }
             self.eventHandlers.allObjects.forEach({

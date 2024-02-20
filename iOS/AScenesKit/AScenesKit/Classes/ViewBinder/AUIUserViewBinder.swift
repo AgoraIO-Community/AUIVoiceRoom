@@ -49,11 +49,6 @@ extension AUIUserViewBinder: AUIUserRespDelegate {
         return userInfo.createData(seatIndexMap[userInfo.userId] ?? -1, isOwner)
     }
     
-    public func onUserBeKicked(roomId: String, userId: String) {
-//        self.userView?.removeMember(userId: userId)
-        cleanUserIdfNeed(roomId: roomId, userId: userId)
-    }
-    
     public func onUserAudioMute(userId: String, mute: Bool) {
     }
     

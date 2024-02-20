@@ -44,9 +44,7 @@ open class AUIVoiceChatRoomService: NSObject {
     private var rtmClientCreateBySercice = false
     
     private var rtcJoinClousure: ((Error?)->())?
-    
-    public var beKickedClosure: (() -> ())?
-    
+        
     public var reportAudioVolumeIndicationOfSpeakers:(([AgoraRtcAudioVolumeInfo], Int)->())?
     
     private var subscribeDate: Date?
@@ -485,11 +483,7 @@ extension AUIVoiceChatRoomService {
     }
 }
 
-extension AUIVoiceChatRoomService: AUIUserRespDelegate {
-    public func onUserBeKicked(roomId: String, userId: String) {
-        self.beKickedClosure?()
-    }
-    
+extension AUIVoiceChatRoomService: AUIUserRespDelegate {    
     public func onRoomUserSnapshot(roomId: String, userList: [AUIUserInfo]) {
         self.userSnapshotList = userList
         

@@ -21,7 +21,7 @@ import SwiftTheme
     }()
     
     /// 房间信息UI
-    private lazy var roomInfoView: AUIRoomInfoView = AUIRoomInfoView(frame: CGRect(x: 16, y: AStatusBarHeight, width: 185, height: 40),
+    private lazy var roomInfoView: AUIRoomInfoView = AUIRoomInfoView(frame: CGRect(x: 16, y: AStatusBarHeight, width: aui_width - 190, height: 40),
                                                                      showExtension: true)
     
     // 关闭按钮
@@ -144,10 +144,10 @@ import SwiftTheme
             self.closeButton
         ])
         membersView.aui_centerY = self.roomInfoView.aui_centerY
-        membersView.aui_right = AScreenWidth - 60
+        membersView.aui_right = aui_width - 50
         
         closeButton.aui_centerY = self.roomInfoView.aui_centerY
-        closeButton.aui_right = aui_width - 15
+        closeButton.aui_right = aui_width - 8
     }
     
     private func loadSubviews() {
@@ -162,12 +162,6 @@ import SwiftTheme
             self.receiveGift,
 //            self.closeButton
         ])
-        membersView.aui_centerY = self.roomInfoView.aui_centerY
-        membersView.aui_right = AScreenWidth - 60
-        
-        closeButton.aui_centerY = self.roomInfoView.aui_centerY
-        closeButton.aui_right = aui_width - 15
-        
     }
     
     private func viewBinderConnected() {
@@ -177,10 +171,6 @@ import SwiftTheme
             assert(false, "service is empty")
             aui_error("service is empty", tag: "AUIVoiceChatRoomView")
             return
-        }
-        service.beKickedClosure = { [weak self] in
-            AUIToast.show(text: "您被踢出房间!")
-            self?.onBackAction()
         }
         
         service.bindRespDelegate(delegate: self)
@@ -213,7 +203,7 @@ import SwiftTheme
                               applyView: self.applyView,
                               invitationService: service.invitationImplement,
                               micSeatService: service.micSeatImpl,
-                              userService: service.userImpl) { [weak self] _ in
+                              userService: service.userImpl) { _ in
 //            self?.requestUsers(users: $0)
         }
         invitationView.addActionHandler(actionHandler: self)
@@ -289,7 +279,7 @@ extension AUIVoiceChatRoomView: AUIRoomMemberListViewEventsDelegate {
             .isShowCloseButton(isShow: true)
             .title(title: "踢出用户")
             .titleColor(color: .white)
-            .rightButton(title: "确定").content(content: "确认踢出？踢出后该用户无法再次进入房间")
+            .rightButton(title: aui_localized("confirm")).content(content: "确认踢出？踢出后该用户无法再次进入房间")
             .theme_rightButtonBackground(color: "CommonColor.primary")
             .rightButtonTapClosure(onTap: {[weak self] text in
                 guard let self = self else { return }
@@ -512,9 +502,9 @@ extension AUIVoiceChatRoomView: AUIMicSeatViewEventsDelegate {
             AUIAlertView.theme_defaultAlert()
                 .contentTextAligment(textAlignment: .center)
                 .isShowCloseButton(isShow: true)
-                .title(title: "申请上麦")
+                .title(title: aui_localized("Apply to mic"))
                 .titleColor(color: .white)
-                .rightButton(title: "确定").content(content: "申请上\(index+1)号麦")
+                .rightButton(title: aui_localized("confirm")).content(content: "申请上\(index+1)号麦")
                 .theme_rightButtonBackground(color: "CommonColor.primary")
                 .rightButtonTapClosure(onTap: {[weak self] text in
                     guard let self = self else { return }

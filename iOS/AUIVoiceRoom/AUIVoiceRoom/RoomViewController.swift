@@ -173,33 +173,33 @@ class RoomViewController: UIViewController {
 }
 
 extension RoomViewController: AUIVoiceChatRoomServiceRespDelegate {
-    
-    func onRoomUserBeKicked(roomId: String, userId: String) {
-        AUIToast.show(text: "您被踢出房间!")
-        VoiceChatUIKit.shared.unbindRespDelegate(delegate: self)
-        AUIToast.hidden(delay:1.5)
-        AUICommonDialog.hidden()
-        self.voiceRoomView?.onBackAction()
-        self.navigationController?.popViewController(animated: true)
-    }
-    
-    func onRoomDestroy(roomId: String) {
+    private func showLeaveAlert(alertText: String, subText: String, confirmText: String) {
         AUIChatInputBar.hiddenInput()
         
         AUIAlertView.theme_defaultAlert()
             .isShowCloseButton(isShow: true)
-            .title(title: "房间已销毁")
-            .rightButton(title: "确认")
+            .title(title: alertText)
+            .content(content: subText)
+            .contentTextAligment(textAlignment: .center)
+            .rightButton(title: confirmText)
             .rightButtonTapClosure(onTap: {[weak self] text in
                 guard let self = self else { return }
                 AUICommonDialog.hidden()
                 self.voiceRoomView?.onBackAction()
                 self.navigationController?.popViewController(animated: true)
             })
+            .isShowCloseButton(isShow: false)
             .show(fromVC: self)
     }
     
+    func onRoomUserBeKicked(roomId: String, userId: String) {
+        showLeaveAlert(alertText: "您已被踢出房间", subText: "", confirmText: aui_localized("confirm"))
+    }
+    
+    func onRoomDestroy(roomId: String) {
+        showLeaveAlert(alertText: "房间已销毁", subText: "返回房间列表", confirmText: "我知道了")
+    }
+    
     func onRoomInfoChange(roomId: String, roomInfo: AUIRoomInfo) {
-        
     }
 }
