@@ -71,6 +71,12 @@
   > 
   >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/createaccount/uikit_easemob_02.png" width="800" />
   
+- 获取RESTful HTTP基本认证 BasicAuth
+
+  > 在用户列表的踢人功能里，用到了[RESTful服务](https://doc.shengwang.cn/doc/rtc/restful/best-practice/user-privilege#%E5%B0%86%E7%94%A8%E6%88%B7%E4%B8%80%E6%AC%A1%E6%80%A7%E8%B8%A2%E5%87%BA%E9%A2%91%E9%81%93)将用户踢出房间，因此这里需要获取RESTful基本认证BasicAuth。
+  > 
+  > HTTP基本认证获取方法见[官方文档](https://doc.shengwang.cn/doc/rtc/restful/get-started/http-authentication)。
+  
 - 获取后台服务域名
 
   > 本项目依赖一个后台服务，该后台服务主要提供下面几个功能：
@@ -96,11 +102,12 @@
   >   SERVER_HOST=<=您的后台服务域名 或者 https://service.shengwang.cn/uikit=>
   >   AGORA_APP_ID=<=您的声网AppID=>
   >   AGORA_APP_CERT=<=您的声网App证书=>
+  >   AGORA_BASIC_AUTH=<=您的声网RESTfual HTTP基本认证=>
   >   IM_APP_KEY=<=您的环信IM AppKey=>
   >   IM_CLIENT_ID=<=您的环信IM Client ID=>
   >   IM_CLIENT_SECRET=<=您的环信IM Client Secret=>
   >   ~~~
-
+  
 - 用 Android Studio 运行项目即可开始您的体验
 
 ---

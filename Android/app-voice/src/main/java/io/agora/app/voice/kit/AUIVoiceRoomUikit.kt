@@ -21,7 +21,12 @@ import retrofit2.Response
 object AUIVoiceRoomUikit {
     private val mSceneId = "VoiceRoomUIKit"
     private var mAPIConfig: AUIAPIConfig? = null
-    private val mRoomManager = AUIRoomManager()
+    private val mRoomManager by lazy {
+        AUIRoomManager(
+            AUIRoomContext.shared().mCommonConfig?.appId ?: "",
+            mSceneId
+        )
+    }
     private val mServices = mutableMapOf<String, AUIVoiceRoomService>()
 
     /**
@@ -59,8 +64,6 @@ object AUIVoiceRoomUikit {
     ) {
         checkSetupAndCommonConfig()
         mRoomManager.getRoomInfoList(
-            AUIRoomContext.shared().mCommonConfig?.appId?: "",
-            mSceneId,
             startTime, pageSize
         ) { error, roomList ->
             if (error == null) {
@@ -86,10 +89,8 @@ object AUIVoiceRoomUikit {
             return
         }
         mRoomManager.createRoom(
-            AUIRoomContext.shared().mCommonConfig?.appId ?: "",
-            mSceneId,
             roomInfo
-        ) { error, roomInfo ->
+        ) { error, _ ->
             AUILogger.logger().d(
                 message = "Create room >> error=$error, roomInfo=$roomInfo"
             )
@@ -152,15 +153,11 @@ object AUIVoiceRoomUikit {
     fun destroyRoom(roomId: String) {
         if (AUIRoomContext.shared().isRoomOwner(roomId)) {
             mRoomManager.destroyRoom(
-                AUIRoomContext.shared().mCommonConfig?.appId ?: "",
-                mSceneId,
                 roomId
             ) {}
             mServices[roomId]?.destroy()
         } else if (mServices[roomId]?.exit() == true) {
             mRoomManager.destroyRoom(
-                AUIRoomContext.shared().mCommonConfig?.appId ?: "",
-                mSceneId,
                 roomId
             ) {}
         }

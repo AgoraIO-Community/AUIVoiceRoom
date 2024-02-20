@@ -3,7 +3,7 @@
 VoiceRoomUIKit 是一个语聊房场景组件，提供房间管理和拉起语聊房场景页面的能力。 开发者可以使用该组件快速构建一个语聊房应用。
 
 ## 快速集成
-  
+
   > 在集成之前，请确保您已根据此[教程](..) 成功运行项目。
 
 ### 1. 添加源码
@@ -11,6 +11,7 @@ VoiceRoomUIKit 是一个语聊房场景组件，提供房间管理和拉起语�
 **将以下源码复制到自己的项目中：**
 
 - [asceneskit](../asceneskit)
+- [AUIVoiceRoomUikit](../app-voice/src/main/java/io/agora/app/voice/kit/AUIVoiceRoomUikit.kt)
 
 
 **在Setting.gradle文件中添加对AScenesKit**
@@ -26,6 +27,7 @@ val config = AUICommonConfig()
 config.context = this
 config.appId = BuildConfig.AGORA_APP_ID
 config.appCert = BuildConfig.AGORA_APP_CERT
+config.basicAuth = BuildConfig.AGORA_BASIC_AUTH
 config.host = BuildConfig.SERVER_HOST
 config.imAppKey = BuildConfig.IM_APP_KEY
 config.imClientId = BuildConfig.IM_CLIENT_ID
@@ -88,10 +90,10 @@ AUIVoiceRoomUikit.destroyRoom(roomId)
 ### 7. 异常处理
 ```kotlin
 //订阅 VoiceRoomUIKit 后 AUIRoomManagerRespDelegate 的回调。
-mVoiceService.getRoomManager().registerRespObserver(this)
+AUIVoiceRoomUikit.registerRespObserver(roomId, this)
 
 //退出房间时取消订阅
-mVoiceService?.getRoomManager()?.unRegisterRespObserver(this)
+AUIVoiceRoomUikit.unRegisterRespObserver(roomId, this)
 
 //通过AUIRoomManagerRespDelegate回调方法中的onRoomDestroy处理房间销毁
 override fun onRoomDestroy(roomId: String) {
@@ -259,7 +261,7 @@ VoiceRoomUIKit的业务服务是基于AUIKit的Service组件进行实现。AUIKi
   > 下面说明如何自定义房间管理：
   >
   >- 确认后台有独立的三个后台接口：创建房间、销毁房间 以及 获取房间列表。
-     >   并且房间信息里必须包含房主的用户信息：用户名、用户ID 和 用户头像。
+  >   并且房间信息里必须包含房主的用户信息：用户名、用户ID 和 用户头像。
   >
   > - 实现您的RoomManager，并包含以下三个接口
   >
