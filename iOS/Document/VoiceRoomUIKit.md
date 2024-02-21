@@ -1,277 +1,473 @@
 # VoiceRoomUIKit
 
-*English | [中文](VoiceRoomUIKit_zh.md)*
 
-VoiceRoomUIKit is a voice chat room scene component, which provides room management and the ability to pull up the voice chat room scene page. Developers can use this component to quickly build a chat room application.
+VoiceChatUIKit 是一个语聊房场景组件，提供房间管理和拉起语聊房场景页面的能力。 开发者可以使用该组件快速构建一个语聊房应用。
 
+## 快速集成
 
-## Quick Started
+ > 在集成之前，请确保您已根据此[教程](../AUIVoiceRoom/) 成功运行项目。
 
-### 1. Add Source Code
+### 1. 添加源码
 
-**Copy the following source code into your own project：**
+**将以下源码复制到自己的项目中：**
 
 - [AScenesKit](../AScenesKit)
 - [KeyCenter.swift](../AUIVoiceRoom/AUIVoiceRoom/KeyCenter.swift)
 
-**Add dependencies on AScenesKit in the Podfile file (for example, when AScenesKit are placed in the same level directory as the Podfile)**
+**在Podfile文件中添加对AScenesKit的依赖（例如AScenesKit与Podfile放在同级目录下时）**
 
 ```
   pod 'AScenesKit', :path => './AScenesKit'
 ```
 
-**Drag KeyCenter.swift into the project**
+**将 KeyCenter.swift 拖到项目中**
 
 ![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/add_keycenter_to_voiceroom.jpg)
 
-**Configure microphone and camera permissions**
+**配置iOS系统麦克风权限**
 
 ![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/WeChatWorkScreenshot_c9c309c0-731c-4964-8ef3-1e60ab6b9241.png)
 
 
-### 2. Initialize VoiceRoomUIKit
+### 2. 初始化VoiceRoomUIKit
 ```swift
-//Set basic information to VoiceRoomUIKit
+//为VoiceRoomUIKit设置基本信息
 let commonConfig = AUICommonConfig()
+commonConfig.appId = KeyCenter.AppId
+commonConfig.appCert = KeyCenter.AppCertificate
+commonConfig.basicAuth = KeyCenter.AppBasicAuth
+commonConfig.imAppKey = KeyCenter.IMAppKey
+commonConfig.imClientId = KeyCenter.IMClientId
+commonConfig.imClientSecret = KeyCenter.IMClientSecret
 commonConfig.host = KeyCenter.HostUrl
-commonConfig.userId = userInfo.userId
-commonConfig.userName = userInfo.userName
-commonConfig.userAvatar = userInfo.userAvatar
-VoiceRoomUIKit.shared.setup(roomConfig: commonConfig,
-                          rtcEngine: nil,   //If there is an externally initialized rtc engine
-                          rtmClient: nil)   //If there is an externally initialized rtm client
+let ownerInfo = AUIUserThumbnailInfo()
+ownerInfo.userId = userInfo.userId
+ownerInfo.userName = userInfo.userName
+ownerInfo.userAvatar = userInfo.userAvatar
+commonConfig.owner = ownerInfo
+VoiceChatUIKit.shared.setup(commonConfig: commonConfig,
+                            apiConfig: nil)
 ```
 
-### 3. Get room list
+### 3.获取房间列表
 ```swift
-VoiceRoomUIKit.shared.getRoomInfoList(lastCreateTime: nil,
-                                    pageSize: kListCountPerPage,
-                                    callback: { error, list in
-    //Update UI
+VoiceRoomUIKit.shared.getRoomInfoList(lastCreateTime: 0,
+                                      pageSize: 20,
+                                      callback: { error, list in
+    //更新UI
+    ...
 })
 ```
 
-### 4. Create room
+### 4.房主创建并进入房间
 ```swift
-  let room = AUICreateRoomInfo()
-  room.roomName = "room name"
-  room.thumbnail = self.userInfo.userAvatar
-  room.micSeatCount = UInt(AUIRoomContext.shared.seatCount)
-  room.micSeatStyle = UInt(AUIRoomContext.shared.seatType.rawValue)
-  VoiceChatUIKit.shared.createRoom(roomInfo: room) { roomInfo in
-      let vc = RoomViewController()
-      vc.roomInfo = roomInfo
-      self.navigationController?.pushViewController(vc, animated: true)
-  } failure: { error in
-      //error handler
-  }
+
+    //生成token
+    let roomConfig = AUIRoomConfig()
+    ...
+
+    //创建房间信息
+    let room = AUICreateRoomInfo()
+    room.roomName = "room name"
+    room.thumbnail = self.userInfo.userAvatar
+    room.micSeatCount = UInt(AUIRoomContext.shared.seatCount)
+    room.micSeatStyle = UInt(AUIRoomContext.shared.seatType.rawValue)
+
+    //创建房间容器
+    let voiceRoomView = AUIVoiceChatRoomView(frame: self.view.bounds)
+    voiceRoomView.onClickOffButton = { [weak self] in
+      //退出房间的回调
+    }
+
+    //创建
+    VoiceChatUIKit.shared.createRoom(roomInfo: room,
+                                     roomConfig: roomConfig,
+                                     chatView: voiceRoomView) { roomInfo in
+        ...
+    } failure: { error in
+        //错误提示
+    }
+
+
+    // 订阅房间被销毁回调
+    VoiceChatUIKit.shared.bindRespDelegate(delegate: self)
 ```
 
-### 5. Launch room
+### 5. 观众进入房间
 ```swift
-//Creating Room Containers
+//生成token
+let roomConfig = AUIRoomConfig()
+...
+
+//创建房间容器视图
 let voiceRoomView = AUIVoiceChatRoomView(frame: self.view.bounds,roomInfo: info)
 voiceRoomView.onClickOffButton = { [weak self] in
-  //exit room callback
+  //退出房间的回调
 }
 
-VoiceChatUIKit.shared.launchRoom(roomInfo: self.roomInfo!,
-                                 roomView: voiceRoomView) {[weak self] error in
-    guard let self = self else {return}
-    if let _ = error { return }
-    //subscription room destroyed callback
-    VoiceChatUIKit.shared.bindRespDelegate(delegate: self)
+//加入
+VoiceChatUIKit.shared.enterRoom(roomId: roomId,
+                                roomConfig: roomConfig,
+                                chatView: voiceRoomView) {roomInfo, error in
+    ...
 }
+
+// 订阅房间被销毁回调
+VoiceChatUIKit.shared.bindRespDelegate(delegate: self)
 ```
 
-### 6. Exit the room
-#### 6.1 Proactively exiting
+### 6. 退出房间
+#### 6.1 主动退出
 ```swift
-//AUIVoiceChatRoomView provides a closure for onClickOffButton
+//AUIVoiceChatRoomView 提供一个关闭的闭包
 voiceRoomView.onClickOffButton = { [weak self] in
-    self.navigationController?.popViewController(animated: true)
     VoiceRoomUIKit.shared.destoryRoom(roomId: self.roomInfo?.roomId ?? "")
+
+    ...
 }
 ```
 
-#### 6.2 Room destruction passive exit
-Please refer to [Room Destruction](#71-room-destruction)
+#### 6.2 房间销毁与自动退出
+详见[房间销毁](#71-房间销毁)
 
+### 7. 异常处理
 
-### 7. Exception handling
-
-#### 7.1 Room destruction
+#### 7.1 房间销毁
 ```swift
-//Subscribe to the callback for AUIRoomManagerRespDelegate after VoiceRoomUIKit. shared. launchRoom
+//订阅 VoiceRoomUIKit 后 AUIVoiceChatRoomServiceRespDelegate 的回调
 VoiceRoomUIKit.shared.bindRespDelegate(delegate: self)
 
-//Unsubscribe when exiting the room
+//退出房间时取消订阅
 VoiceRoomUIKit.shared.unbindRespDelegate(delegate: self)
 
-//Process room destruction through onRoomDestroy in the AUIRoomManagerRespDelegate callback method
+//通过AUIVoiceChatRoomServiceRespDelegate回调方法中的onRoomDestroy处理房间销毁
 func onRoomDestroy(roomId: String) {
     //Processing room was destroyed
 }
-
-//exit room callback
+//用户被踢出房间的回调
 func onRoomUserBeKicked(roomId: String, userId: String) {
-        AUIToast.show(text: "You were kicked out!")
+    AUIToast.show(text: "You were kicked out!")
     self.navigationController?.popViewController(animated: true)
 }
 ```
 
-### 8. Skin changing
-- AUIKit supports one click skin changing, and you can set the skin using the following methods
-```swift
-//Reset to default theme
-AUIRoomContext.shared.resetTheme()
-```
-```swift
-//Switch to the next theme
-AUIRoomContext.shared.switchThemeToNext()
-```
+### 8.更换皮肤
+- AUIKit支持一键换肤，可以通过以下方法设置皮肤
+  ```swift
+  //重新设置默认皮肤
+  AUIRoomContext.shared.resetTheme()
+  ```
+  ```swift
+  //切换到下一个主题皮肤
+  AUIRoomContext.shared.switchThemeToNext()
+  ```
 
-```swift
-//Specify a theme
-AUIRoomContext.shared.switchTheme(themeName: "Light")
-```
-- You can also change the skin of the component by modifying the [theme](../AUIKit/AUIKit/Resource/auiTheme.bundle/UIKit/theme) or replacing the [resource file](../AUIKit/AUIKit/Resource/auiTheme.bundle/UIKit/resource)
-- For more skin changing issues, please refer to [Skin Settings](./VoiceRoomTheme.md)
+  ```swift
+  //指定特殊皮肤
+  AUIRoomContext.shared.switchTheme(themeName: "UIKit")
+  ```
+- 您还可以通过修改 [theme](../AUIKit/AUIKit/Resource/auiTheme.bundle/UIKit/theme)或替换[resource](../AUIKit/AUIKit/Resource/auiTheme.bundle/UIKit/resource)更新皮肤资源
+- 更多换皮问题请参考 [皮肤设置](./VoiceRoomTheme.md)
 
-# API reference
+# API参考
 ## setup
-Initialization
+初始化
 ```swift
-func setup(roomConfig: AUICommonConfig,
-           rtcEngine: AgoraRtcEngineKit? = nil,
-           rtmClient: AgoraRtmClientKit? = nil) 
+func setup(commonConfig: AUICommonConfig,
+           apiConfig: AUIAPIConfig? = nil)
 ```
-The parameters are shown in the table below:
-| parameter   | type            | meaning     |
+
+| 参数        | 类型            | 含义                                                         |
 | ----------- | --------------- | ------------------------------------------------------------ |
-| config      | AUICommonConfig | General configuration, including user information and domain name, etc.                             |
-| rtcEngine | AgoraRtcEngineKit     | (Optional) Agora RTC engine. When Agora RTC has been integrated in the project, it can be passed in, otherwise it will be automatically created internally. |
-| rtmClient   | AgoraRtmClientKit       | (Optional) Agora RTM engine. When Agora RTM has been integrated in the project, it can be passed in, otherwise it will be automatically created internally.|
+| commonConfig      | AUICommonConfig | 通用配置，包含用户信息和域名等                              |
+| apiConfig | AUIAPIConfig     | （可选）声网相关SDK的引擎设置，为nil表示内部隐式创建该实例。 |
+
 
 ## createRoom
-Create a Room
+创建房间
 
 ```swift
-func createRoom(roomInfo: AUICreateRoomInfo,
-                success: ((AUIRoomInfo?)->())?,
-                failure: ((Error)->())?)
+func createRoom(roomInfo: AUIRoomInfo,
+                roomConfig: AUIRoomConfig,
+                chatView: AUIVoiceChatRoomView,
+                completion: @escaping (NSError?) -> Void)
 ```
 
-The parameters are shown in the table below:
-| parameter   | type            | meaning     |
+
+参数如下表所示：
+
+| 参数           | 类型              | 含义                             |
 | -------------- | ----------------- | -------------------------------- |
-| roomInfo       | AUICreateRoomInfo | Information needed to create a room          |
-| success        | Closure          | Success callback, success will return a room information |
-| failure        | Closure          | Failure callback                         |
+| roomInfo | AUICreateRoomInfo | 创建房间所需的信息               |
+| roomConfig        | AUIRoomConfig          | 房间token配置 |
+| chatView        | AUIVoiceChatRoomView          | 语聊房容器View                    |
+| completion        | Closure          | 完成回调                         |
 
 
 
 ### getRoomInfoList
-Get room list
+
+获取房间列表
 
 ```swift
-func getRoomInfoList(lastCreateTime: Int64?, 
+func getRoomInfoList(lastCreateTime: Int64, 
                      pageSize: Int, 
                      callback: @escaping AUIRoomListCallback)
 ```
 
-The parameters are shown in the table below:
-| parameter   | type            | meaning     |
+参数如下表所示：
+
+| 参数      | 类型     | 含义                                 |
 | --------- | -------- | ------------------------------------ |
-| lastCreateTime | Int64     | The page start time,difference from 1970-01-01:00:00:00, in milliseconds, For example: 1681879844085   |
-| pageSize  | Int      | The page size                                 |
-| callback   | Closure | Completion callback|
+| lastCreateTime | Int64     | 起始时间，与1970-01-01:00:00:00的差值，单位：毫秒，例如:1681879844085，默认为0，表示最新                         |
+| pageSize  | Int      | 页数                                 |
+| callback   | Closure | 完成回调 |
 
-### launchRoom
-Launch Room
+### enterRoom
+
 ```swift
-func launchRoom(roomInfo: AUIRoomInfo,
-                voiceChatView: AUIVoiceChatRoomView) 
+func enterRoom(roomId: String,
+               roomConfig: AUIRoomConfig,
+               chatView: AUIVoiceChatRoomView,
+               completion: @escaping (AUIRoomInfo?, NSError?) -> Void) 
 ```
 
-The parameters are shown in the table below:
+参数如下表所示：
 
-| parameter   | type            | meaning     |
+| 参数        | 类型            | 含义                                  |
 | ----------- | --------------- | ------------------------------------- |
-| roomInfo    | AUIRoomInfo     | Room information                     |
-| voiceChatView | AUIVoiceChatRoomView | Room UI View                    |
-| completion | Closure | Join the room to complete the callback                          |
+| roomId    | String     | 房间id                              |
+| roomConfig        | AUIRoomConfig          | 房间token配置 |
+| chatView | AUIVoiceChatRoomView | 语聊房容器View                          |
+| completion | Closure | 加入房间完成回调                           |
 
-### destroyRoom
-Destroy Room
+### leaveRoom
+
+离开房间
 
 ```swift
-func destoryRoom(roomId: String)
+func leaveRoom(roomId: String)
 ```
 
-The parameters are shown in the table below:
+参数如下表所示：
 
-| parameter   | type            | meaning     |
+| 参数   | 类型   | 含义           |
 | ------ | ------ | -------------- |
-| roomId | String | The ID of the room to destroy |
+| roomId | String | 要离开的房间ID |
 
 
-## Data Model
+## 数据模型
 
 ### AUICommonConfig
 
-| parameter   | type            | meaning     |
+| 参数       | 类型    | 含义                 |
 | ---------- | ------- | -------------------- |
-| host       | String  | Backend service domain name     |
-| userId     | String  | User ID              |
-| userName   | String  | User name            |
-| userAvatar | String  | User avatar url      |
+| host       | String  | 后端服务域名          |
+| appId     | String  | 声网AppId               |
+| appCert   | String  | (可选)声网App证书，没有使用后端token生成服务可不填               |
+| basicAuth   | String  | (可选)声网basicAuth，没有用到后端踢人服务可以不设置             |
+| imAppKey   | String  | (可选)环信AppKey，没有用到后端IM服务可以不设置              |
+| imClientId   | String  | (可选)环信ClientId，没有用到后端IM服务可以不设置              |
+| imClientSecret   | String  | (可选)环信ClientSecret，没有用到后端IM服务可以不设置               |
+| owner | AUIUserThumbnailInfo  | 用户信息             |
+
+### AUIAPIConfig
+| 参数       | 类型    | 含义                 |
+| ---------- | ------- | -------------------- |
+| rtcEngine       | AgoraRtcEngineKit  | (可选)rtc实例对象,为nil内部在使用到时会自行创建         |
+| rtmClient       | AgoraRtmClientKit  | (可选)rtm实例对象,为nil内部在使用到时会自行创建          |
+| ktvApi       | KTVApiDelegate  | (可选)KTVApi实例，用户KTV场景，如果非K歌场景可以不设置，  为nil内部在使用到时会自行创建        |
 
 ### AUIRoomInfo
-| parameter   | type            | meaning     |
+
+| 参数        | 类型                 | 含义         |
 | ----------- | -------------------- | ------------ |
-| roomId      | String               | Room id       |
-| roomOwner   | AUIUserThumbnailInfo | Room information   |
-| memberCount | Int                  | Online user count  |
-| createTime  | Int64                | Room create time,difference from 1970-01-01:00:00:00, in milliseconds, For example: 1681879844085 |
+| roomId      | String               | 房间id       |
+| roomName      | String               | 房间名称       |
+| owner   | AUIUserThumbnailInfo | 房主信息     |
+| memberCount | Int                  | 房间人数     |
+| micSeatCount | UInt                  | 麦位个数，默认为8     |
+| micSeatStyle | UInt                  | 麦位类型     |
+| createTime  | Int64                 | 房间创建时间，与1970-01-01:00:00:00的差值，单位：毫秒，例如:1681879844085 |
 
 ### AUIUserThumbnailInfo
 
-| parameter   | type            | meaning     |
+| 参数       | 类型   | 含义     |
 | ---------- | ------ | -------- |
-| userId     | String | Room id   |
-| userName   | String | User name   |
-| userAvatar | String | User avatar url |
+| userId     | String | 用户Id   |
+| userName   | String | 用户名   |
+| userAvatar | String | 用户头像 |
 
+### AUIVoiceChatRoomServiceRespDelegate
+```AUIVoiceChatRoomServiceRespDelegate``` 协议用于处理与房间操作相关的各种响应事件。它提供了以下方法，可以由遵循此协议的类来实现，以响应特定的事件。
 
-### AUIRoomManagerRespDelegate
-```AUIRoomManagerRespDelegate``` protocol is used to handle various response events related to room operations. It provides the following methods that can be implemented by classes following this protocol to respond to specific events.
-
-#### Method
+#### 方法
+  - `onTokenPrivilegeWillExpire(roomId: String?)`
+    房间token即将过期的回调方法
+    - 参数：
+      - ```roomId```: 房间ID。
+    >
   - ```func onRoomDestroy(roomId: String)```
-    The callback method called when the room is destroyed.
-    - Parameter:
-      - ```roomId```: Room ID.
+    房间被销毁时调用的回调方法。
+    - 参数：
+      - ```roomId```: 房间ID。
     >
   - ```func onRoomInfoChange(roomId: String, roomInfo: AUIRoomInfo)```
-    The callback method called when room information changes.
-    - Parameter:
-      - ```roomId```: Room ID.
-      - ```roomInfo```: Room information.
+    房间信息发生变更时调用的回调方法。
+    - 参数：
+      - ```roomId```:房间ID。
+      - ```roomInfo```:房间信息。
     >
-  - ```func onRoomAnnouncementChange(roomId: String, announcement: String)```
-    The method called when a room announcement changes.
-    - Parameter:
-      - ```roomId```: Room ID.
-      - ```announcement```: Announcement of changes.
-    >
+
 - ```func onRoomUserBeKicked(roomId: String, userId: String)```
-    The method called when a room user is kicked out of the room.
-    - Parameter:
-      - ```roomId```: Room ID.
-      - ```userId```: User ID.
+    房间用户被踢出房间时调用的方法。
+    - 参数：
+      - ```roomId```: 房间ID。
+      - ```userId```: 用户ID。
+
+## 自定义功能
+VoiceRoomUIKit支持对UI及业务功能做定制化修改，其实现放在AScenesKit库里，该库通过CocoaPods引入已有的[AUKit](https://github.com/AgoraIO-Community/AUIKit)组件做定制，因此自定义需要先了解AUIKit的接口。
+
+AUIKit的接口可以通过AUIKit的[README](https://github.com/AgoraIO-Community/AUIKit/tree/main/iOS)文档进行查看。
+
+为了更方便地介绍如何做基础及高阶定制，下面先介绍如何引入AUIKit源码，然后再从UI和业务逻辑分别说明如何做定制。
+
+### 引入AUIKit源码
+配置方法如下：
+  > 本项目默认使用CocoaPods引入AUIKit库，但是可以在[Podfile](../AUIVoiceRoom/Podfile)里配置AUIKit源码路径。
+  > 当AUIKit源码路径存在时，使用Xcode编译时会将源码导到项目里并能直接修改。
+  > 配置方法如下：
+  >
+  > - 克隆或者直接下载AUIKit源码
+  >
+  > - 在Podfile里配置AUIKit源码路径，该路径可以是相对于Podfile所在目录的相对路径
+  >
+  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/ios/voicechat_custom_01.png" width="800" />
+  >
+  > - 执行`pod install`后，即可看到AUIKit源码
+  >
+  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/ios/voicechat_custom_02.png" width="800" />
+
+### UI定制
+VoiceRoomUIKit的UI是基于AUIKit的UI组件进行实现，而AIKit提供了一套UI主题样式，因此VoiceRoomUIKit UI样式是通过扩展AUIKit组件主题来实现的。
+
+AUIKit组件的主题样式属性说明见[AUIKit属性](https://github.com/AgoraIO-Community/AUIKit/blob/main/iOS/README.md#widget)。
+
+如何为一组新UI扩展主题请参考[VoiceRoom Theme](./VoiceRoomTheme.md)。
+
+
+另外，VoiceRoomUIKit提供了两套默认主题，[Dark](https://github.com/AgoraIO-Community/AUIKit/tree/main/iOS/AUIKitCore/Resource/auiTheme.bundle/Dark) 和 [Light](https://github.com/AgoraIO-Community/AUIKit/tree/main/iOS/AUIKitCore/Resource/auiTheme.bundle/Light)，
+
+
+下面介绍 `Light` 是如何定制主题的，然后再进阶介绍如何自定义新的主题属性
+
+#### 基础定制
+> 基础定制主要是介绍如何在主题里对特定ui组件的属性进行修改以达到所要的效果，其中ui组件的可修改主题属性见[AUIKit属性](https://github.com/AgoraIO-Community/AUIKit/blob/main/iOS/README.md#widget)。
+  >
+  > 下面以麦位为例来介绍如何做定制：
+  >
+  > - 定位打开对应的[micSeat.json](https://github.com/AgoraIO-Community/AUIKit/blob/main/iOS/AUIKitCore/Resource/auiTheme.bundle/Dark/theme/micSeat.json)文件
+  >
+  >    <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/ios/voicechat_custom_theme_01.png" width="800" />
+  >
+  > - 拷贝该麦位主题json文件到项目里，例如拷贝到scenekit的对应主题bundle里
+  >
+  >    <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/ios/voicechat_custom_theme_02.png" width="800" />
+  >
+  > - 修改麦位属性，例如
+  >
+  > ~~~json
+  > "SeatItem": {
+  >   ...
+  >   "backgroundColor": "#ff0000",
+  >   ...
+  > }
+  > ~~~
+  >
+  > - 配置好运行项目即可看到效果
+
+#### 高级定制
+ > 高级定制主要适用于主题属性无法满足UI定制化需求，此时需要自己对AUIKit组件进行属性扩展。
+  >
+  > 要对AUIKit ui组件添加属性，需要先下载AUIKit源码，然后通过本地依赖进工程里，例如AUIKit项目与AUIVoiceRoom项目同级时，依赖如下设置：
+  > 
+  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/ios/voicechat_custom_dependency.png" width="800" />
+  >
+  > 下面以麦位背景色来介绍如何添加新属性，以及如何在代码里获取到主题属性值并调整ui:
+  >
+  > - 找到麦位的json文件，在里面添加背景色属性
+  >
+  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/ios/voicechat_custom_theme_03.png" width="800" />
+  >
+  > - 找到麦位自定义View，在麦位view里使用上面定义的背景色属性
+  >
+  >    <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/ios/voicechat_custom_theme_04.png" width="800" />
+  >
+  > - 主题属性自定义完成后即可按基础定制的步骤来使用这个新增属性
+
+
+### 业务功能定制
+VoiceRoomUIKit的业务服务是基于AUIKit的Service组件进行实现。AUIKit提供了一系列Service组件供上层使用，具体可以参考[AUIKit Service文档](https://github.com/AgoraIO-Community/AUIKit/blob/main/iOS/README_zh.md#service)。下面介绍VoiceRoomUIKit如何做基础定制，以及如何实现自己的房间管理。
+
+#### binder 和 service 使用
+
+  > 在做自定义前，需要知道几点：
+  >   1. 组件通过[Binder](../AScenesKit/AScenesKit/Classes/ViewBinder/)将AUIKit提供的UI组件及Service组件绑定起来以实现业务交互
+  >   2. [AUIVoiceChatRoomService](../AScenesKit/AScenesKit/Classes/RoomContainer/AUIVoiceChatRoomService.swift)管理着所有业务service
+  >   3. [AUIVoiceChatRoomView](../AScenesKit/AScenesKit/Classes/RoomContainer/AUIVoiceChatRoomView.swift)作为房间总ui入口，管理所有Binder及AUIVoiceRoomService
+  >
+  > 自定义功能核心是修改Binder及AUIVoiceChatRoomView。
+  >
+  > 下面是自定义麦位的参考步骤：
+  >
+  >- 查看 AUIVoiceChatRoomView 找到麦位控件
+  >
+  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/ios/voicechat_custom_03.png" width="800" />
+  >
+  > - 在AUIVoiceRoomView里找到对应的Binder实现[micSeatBinder](../AScenesKit/AScenesKit/Classes/ViewBinder/AUIMicSeatViewBinder.swift)。
+  >
+  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/ios/voicechat_custom_04.png" width="800" />
+  >
+  > - 将麦位相关的AUIKit ui组件实例及service组件实例通过与麦位Binder进行绑定
+  >
+  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/ios/voicechat_custom_05.png" width="800" />
+  >
+  > - 在麦位Binder的bind方法里设置service事件监听、获取service数据及初始化ui等初始化操作
+  >
+  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/ios/voicechat_custom_06.png" width="800" />
+
+#### 自定义房间管理
+
+  > 在后台服务里提供了一个房间管理，这个房间管理是由[RoomManager](https://github.com/AgoraIO-Community/AUIKit/blob/main/iOS/AUIKitCore/Sources/Service/Impl/AUIRoomManagerImpl.swift)进行实现。
+  > RoomManager提供了创建房间、销毁房间、获取房间列表这三个api，但是这仅能满足简单的房间管理需求，如果有更复杂的需求就需要自行开发房间管理服务。或者您已经有自己的房间管理服务，您也可以使用自己的房间管理服务。
+  >
+  > 下面说明如何自定义房间管理：
+  >
+  >- 确认后台有独立的三个后台接口：创建房间、销毁房间 以及 获取房间列表。
+     >   并且房间信息里必须包含房主的用户信息：用户名、用户ID 和 用户头像。
+  >
+  > - 实现您的RoomManager，并包含以下三个接口
+  >
+  > ~~~swift
+  > // 创建房间
+  > public func createRoom(room: AUIRoomInfo,
+  >                        callback: @escaping (NSError?, AUIRoomInfo?) -> ())
+  >  
+  > // 销毁房间
+  > public func destroyRoom(roomId: String,
+  >                         callback: @escaping (NSError?) -> ())
+  > 
+  > // 获取房间列表
+  > public func getRoomInfoList(lastCreateTime: Int64,
+  >                             pageSize: Int,
+  >                             callback: @escaping AUIRoomListCallback)
+  > ~~~
+  >
+  > - 将[VoiceChatUIKit](../AUIVoiceRoom/AUIVoiceRoom/VoiceChatUIKit.swift)中的RoomManager替换成自己的RoomManager
+  >
+  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/ios/voicechat_custom_07.png" width="800" />
 
 ## License
-Copyright © Agora Corporation. All rights reserved.
-Licensed under the [MIT license](../LICENSE).
+版权所有 © Agora Corporation。 版权所有。
+根据 [MIT 许可证](../LICENSE) 获得许可。
 

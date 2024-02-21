@@ -18,6 +18,7 @@
         android:drawableTint="@color/aui_primary_light"
         android:gravity="center"
         android:text="2人正在嗨歌"
+        android:visibility="gone"
         android:textColor="@color/aui_primary_light"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"

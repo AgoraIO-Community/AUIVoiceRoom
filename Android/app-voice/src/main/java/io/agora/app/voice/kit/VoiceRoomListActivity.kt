@@ -22,16 +22,17 @@ import io.agora.app.voice.BuildConfig
 import io.agora.app.voice.R
 import io.agora.app.voice.databinding.VoiceRoomListActivityBinding
 import io.agora.app.voice.databinding.VoiceRoomListItemBinding
-import io.agora.asceneskit.voice.AUIVoiceRoomUikit
-import io.agora.asceneskit.voice.VoiceRoomActivity
+import io.agora.asceneskit.voice.AUIAPIConfig
 import io.agora.auikit.model.AUICommonConfig
-import io.agora.auikit.model.AUICreateRoomInfo
+import io.agora.auikit.model.AUIRoomContext
 import io.agora.auikit.model.AUIRoomInfo
+import io.agora.auikit.model.AUIUserThumbnailInfo
 import io.agora.auikit.ui.basic.AUIAlertDialog
 import io.agora.auikit.ui.basic.AUISpaceItemDecoration
 import io.agora.auikit.ui.micseats.MicSeatType
 import io.agora.auikit.utils.BindingViewHolder
 import java.util.Random
+import java.util.UUID
 
 class VoiceRoomListActivity: AppCompatActivity() {
 
@@ -47,7 +48,7 @@ class VoiceRoomListActivity: AppCompatActivity() {
         }
 
     companion object {
-        private var ThemeId = io.agora.asceneskit.R.style.Theme_VoiceRoom
+        private var ThemeId = io.agora.asceneskit.R.style.Theme_VoiceRoom_Light
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,7 +59,7 @@ class VoiceRoomListActivity: AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        AUIVoiceRoomUikit.release()
+        AUIVoiceRoomUIKit.release()
     }
 
     private fun initView() {
@@ -71,7 +72,7 @@ class VoiceRoomListActivity: AppCompatActivity() {
         //if (theme.resolveAttribute(android.R.attr.windowBackground, out, true)) {
         //    window.setBackgroundDrawableResource(out.resourceId)
         //}
-        val isDarkTheme = ThemeId != io.agora.asceneskit.R.style.Theme_VoiceRoom
+        val isDarkTheme = ThemeId != io.agora.asceneskit.R.style.Theme_VoiceRoom_Light
         var systemUiVisibility: Int = window.decorView.systemUiVisibility
         if (isDarkTheme) {
             systemUiVisibility = systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
@@ -109,12 +110,24 @@ class VoiceRoomListActivity: AppCompatActivity() {
             launcher.launch(intent)
         }
 
-        mViewBinding.rvList.addItemDecoration(
-            AUISpaceItemDecoration(
-                resources.getDimensionPixelSize(R.dimen.voice_room_list_item_space_h),
-                resources.getDimensionPixelSize(R.dimen.voice_room_list_item_space_v)
+        var containSpaceDecoration = false
+        if (mViewBinding.rvList.itemDecorationCount > 0) {
+            for (i in 0 until mViewBinding.rvList.itemDecorationCount) {
+                val decoration = mViewBinding.rvList.getItemDecorationAt(i)
+                if (decoration is AUISpaceItemDecoration) {
+                    containSpaceDecoration = true
+                }
+            }
+        }
+        if (!containSpaceDecoration) {
+            mViewBinding.rvList.addItemDecoration(
+                AUISpaceItemDecoration(
+                    resources.getDimensionPixelSize(R.dimen.voice_room_list_item_space_h),
+                    resources.getDimensionPixelSize(R.dimen.voice_room_list_item_space_v)
+                )
             )
-        )
+        }
+
         mViewBinding.rvList.adapter = listAdapter
 
         mViewBinding.swipeRefresh.setOnRefreshListener {
@@ -127,37 +140,42 @@ class VoiceRoomListActivity: AppCompatActivity() {
     private fun initService() {
         // init AUiKit
         val config = AUICommonConfig()
-        config.context = applicationContext
-        config.userId = Random().nextInt(99999999).toString()
-        config.userName = randomUserName()
-        config.userAvatar = randomAvatar()
+        config.context = this
+        config.appId = BuildConfig.AGORA_APP_ID
+        config.appCert = BuildConfig.AGORA_APP_CERT
+        config.basicAuth = BuildConfig.AGORA_BASIC_AUTH
         config.host = BuildConfig.SERVER_HOST
-
-        AUIVoiceRoomUikit.init(
+        config.imAppKey = BuildConfig.IM_APP_KEY
+        config.imClientId = BuildConfig.IM_CLIENT_ID
+        config.imClientSecret = BuildConfig.IM_CLIENT_SECRET
+        // Randomly generate local user information
+        config.owner = AUIUserThumbnailInfo().apply {
+            userId = RandomUtils.randomUserId()
+            userName = RandomUtils.randomUserName()
+            userAvatar = RandomUtils.randomAvatar()
+        }
+        AUIVoiceRoomUIKit.init(
             config,
-            rtmClient = null, // option
-            rtcEngineEx = null, // option
-            ktvApi = null// option
+            AUIAPIConfig()
         )
         fetchRoomList()
     }
 
     private fun createRoom(roomName: String) {
-        val createRoomInfo = AUICreateRoomInfo()
-        createRoomInfo.roomName = roomName
-        createRoomInfo.micSeatCount = seatCount
-        createRoomInfo.micSeatStyle = seatStyle
-        AUIVoiceRoomUikit.createRoom(
-            createRoomInfo,
-            success = { roomInfo ->
-                Log.e("apex", "createRoom success ${roomInfo.roomId}  ${roomInfo.roomOwner?.userId}")
-                gotoRoomDetailPage(roomInfo)
-            },
-            failure = {
-                Toast.makeText(this@VoiceRoomListActivity, "Create room failed!", Toast.LENGTH_SHORT)
-                    .show()
-            }
-        )
+        val roomInfo = AUIRoomInfo()
+        roomInfo.roomId = UUID.randomUUID().toString()
+        roomInfo.roomName = roomName
+        roomInfo.thumbnail = RandomUtils.randomAvatar()
+        roomInfo.owner = AUIRoomContext.shared().currentUserInfo
+        roomInfo.micSeatStyle = seatStyle
+        roomInfo.micSeatCount = when(MicSeatType.fromString(seatStyle)){
+            MicSeatType.OneTag -> 1
+            MicSeatType.SixTag -> 6
+            MicSeatType.EightTag -> 8
+            MicSeatType.NineTag -> 9
+            null -> 8
+        }
+        VoiceRoomActivity.launch(this, true, roomInfo, ThemeId)
     }
 
     private fun fetchRoomList(){
@@ -167,7 +185,7 @@ class VoiceRoomListActivity: AppCompatActivity() {
                 lastCreateTime = it.createTime
             }
         }
-        AUIVoiceRoomUikit.getRoomList(lastCreateTime,10,
+        AUIVoiceRoomUIKit.getRoomList(lastCreateTime,10,
                 success = { roomList ->
                     if (roomList.size < 10) {
                         listAdapter.loadingMoreState = LoadingMoreState.NoMoreData
@@ -207,7 +225,7 @@ class VoiceRoomListActivity: AppCompatActivity() {
     }
 
     private fun gotoRoomDetailPage(roomInfo: AUIRoomInfo) {
-        VoiceRoomActivity.launch(this, roomInfo, ThemeId)
+        VoiceRoomActivity.launch(this, false, roomInfo, ThemeId)
     }
 
     enum class LoadingMoreState {
@@ -243,12 +261,12 @@ class VoiceRoomListActivity: AppCompatActivity() {
         ) {
             val item = getItem(position)
             holder.binding.tvRoomName.text = item.roomName
-            holder.binding.tvRoomOwner.text = item.roomOwner?.userName ?: "unKnowUser"
+            holder.binding.tvRoomOwner.text = (item.owner?.userName ?: "unKnowUser") + "的房间"
             holder.binding.root.setOnClickListener {
                 this@VoiceRoomListActivity.gotoRoomDetailPage(item) }
 
             Glide.with(holder.binding.ivAvatar)
-                .load(item.roomOwner?.userAvatar)
+                .load(item.owner?.userAvatar)
                 .apply(RequestOptions.circleCropTransform())
                 .into(holder.binding.ivAvatar)
 
@@ -264,7 +282,7 @@ class VoiceRoomListActivity: AppCompatActivity() {
             data.let { intent->
                 val voiceThemeId = intent?.getIntExtra(
                     "voiceThemeId",
-                    io.agora.asceneskit.R.style.Theme_VoiceRoom
+                    io.agora.asceneskit.R.style.Theme_VoiceRoom_Light
                 )
                 voiceThemeId?.let {
                     ThemeId = it
@@ -295,33 +313,4 @@ class VoiceRoomListActivity: AppCompatActivity() {
     }
 
 
-    private fun randomAvatar(): String {
-        val randomValue = Random().nextInt(8) + 1
-        return "https://accktvpic.oss-cn-beijing.aliyuncs.com/pic/sample_avatar/sample_avatar_${randomValue}.png"
-    }
-
-    private fun randomUserName(): String {
-        val userNames = arrayListOf(
-            "安迪",
-            "路易",
-            "汤姆",
-            "杰瑞",
-            "杰森",
-            "布朗",
-            "吉姆",
-            "露西",
-            "莉莉",
-            "韩梅梅",
-            "李雷",
-            "张三",
-            "李四",
-            "小红",
-            "小明",
-            "小刚",
-            "小霞",
-            "小智",
-        )
-        val randomValue = Random().nextInt(userNames.size) + 1
-        return userNames[randomValue % userNames.size]
-    }
 }

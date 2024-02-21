@@ -3,15 +3,17 @@ package io.agora.asceneskit.voice.binder
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
 import io.agora.asceneskit.R
 import io.agora.asceneskit.voice.AUIVoiceRoomService
+import io.agora.auikit.model.AUIRoomContext
 import io.agora.auikit.model.AUIUserInfo
 import io.agora.auikit.model.AUIUserThumbnailInfo
 import io.agora.auikit.service.IAUIInvitationService
 import io.agora.auikit.service.IAUIMicSeatService
 import io.agora.auikit.service.IAUIUserService
-import io.agora.auikit.service.imp.AUIInvitationServiceImplResp
+import io.agora.auikit.service.callback.AUIException
 import io.agora.auikit.ui.action.AUIActionUserInfo
 import io.agora.auikit.ui.action.AUIActionUserInfoList
 import io.agora.auikit.ui.action.impI.AUIApplyDialog
@@ -28,7 +30,6 @@ class AUIInvitationBinder constructor(
     IAUIUserService.AUIUserRespObserver, IAUIMicSeatService.AUIMicSeatRespObserver {
     private var activity: FragmentActivity?
     private var mVoiceService:AUIVoiceRoomService
-    private var invitationImpl:AUIInvitationServiceImplResp
     private var invitationService:IAUIInvitationService
     private val applyList = mutableListOf<AUIUserInfo?>()
     private var applyDialog:AUIApplyDialog?=null
@@ -42,12 +43,11 @@ class AUIInvitationBinder constructor(
 
     init {
         this.mVoiceService = voiceService
-        this.invitationService = voiceService.getInvitationService()
-        this.invitationImpl = invitationService as AUIInvitationServiceImplResp
+        this.invitationService = voiceService.invitationService
         this.activity = activity
-        this.userService = voiceService.getUserService()
+        this.userService = voiceService.userService
 
-        val roomOwner = voiceService.getRoomInfo().roomOwner
+        val roomOwner = voiceService.roomInfo?.owner
         val owner = AUIUserInfo()
         owner.userName = roomOwner?.userName.toString()
         owner.userId = roomOwner?.userId.toString()
@@ -57,60 +57,54 @@ class AUIInvitationBinder constructor(
     }
 
     override fun bind() {
-        invitationImpl.registerRespObserver(this)
-        mVoiceService.getUserService().registerRespObserver(this)
-        mVoiceService.getMicSeatsService().registerRespObserver(this)
+        invitationService.registerRespObserver(this)
+        mVoiceService.userService.registerRespObserver(this)
+        mVoiceService.micSeatService.registerRespObserver(this)
     }
 
     override fun unBind() {
-        invitationImpl.unRegisterRespObserver(this)
-        mVoiceService.getUserService().unRegisterRespObserver(this)
-        mVoiceService.getMicSeatsService().unRegisterRespObserver(this)
+        invitationService.unRegisterRespObserver(this)
+        mVoiceService.userService.unRegisterRespObserver(this)
+        mVoiceService.micSeatService.unRegisterRespObserver(this)
     }
 
     // 显示申请列表
     fun showApplyDialog(){
-        if (applyDialog == null){
-            applyDialog = AUIApplyDialog()
-        }
-        val applyInfo = AUIActionUserInfoList(mutableListOf<AUIActionUserInfo?>().apply {
-            addAll(applyList.map { userInfo ->
-                AUIActionUserInfo(userInfo?.userId ?: "", userInfo?.userName ?: "", userInfo?.userAvatar ?: "", userInfo?.micIndex ?: 0)
+        var dialog = applyDialog
+        if (dialog == null){
+            dialog = AUIApplyDialog()
+            dialog.refreshApplyData(applyList.map { userInfo ->
+                AUIActionUserInfo(
+                    userInfo?.userId ?: "",
+                    userInfo?.userName ?: "",
+                    userInfo?.userAvatar ?: "",
+                    userInfo?.micIndex ?: 0
+                )
             })
-        })
-        applyDialog?.apply {
-            arguments = Bundle().apply {
-                putSerializable(AUIApplyDialog.KEY_ROOM_APPLY_BEAN, applyInfo)
-                putInt(AUIApplyDialog.KEY_CURRENT_ITEM, 0)
-            }
-            setApplyDialogListener(object : AUIApplyDialogEventListener {
-                override fun onApplyItemClick(
-                    view: View,
-                    applyIndex: Int?,
-                    user: AUIActionUserInfo?,
-                    position: Int
-                ) {
-                    if (user?.userId != null && applyIndex != null){
-                        mVoiceService.getInvitationService().acceptApply(
-                            user.userId,
-                            applyIndex
-                        ) {
-                            if (it == null){
-                                Log.d("apex","房主同意上麦申请 成功")
-                                if (position >=0){
-                                    applyList.removeAt(position)
-                                    applyDialog?.refreshApplyData(mutableListOf<AUIActionUserInfo?>().apply {
-                                        addAll(applyList.map { userInfo ->
-                                            AUIActionUserInfo(userInfo?.userId ?: "", userInfo?.userName ?: "", userInfo?.userAvatar ?: "", userInfo?.micIndex ?: 0)
-                                        })
-                                    })
-                                }
-                            }
+            applyDialog = dialog
+        }
+        dialog.setApplyDialogListener(object : AUIApplyDialogEventListener {
+            override fun onApplyItemClick(
+                view: View,
+                applyIndex: Int?,
+                user: AUIActionUserInfo?,
+                position: Int
+            ) {
+                if (user?.userId != null && applyIndex != null){
+                    mVoiceService.invitationService.acceptApply(
+                        user.userId,
+                        applyIndex
+                    ) {
+                        if (it == null){
+                            Log.d("apex","房主同意上麦申请 成功")
+                            Toast.makeText(view.context, R.string.voice_room_apply_accept_success, Toast.LENGTH_SHORT).show()
+                        }else{
+                            Toast.makeText(view.context, R.string.voice_room_apply_accept_failed, Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
-            })
-        }
+            }
+        })
         activity?.supportFragmentManager?.let {
             applyDialog?.show(
                 it, "AUIApplyDialog"
@@ -118,31 +112,56 @@ class AUIInvitationBinder constructor(
         }
     }
 
-    override fun onApplyListUpdate(userList: ArrayList<AUIUserInfo?>) {
-        applyUserList = userList
+    override fun onApplyListUpdate(userList: List<AUIUserInfo>?) {
+        super.onApplyListUpdate(userList)
+        applyUserList = ArrayList(userList ?: emptyList())
         applyList.clear()
-        userList.forEach { it1 ->
-            val userInfo = mMemberMap[it1?.userId]
-            userInfo?.micIndex = it1?.micIndex
+        userList?.forEach { user ->
+            val userInfo = mMemberMap[user.userId]
+            userInfo?.micIndex = user.micIndex
             userInfo?.let {
                 applyList.add(it)
             }
         }
-        applyDialog?.refreshApplyData(mutableListOf<AUIActionUserInfo?>().apply {
-            addAll(applyList.map { userInfo ->
-                AUIActionUserInfo(userInfo?.userId ?: "", userInfo?.userName ?: "", userInfo?.userAvatar ?: "", userInfo?.micIndex ?: 0)
-            })
+        applyDialog?.refreshApplyData(applyList.map { userInfo ->
+            AUIActionUserInfo(userInfo?.userId ?: "", userInfo?.userName ?: "", userInfo?.userAvatar ?: "", userInfo?.micIndex ?: 0)
         })
     }
 
+    override fun onApplyAccepted(userId: String, seatIndex: Int) {
+        super.onApplyAccepted(userId, seatIndex)
+        if(userId == AUIRoomContext.shared().currentUserInfo.userId){
+            Toast.makeText(activity, R.string.voice_room_apply_accepted, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    override fun onApplyWillAccept(userId: String, seatIndex: Int): AUIException? {
+        if (mSeatMap[seatIndex]?.isNotEmpty() == true) {
+            return AUIException(AUIException.ERROR_CODE_SEAT_NOT_IDLE, "")
+        }
+        userService.getUserInfo(userId)?.let {
+            mVoiceService.micSeatService.pickSeat(seatIndex, it) {}
+        }
+        return super.onApplyWillAccept(userId, seatIndex)
+    }
+
+    override fun onInviteWillAccept(userId: String, seatIndex: Int): AUIException? {
+        if (mSeatMap[seatIndex]?.isNotEmpty() == true) {
+            return AUIException(AUIException.ERROR_CODE_SEAT_NOT_IDLE, "")
+        }
+        userService.getUserInfo(userId)?.let {
+            mVoiceService.micSeatService.pickSeat(seatIndex, it) {}
+        }
+
+        return super.onInviteWillAccept(userId, seatIndex)
+    }
+
+
     //显示邀请列表
     fun showInvitationDialog(index:Int){
-        val invitationInfo = AUIActionUserInfoList()
-        invitationInfo.userList = mutableListOf<AUIActionUserInfo?>().apply {
-            currentMemberList.map { userInfo ->
-                AUIActionUserInfo(userInfo?.userId ?: "", userInfo?.userName ?: "", userInfo?.userAvatar ?: "", userInfo?.micIndex ?: 0)
-            }
-        }
+        val invitationInfo = AUIActionUserInfoList(currentMemberList.map { userInfo ->
+            AUIActionUserInfo(userInfo?.userId ?: "", userInfo?.userName ?: "", userInfo?.userAvatar ?: "", userInfo?.micIndex ?: 0)
+        })
         invitationInfo.invitedIndex = index
         Log.e("apex","onShowInvited $index $invitationInfo")
         invitationDialog = AUIInvitationDialog()
@@ -154,12 +173,14 @@ class AUIInvitationBinder constructor(
             setInvitationDialogListener(object : AUIInvitationDialogEventListener {
                 override fun onInvitedItemClick(view: View, invitedIndex: Int, user: AUIActionUserInfo?) {
                     if (user != null){
-                        mVoiceService.getInvitationService().sendInvitation(
+                        mVoiceService.invitationService.sendInvitation(
                             user.userId,
                             invitedIndex
                         ) {
-                            if (it == null){
-                                Log.d("apex","邀请${user.userId}上麦成功 $invitedIndex 成功")
+                            if (it == null) {
+                                Toast.makeText(context, R.string.voice_room_invite_send_success, Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(context, R.string.voice_room_invite_send_failed, Toast.LENGTH_SHORT).show()
                             }
                         }
                     }
@@ -174,6 +195,9 @@ class AUIInvitationBinder constructor(
     }
 
     override fun onReceiveInvitation(userId: String, micIndex: Int) {
+        if(userId != mVoiceService.micSeatService.roomContext.currentUserInfo.userId){
+            return
+        }
         // 收到上麦邀请
         activity?.let {
             AUIAlertDialog(it).apply {
@@ -186,7 +210,7 @@ class AUIInvitationBinder constructor(
                     }
                 )
                 setPositiveButton(context.getString(R.string.voice_room_confirm)) {
-                    mVoiceService.getInvitationService().acceptInvitation(userId,micIndex
+                    mVoiceService.invitationService.acceptInvitation(userId,micIndex
                     ) { e->
                         if (e == null){
                             Log.d("apex","同意上麦邀请成功")
@@ -195,7 +219,7 @@ class AUIInvitationBinder constructor(
                     dismiss()
                 }
                 setNegativeButton( context.getString(R.string.voice_room_reject)) {
-                    mVoiceService.getInvitationService().rejectInvitation(userId){ e ->
+                    mVoiceService.invitationService.rejectInvitation(userId){ e ->
                         if (e == null){
                             Log.d("apex","拒绝上麦邀请成功")
                         }
@@ -206,6 +230,7 @@ class AUIInvitationBinder constructor(
             }
         }
     }
+
 
     /** IAUiUserService.AUiUserRespDelegate */
     override fun onRoomUserEnter(roomId: String, userInfo: AUIUserInfo) {
@@ -244,6 +269,7 @@ class AUIInvitationBinder constructor(
         if (mSeatMap[seatIndex].equals(userInfo.userId)) {
             mSeatMap.remove(seatIndex)
         }
+        invitationService.cleanUserInfo(userInfo.userId){}
         filterCurrentMember()
     }
 
@@ -253,16 +279,12 @@ class AUIInvitationBinder constructor(
         mMemberMap.values.toList().forEach {  user ->
             // 在麦位数据和所有成员数据中 查找共有的uid
             val uid = mSeatMap.entries.find { it.value == user?.userId }?.value
-            if (user?.userId != uid && user?.userId != mVoiceService.getRoomInfo().roomOwner?.userId){
+            if (user?.userId != uid && user?.userId != mVoiceService.roomInfo?.owner?.userId){
                 currentMemberList.add(user)
             }
         }
-        invitationDialog?.refreshInvitationData(mutableListOf<AUIActionUserInfo?>().apply {
-            addAll(
-                currentMemberList.map { userInfo ->
-                    AUIActionUserInfo(userInfo?.userId ?: "", userInfo?.userName ?: "", userInfo?.userAvatar ?: "", userInfo?.micIndex ?: 0)
-                }
-            )
+        invitationDialog?.refreshInvitationData(currentMemberList.map { userInfo ->
+            AUIActionUserInfo(userInfo?.userId ?: "", userInfo?.userName ?: "", userInfo?.userAvatar ?: "", userInfo?.micIndex ?: 0)
         })
     }
 
@@ -275,10 +297,8 @@ class AUIInvitationBinder constructor(
                 applyList.add(it)
             }
         }
-        applyDialog?.refreshApplyData(mutableListOf<AUIActionUserInfo?>().apply {
-            addAll(applyList.map { userInfo ->
-                AUIActionUserInfo(userInfo?.userId ?: "", userInfo?.userName ?: "", userInfo?.userAvatar ?: "", userInfo?.micIndex ?: 0)
-            })
+        applyDialog?.refreshApplyData(applyList.map { userInfo ->
+            AUIActionUserInfo(userInfo?.userId ?: "", userInfo?.userName ?: "", userInfo?.userAvatar ?: "", userInfo?.micIndex ?: 0)
         })
     }
 

@@ -1,68 +1,63 @@
 # AUIVoiceRoom
 
-*English | [中文](README.zh.md)*
+## 概述
 
-## Overview
+**AUIKit 组件化解决方案** 是 Agora 面向 Karaoke、语聊等应用场景推出的 low code 解决方案，利用声网 RTC&&RTM 技术能力，帮助开发者快速实现相关业务需求， 焕发核心业务的光彩。
 
-**AUIKit Component Solution** is a low-code solution launched by Agora for Karaoke, VoiceRoom and other scenarios. By utilizing Agora's RTC && RTM technology capabilities, it helps developers quickly implement related business requirements and enhance the core business.
+## 场景描述
 
-## Scenario Description
-
-AUIVoiceRoom is a modular solution that integrates features from Agora's RTC, RTM, and AgoraChat products, aiming to facilitate the rapid development of online voice chat rooms. In this solution, in a multi-person voice interaction scenario, audience members can freely join the voice chat and communicate with each other.
+AUIVoiceRoom 是一款集成了声网 RTC、RTM、AgoraChat等产品的功能组件化方案，帮助您快速开发在线语聊房。在此方案中，多人语音互动场景，观众可以自由上麦进行语音交流。
 
 
-| Role           | Description                                                                                                                                               |
-|----------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Host           | Voice chat room creators can engage in real-time audio conversations.                                                                                     |
-| Co-host anchor | After the audience enters the voice chat room, they can become co-host anchors by applying or being invited, and engage in real-time audio conversations. |
-| Audience       | Audience members entering the voice chat room.                                                                                                            |
+| 角色   | 描述                                    |
+|------|---------------------------------------|
+| 房主   | 语聊房创建者，可以进行实时音频通话                     |
+| 上麦主播 | 观众进入语聊房后，通过申请上麦或邀请上麦成为上麦主播，可以进行实时音频通话 |
+| 观众   | 进入语聊房的观众                              |
 
-AUIVoiceRoom provides the following core features:
-- **Room management**：Create, destroy, and list rooms
-- **Microphone seat management:**：Manage anchors' microphone access, including granting access, revoking access, kicking off, banning/locking microphones, etc
-- **User management**：Kicking, user muting, user list, etc
-- **Invitation/Application**： Invitation/application operations, etc
-- **Chat management**：Send/receive chat messages, etc
-- **Gift Management**：Sending/receiving gifts, etc
+AUIVoiceRoom 提供以下核心功能：
+- **房间管理**：创建、销毁房间，房间列表等
+- **麦位管理**：上麦、下麦、踢人下麦、封禁/锁麦等
+- **用户管理**：踢人、用户静音、用户列表等
+- **邀请/申请**：邀请/申请操作等
+- **聊天管理**：发送/接收聊天信息等
+- **礼物管理**：发送/接收礼物等
 
 
-
-## Demo
+## Demo 体验
   ![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/IMG_8055.PNG?x-oss-process=image/resize,w_200)  ![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/IMG_8056.PNG?x-oss-process=image/resize,w_200)  ![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/IMG_8057.PNG?x-oss-process=image/resize,w_200) 
 
-| iOS                                                          | Android                                                      |
-| ------------------------------------------------------------ | ------------------------------------------------------------ |
-| ![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/qrcode/voiceroom_ios.png) | ![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/qrcode/voiceroom_android.png) |
+| iOS                                                                                                   | Android                                                      |
+|-------------------------------------------------------------------------------------------------------| ------------------------------------------------------------ |
+| <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/qrcode/voiceroom_ios.png" width="180" />  | <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/qrcode/voiceroom_android.png" width="180" /> |
 
-## Quick Start
+## 快速开始
 
-| iOS                           | Android                                                                                  | Backend                                                                                  |
-|-------------------------------|------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------|
-| [VoiceRoom(iOS)](iOS/AUIVoiceRoom) | [VoiceRoom(Android)](Android) | [VoiceRoom(Backend)](backend) |
-|                               |                                                                                          |                                                                                          |
+| iOS                                 | Android                       | Backend                       |
+|-------------------------------------|-------------------------------|-------------------------------|
+| [VoiceRoom(iOS)](iOS/AUIVoiceRoom)  | [VoiceRoom(Android)](Android) | [VoiceRoom(Backend)](backend) |
 
 
-## Communication&Feedback
+## 交流&反馈
 
-Welcome to join our WeChat communication group
+欢迎加入微信群交流
 
-![image-20210622142449407](https://download.agora.io/null/karaoke-uikit-wechat-pic.jpg)
-
+<img src="https://download.agora.io/null/karaoke-uikit-wechat-pic.jpg" alt="image-20210622142449407" title="image-20210622142449407" width="600" />
 
 
 ---
 
 ## FAQ
 
-### How to Get Agora APPID
+### 如何获取声网 APPID
 
-> Apply for Agora AppID：[https://www.agora.io/cn/](https://www.agora.io/cn/)
+> 声网 APPID 申请：[https://www.agora.io/cn/](https://www.agora.io/cn/)
 
 
-### How to Contact Agora for Support
+### 集成遇到困难，该如何联系声网获取协助
 
-> Solution 1: Join our WeChat communication group
+> 方案1：加入微信交流群沟通
 >
-> Solution 2: Send an email to support@agora.io for consultation when you encounter integration difficulties.
+> 方案2：发送邮件给 [support@agora.io](mailto:support@agora.io) 咨询
 
 ---

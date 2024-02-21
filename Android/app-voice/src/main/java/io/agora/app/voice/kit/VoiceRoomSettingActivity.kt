@@ -24,18 +24,18 @@ class VoiceRoomSettingActivity : AppCompatActivity() {
     private var mSeatsPosition = 2
 
     companion object {
-        private var ThemeId = io.agora.asceneskit.R.style.Theme_VoiceRoom
+        private var ThemeId = io.agora.asceneskit.R.style.Theme_VoiceRoom_Light
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val extra = intent?.getIntExtra(
             "CurrentThemeId",
-            io.agora.asceneskit.R.style.Theme_VoiceRoom
+            io.agora.asceneskit.R.style.Theme_VoiceRoom_Light
         )
         extra?.let {
             ThemeId = it
-            if (it != io.agora.asceneskit.R.style.Theme_VoiceRoom){
+            if (it != io.agora.asceneskit.R.style.Theme_VoiceRoom_Light){
                 isThemeChange = true
                 mThemeSelectorPosition = 1
             }
@@ -71,9 +71,9 @@ class VoiceRoomSettingActivity : AppCompatActivity() {
             isThemeChange = true
             mThemeSelectorPosition = position
             ThemeId = if (position == 1){
-                io.agora.asceneskit.R.style.Theme_VoiceRoom_Voice
+                io.agora.asceneskit.R.style.Theme_VoiceRoom_Dark
             }else{
-                io.agora.asceneskit.R.style.Theme_VoiceRoom
+                io.agora.asceneskit.R.style.Theme_VoiceRoom_Light
             }
             theme.setTo(resources.newTheme())
             initView()

@@ -1,29 +1,29 @@
+# 版本改动
 
-English | [中文](CHANGELOG.zh.md)
+## [1.0.0](https://github.com/AgoraIO-Community/AUIVoiceRoom/releases/tag/1.0.0)
+- 适配AUIKit 1.0.1版本
 
 ## [0.3.5](https://github.com/AgoraIO-Community/AUIVoiceRoom/releases/tag/0.3.5)
 - Update the test host url to "shengwang.cn".
 
 ## [0.3.4](https://github.com/AgoraIO-Community/AUIVoiceRoom/releases/tag/0.3.4)
-- Update Integration Documents.
+- 更新集成文档。
 
 ## [0.3.3](https://github.com/AgoraIO-Community/AUIVoiceRoom/releases/tag/0.3.3)
-- [iOS]Update the RTC SDK to the latest version.
-  
+- [iOS]更新RTC SDK到最新版本。
+
 ## [0.3.2](https://github.com/AgoraIO-Community/AUIVoiceRoom/releases/tag/0.3.2)
-- Upgrade AUIKit to 0.5.2.
+- 升级AUIKit到0.5.2。
 
 ## [0.3.1](https://github.com/AgoraIO-Community/AUIVoiceRoom/releases/tag/0.3.1)
-- Upgrade AUIKit to 0.5.1.
-- [Android]Fix room destroy abnormality.
+- 升级AUIKit到0.5.1
+- [Android]修复房间销毁异常。
 
 ## [0.3.0](https://github.com/AgoraIO-Community/AUIVoiceRoom/releases/tag/0.3.0)
-- AUIKitVoiceRoom renamed to AUIVoiceRoom.
+- AUIKitVoiceRoom重命名为AUIVoiceRoom。
 
 ## [0.2.0](https://github.com/AgoraIO-Community/AUIVoiceRoom/releases/tag/0.2.0)
-- Fix abnormal mute status issue.
-- Using RTM standalone version.
+- 修复静音状态异常问题。
+- 使用RTM独立版。
 
 ## [0.1.0](https://github.com/AgoraIO-Community/AUIVoiceRoom/releases/tag/0.1.0)
-
-

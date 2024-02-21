@@ -30,7 +30,7 @@ class AUIRoomInfoBinder constructor(
 
         // 缺少房间信息server 设置房主头像、房间标题和子标题
         auiRoomInfo.let {
-            it.roomOwner?.userAvatar?.let { it1 -> auiRoomInfoView?.setMemberAvatar(it1) }
+            it.owner?.userAvatar?.let { it1 -> auiRoomInfoView?.setMemberAvatar(it1) }
             it.roomName.let { it1 -> auiRoomInfoView?.setVoiceTitle(it1) }
             it.roomId.let { it1 -> auiRoomInfoView?.setVoiceSubTitle("房间ID: $it1") }
         }

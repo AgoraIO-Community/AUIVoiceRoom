@@ -19,7 +19,7 @@ class AUIChatListBinder constructor(
 ): IAUIBindable, AUIChatListItemClickListener, IAUIIMManagerService.AUIIMManagerRespObserver {
 
     init {
-        (chatList as? AUIChatListView)?.setOwnerId(roomInfo.roomOwner?.userId ?: "")
+        (chatList as? AUIChatListView)?.setOwnerId(roomInfo.owner?.userId ?: "")
     }
 
     override fun bind() {

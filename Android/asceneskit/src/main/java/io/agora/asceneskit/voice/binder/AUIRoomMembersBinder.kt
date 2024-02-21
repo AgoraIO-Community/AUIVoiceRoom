@@ -3,14 +3,16 @@ package io.agora.asceneskit.voice.binder
 import android.content.Context
 import android.util.Log
 import android.view.View
+import android.widget.Toast
+import io.agora.asceneskit.R
 import io.agora.asceneskit.voice.AUIVoiceRoomService
 import io.agora.auikit.model.AUIRoomContext
 import io.agora.auikit.model.AUIRoomInfo
 import io.agora.auikit.model.AUIUserInfo
 import io.agora.auikit.model.AUIUserThumbnailInfo
 import io.agora.auikit.service.IAUIMicSeatService
-import io.agora.auikit.service.IAUIRoomManager
 import io.agora.auikit.service.IAUIUserService
+import io.agora.auikit.ui.basic.AUIAlertDialog
 import io.agora.auikit.ui.basic.AUIBottomDialog
 import io.agora.auikit.ui.member.IAUIRoomMembersView
 import io.agora.auikit.ui.member.MemberInfo
@@ -20,36 +22,35 @@ import io.agora.auikit.ui.member.listener.AUIRoomMembersActionListener
 class AUIRoomMembersBinder constructor(
     context: Context,
     memberView: IAUIRoomMembersView,
-    voiceService:AUIVoiceRoomService,
-    listener:AUIRoomMemberEvent?,
-):
-    IAUIBindable, IAUIUserService.AUIUserRespObserver, AUIRoomMembersActionListener,
-    IAUIMicSeatService.AUIMicSeatRespObserver, IAUIRoomManager.AUIRoomManagerRespObserver {
+    voiceService: AUIVoiceRoomService,
+    listener: AUIRoomMemberEvent?,
+) : IAUIBindable,
+    IAUIUserService.AUIUserRespObserver,
+    AUIRoomMembersActionListener,
+    IAUIMicSeatService.AUIMicSeatRespObserver {
 
-    private var userService:IAUIUserService?
-    private var micSeats:IAUIMicSeatService?
-    private var memberView:IAUIRoomMembersView?
-    private var roomInfo:AUIRoomInfo?
-    private var context:Context?=null
-    private var roomContext:AUIRoomContext
-    private var roomManager:IAUIRoomManager
+    private var userService: IAUIUserService?
+    private var micSeats: IAUIMicSeatService?
+    private var memberView: IAUIRoomMembersView?
+    private var roomInfo: AUIRoomInfo?
+    private var context: Context? = null
+    private var roomContext: AUIRoomContext
     private var mMemberMap = mutableMapOf<String?, AUIUserInfo?>()
     private var mSeatMap = mutableMapOf<Int, String?>()
-    private var isOwner:Boolean = false
-    private var listener:AUIRoomMemberEvent?
-    private var dialogMemberView:AUIRoomMemberListView?=null
+    private var isOwner: Boolean = false
+    private var listener: AUIRoomMemberEvent?
+    private var dialogMemberView: AUIRoomMemberListView? = null
 
 
     init {
-        this.userService = voiceService.getUserService()
-        this.micSeats = voiceService.getMicSeatsService()
-        this.roomManager = voiceService.getRoomManager()
-        this.roomInfo = voiceService.getRoomInfo()
+        this.userService = voiceService.userService
+        this.micSeats = voiceService.micSeatService
+        this.roomInfo = voiceService.roomInfo
         this.roomContext = AUIRoomContext.shared()
         this.memberView = memberView
         this.context = context
         this.listener = listener
-        val roomOwner = roomInfo?.roomOwner
+        val roomOwner = roomInfo?.owner
         isOwner = roomContext.currentUserInfo.userId == roomOwner?.userId
 
         val owner = AUIUserInfo()
@@ -64,14 +65,12 @@ class AUIRoomMembersBinder constructor(
         micSeats?.registerRespObserver(this)
         userService?.registerRespObserver(this)
         memberView?.setMemberActionListener(this)
-        roomManager.registerRespObserver(this)
     }
 
     override fun unBind() {
         userService?.unRegisterRespObserver(this)
         micSeats?.unRegisterRespObserver(this)
         memberView?.setMemberActionListener(null)
-        roomManager.unRegisterRespObserver(this)
     }
 
     override fun onMemberRankClickListener(view: View) {
@@ -94,26 +93,28 @@ class AUIRoomMembersBinder constructor(
         dialogMemberView?.setMembers(mMemberMap.values.toList().map {
             MemberInfo(it?.userId ?: "", it?.userName ?: "", it?.userAvatar ?: "")
         }, mSeatMap)
-        dialogMemberView?.setIsOwner(isOwner, roomInfo?.roomOwner?.userId)
-        dialogMemberView?.setMemberActionListener(object : AUIRoomMemberListView.ActionListener{
+        dialogMemberView?.setIsOwner(isOwner, roomInfo?.owner?.userId)
+        dialogMemberView?.setMemberActionListener(object : AUIRoomMemberListView.ActionListener {
             override fun onKickClick(view: View, position: Int, user: MemberInfo?) {
                 try {
-                    val userId = user?.userId?.toInt()
-                    if (isOwner){
-                        userId?.let {
-                            roomManager.kickUser(roomInfo?.roomId,it) { it1 ->
-                                if (it1 == null){
-                                    mMemberMap.remove(it.toString())
+                    val userId = user?.userId ?: return
+                    if (isOwner) {
+                        // 踢人（非麦位，是在用户列表里踢人，此处应该是userService里的一个方法）
+                        showKickSureDialog(context){
+                            userService?.kickUser(userId){ error->
+                                if (error == null) {
+                                    mMemberMap.remove(userId)
                                     updateMemberView()
-                                    Log.d("AUIRoomMembersBinder","onKickClick suc")
-                                }else{
-                                    Log.d("AUIRoomMembersBinder","onKickClick fail ${it1.message}")
+                                    Log.d("AUIRoomMembersBinder", "onKickClick suc")
+                                    Toast.makeText(context, R.string.voice_room_kick_user_success, Toast.LENGTH_SHORT).show()
+                                } else {
+                                    Log.d("AUIRoomMembersBinder", "onKickClick fail ${error.message}")
                                 }
                             }
                         }
                     }
-                }catch (e:Exception){
-                    Log.d("AUIRoomMembersBinder","Conversion exception")
+                } catch (e: Exception) {
+                    Log.d("AUIRoomMembersBinder", "Conversion exception")
                 }
             }
         })
@@ -124,8 +125,23 @@ class AUIRoomMembersBinder constructor(
                 show()
             }
         }
-
     }
+
+    private fun showKickSureDialog(context: Context, confirm: ()->Unit) {
+        AUIAlertDialog(context).apply {
+            setTitle(R.string.voice_room_tip)
+            setMessage(context.getString(R.string.voice_room_kick_sure_tip))
+            setPositiveButton(context.getString(R.string.voice_room_confirm)){
+                dismiss()
+                confirm.invoke()
+            }
+            setTitleCloseButton{
+                dismiss()
+            }
+            show()
+        }
+    }
+
 
     /** IAUiUserService.AUiUserRespDelegate */
     override fun onRoomUserEnter(roomId: String, userInfo: AUIUserInfo) {
@@ -156,7 +172,7 @@ class AUIRoomMembersBinder constructor(
 
     /** IAUiMicSeatService.AUiMicSeatRespDelegate */
     override fun onAnchorEnterSeat(seatIndex: Int, userInfo: AUIUserThumbnailInfo) {
-        Log.e("apex","onAnchorEnterSeat $seatIndex ${userInfo.userName}")
+        Log.e("apex", "onAnchorEnterSeat $seatIndex ${userInfo.userName}")
         mSeatMap[seatIndex] = userInfo.userId
         updateMemberView()
     }
@@ -168,7 +184,12 @@ class AUIRoomMembersBinder constructor(
         }
     }
 
-    private fun updateMemberView(){
+    override fun onLocalUserKickedOut(roomId: String) {
+        super.onLocalUserKickedOut(roomId)
+        listener?.onLocalUserKickedOut()
+    }
+
+    private fun updateMemberView() {
         memberView?.setMemberData(mMemberMap.values.toList().map {
             MemberInfo(it?.userId ?: "", it?.userName ?: "", it?.userAvatar ?: "")
         })
@@ -177,15 +198,10 @@ class AUIRoomMembersBinder constructor(
         }, mSeatMap)
     }
 
-    override fun onRoomUserBeKicked(roomId: String?, userId: String?) {
-        if (roomId == roomInfo?.roomId){
-            mMemberMap.remove(userId)
-            updateMemberView()
-        }
-    }
+    interface AUIRoomMemberEvent {
+        fun onCloseClickListener(view: View) {}
 
-    interface AUIRoomMemberEvent{
-        fun onCloseClickListener(view: View){}
+        fun onLocalUserKickedOut(){}
     }
 
 }

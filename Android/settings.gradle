@@ -18,15 +18,20 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "AUIVoiceRoom"
-def uiKitPath = new File(settingsDir, '../AUIKit/Android/auikit')
+def uiKitPath = new File(settingsDir, '../../AUIKit/Android/auikit')
 if(uiKitPath.exists()){
     include ':auikit'
     project(':auikit').projectDir = uiKitPath
 }
-def uiKitUIPath = new File(settingsDir, '../AUIKit/Android/auikit-ui')
+def uiKitUIPath = new File(settingsDir, '../../AUIKit/Android/auikit-ui')
 if(uiKitUIPath.exists()){
     include ':auikit-ui'
     project(':auikit-ui').projectDir = uiKitUIPath
+}
+def uiKitServicePath = new File(settingsDir, '../../AUIKit/Android/auikit-service')
+if(uiKitServicePath.exists()){
+    include ':auikit-service'
+    project(':auikit-service').projectDir = uiKitServicePath
 }
 
 include ':app-voice'
