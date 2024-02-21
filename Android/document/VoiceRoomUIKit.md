@@ -11,7 +11,7 @@ VoiceRoomUIKit 是一个语聊房场景组件，提供房间管理和拉起语�
 **将以下源码复制到自己的项目中：**
 
 - [asceneskit](../asceneskit)
-- [AUIVoiceRoomUikit](../app-voice/src/main/java/io/agora/app/voice/kit/AUIVoiceRoomUikit.kt)
+- [AUIVoiceRoomUIKit](../app-voice/src/main/java/io/agora/app/voice/kit/AUIVoiceRoomUIKit.kt)
 
 
 **在Setting.gradle文件中添加对AScenesKit**
@@ -38,7 +38,7 @@ config.owner = AUIUserThumbnailInfo().apply {
   userName = RandomUtils.randomUserName()
   userAvatar = RandomUtils.randomAvatar()
 }
-AUIVoiceRoomUikit.init(
+AUIVoiceRoomUIKit.init(
   config,
   AUIAPIConfig()
 )
@@ -46,7 +46,7 @@ AUIVoiceRoomUikit.init(
 
 ### 3.获取房间列表
 ```kotlin
-AUIVoiceRoomUikit.getRoomList(
+AUIVoiceRoomUIKit.getRoomList(
     lastCreateTime,
     pageSize,
     success = {},
@@ -56,7 +56,7 @@ AUIVoiceRoomUikit.getRoomList(
 
 ### 4.房主创建并进入房间
 ```kotlin
-AUIVoiceRoomUikit.createRoom(
+AUIVoiceRoomUIKit.createRoom(
   roomInfo,
   roomConfig,
   mViewBinding.VoiceRoomView,
@@ -70,7 +70,7 @@ AUIVoiceRoomUikit.createRoom(
 
 ### 5. 观众进入房间
 ```kotlin
-AUIVoiceRoomUikit.launchRoom(
+AUIVoiceRoomUIKit.launchRoom(
   roomInfo,
   roomConfig,
   mViewBinding.VoiceRoomView,
@@ -84,16 +84,16 @@ AUIVoiceRoomUikit.launchRoom(
 
 ### 6. 退出房间
 ```kotlin
-AUIVoiceRoomUikit.destroyRoom(roomId)
+AUIVoiceRoomUIKit.destroyRoom(roomId)
 ```
 
 ### 7. 异常处理
 ```kotlin
 //订阅 VoiceRoomUIKit 后 AUIRoomManagerRespDelegate 的回调。
-AUIVoiceRoomUikit.registerRespObserver(roomId, this)
+AUIVoiceRoomUIKit.registerRespObserver(roomId, this)
 
 //退出房间时取消订阅
-AUIVoiceRoomUikit.unRegisterRespObserver(roomId, this)
+AUIVoiceRoomUIKit.unRegisterRespObserver(roomId, this)
 
 //通过AUIRoomManagerRespDelegate回调方法中的onRoomDestroy处理房间销毁
 override fun onRoomDestroy(roomId: String) {
@@ -117,9 +117,9 @@ override fun onRoomUserBeKicked(roomId: String?, userId: String?) {
 // Token即将过期回调
 override fun onTokenPrivilegeWillExpire(roomId: String) {
   super.onTokenPrivilegeWillExpire(roomId)
-  AUIVoiceRoomUikit.generateToken(roomId,
+  AUIVoiceRoomUIKit.generateToken(roomId,
     onSuccess = {
-      AUIVoiceRoomUikit.renewToken(roomId, it)
+      AUIVoiceRoomUIKit.renewToken(roomId, it)
     },
     onFailure = {
       AUILogger.logger()
@@ -280,7 +280,7 @@ VoiceRoomUIKit的业务服务是基于AUIKit的Service组件进行实现。AUIKi
   > fun getRoomInfoList(lastCreateTime: Long?, pageSize: Int, callback: AUIRoomListCallback?)
   > ~~~
   >
-  > - 将[AUIVoiceRoomUikit.kt](../app-voice/src/main/java/io/agora/app/voice/kit/AUIVoiceRoomUikit.kt)中的RoomManager替换成自己的RoomManager
+  > - 将[AUIVoiceRoomUIKit.kt](../app-voice/src/main/java/io/agora/app/voice/kit/AUIVoiceRoomUIKit.kt)中的RoomManager替换成自己的RoomManager
   >
   >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/voicechat_android_custom_12.png" width="800" />
 
