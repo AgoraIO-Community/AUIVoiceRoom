@@ -44,7 +44,7 @@ import SwiftTheme
     private lazy var micSeatView: AUIMicSeatView = {
         let frame = micSeatFrame()
         let type = AUIMicSeatViewLayoutType(rawValue: self.roomInfo?.micSeatStyle ?? 0) ?? .eight
-        let view = AUIMicSeatView(frame: frame, layout: self.layout(type: type))
+        let view = AUIMicSeatView(frame: frame, layout: self.layout(type: type), hiddenRipple: false)
         return view
     }()
     
