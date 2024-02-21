@@ -14,8 +14,7 @@ struct KeyCenter {
      则应使用不同的 App ID。如果应用程序需要相互通信，则应使用同一个App ID。
      进入声网控制台(https://console.shengwang.cn/)，创建一个项目，进入项目配置页，即可看到APP ID。
      */
-//    static var AppId: String = <#Your AppId#>
-    static var AppId: String = "925dd81d763a42919862fee9f3f204a7"  //该AppId仅限体验使用，请勿用户正式商用环境
+    static var AppId: String = <#Your AppId#>
     
     /*
      声网APP证书
@@ -60,6 +59,6 @@ struct KeyCenter {
     /*
      后端微服务域名
      */
-//    static var HostUrl: String = <#Your Host Url#>
-    static var HostUrl: String = "https://service.shengwang.cn/uikit-v2" //该域名仅限体验使用，请勿用户正式商用环境
+    static var HostUrl: String = <#Your Host Url#>
+//    static var HostUrl: String = "https://service.shengwang.cn/uikit-v2" //该域名仅限体验使用，请勿用户正式商用环境
 }
