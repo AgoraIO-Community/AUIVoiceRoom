@@ -79,11 +79,11 @@ class VoiceRoomActivity : AppCompatActivity(), AUIVoiceRoomObserver {
         }
         mPermissionHelp.checkMicPerm(
             {
-                AUIVoiceRoomUikit.generateToken(
+                AUIVoiceRoomUIKit.generateToken(
                     roomInfo.roomId,
                     onSuccess = { roomConfig ->
                         if (isCreateRoom) {
-                            AUIVoiceRoomUikit.createRoom(
+                            AUIVoiceRoomUIKit.createRoom(
                                 roomInfo,
                                 roomConfig,
                                 mViewBinding.VoiceRoomView,
@@ -94,7 +94,7 @@ class VoiceRoomActivity : AppCompatActivity(), AUIVoiceRoomObserver {
                                 }
                             )
                         } else {
-                            AUIVoiceRoomUikit.launchRoom(
+                            AUIVoiceRoomUIKit.launchRoom(
                                 roomInfo,
                                 roomConfig,
                                 mViewBinding.VoiceRoomView,
@@ -105,7 +105,7 @@ class VoiceRoomActivity : AppCompatActivity(), AUIVoiceRoomObserver {
                                 }
                             )
                         }
-                        AUIVoiceRoomUikit.registerRespObserver(roomId = roomInfo.roomId, this)
+                        AUIVoiceRoomUIKit.registerRespObserver(roomId = roomInfo.roomId, this)
                     },
                     onFailure = {
                         shutDownRoom()
@@ -165,9 +165,9 @@ class VoiceRoomActivity : AppCompatActivity(), AUIVoiceRoomObserver {
 
     override fun onTokenPrivilegeWillExpire(roomId: String) {
         super.onTokenPrivilegeWillExpire(roomId)
-        AUIVoiceRoomUikit.generateToken(roomId,
+        AUIVoiceRoomUIKit.generateToken(roomId,
             onSuccess = {
-                AUIVoiceRoomUikit.renewToken(roomId, it)
+                AUIVoiceRoomUIKit.renewToken(roomId, it)
             },
             onFailure = {
                 AUILogger.logger()
@@ -178,8 +178,8 @@ class VoiceRoomActivity : AppCompatActivity(), AUIVoiceRoomObserver {
     private fun shutDownRoom() {
         AUILogger.logger().d("VoiceRoomActivity", "shutDownRoom ...")
         val roomId = roomInfo.roomId
-        AUIVoiceRoomUikit.destroyRoom(roomId)
-        AUIVoiceRoomUikit.unRegisterRespObserver(roomId, this@VoiceRoomActivity)
+        AUIVoiceRoomUIKit.destroyRoom(roomId)
+        AUIVoiceRoomUIKit.unRegisterRespObserver(roomId, this@VoiceRoomActivity)
         finish()
     }
 

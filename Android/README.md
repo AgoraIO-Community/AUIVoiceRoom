@@ -5,7 +5,7 @@
 ---
 ## 架构图
 
-<img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/uikit_structure_chart_voicechat_1.0.0_5.png" width="800" />
+<img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/uikit_structure_chart_voicechat_1.0.0_6.png" width="800" />
 
 ---
 ## 目录结构

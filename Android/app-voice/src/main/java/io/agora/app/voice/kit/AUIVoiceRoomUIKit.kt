@@ -18,7 +18,7 @@ import io.agora.auikit.service.room.AUIRoomManager
 import io.agora.auikit.utils.AUILogger
 import retrofit2.Response
 
-object AUIVoiceRoomUikit {
+object AUIVoiceRoomUIKit {
     private val mSceneId = "VoiceRoomUIKit"
     private var mAPIConfig: AUIAPIConfig? = null
     private val mRoomManager by lazy { AUIRoomManager(sceneId = mSceneId) }
