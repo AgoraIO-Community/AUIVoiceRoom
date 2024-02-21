@@ -359,7 +359,7 @@ AUIKit组件的主题样式属性说明见[AUIKit属性](https://github.com/Agor
 另外，VoiceRoomUIKit提供了两套默认主题，[Dark](https://github.com/AgoraIO-Community/AUIKit/tree/main/iOS/AUIKitCore/Resource/auiTheme.bundle/Dark) 和 [Light](https://github.com/AgoraIO-Community/AUIKit/tree/main/iOS/AUIKitCore/Resource/auiTheme.bundle/Light)，
 
 
-下面介绍`Light`是如何定制主题的，然后再进阶介绍如何自定义新的主题属性
+下面介绍 `Light` 是如何定制主题的，然后再进阶介绍如何自定义新的主题属性
 
 #### 基础定制
 > 基础定制主要是介绍如何在主题里对特定ui组件的属性进行修改以达到所要的效果，其中ui组件的可修改主题属性见[AUIKit属性](https://github.com/AgoraIO-Community/AUIKit/blob/main/iOS/README.md#widget)。
@@ -388,7 +388,9 @@ AUIKit组件的主题样式属性说明见[AUIKit属性](https://github.com/Agor
 
 #### 高级定制
  > 高级定制主要适用于主题属性无法满足UI定制化需求，此时需要自己对AUIKit组件进行属性扩展。
-  > 要对AUIKit ui组件添加属性，需要先参考前面章节引入AUIKit源码，然后直接在AUIKit源码上进行修改。
+  >
+  > 要对AUIKit ui组件添加属性，需要先下载AUIKit源码，然后通过本地依赖进工程里，例如AUIKit项目与AUIVoiceRoom项目同级时，依赖如下设置：
+  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/ios/voicechat_custom_dependency.png" width="800" />
   >
   > 下面以麦位背景色来介绍如何添加新属性，以及如何在代码里获取到主题属性值并调整ui:
   >
