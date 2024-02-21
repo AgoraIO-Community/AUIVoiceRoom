@@ -390,6 +390,7 @@ AUIKit组件的主题样式属性说明见[AUIKit属性](https://github.com/Agor
  > 高级定制主要适用于主题属性无法满足UI定制化需求，此时需要自己对AUIKit组件进行属性扩展。
   >
   > 要对AUIKit ui组件添加属性，需要先下载AUIKit源码，然后通过本地依赖进工程里，例如AUIKit项目与AUIVoiceRoom项目同级时，依赖如下设置：
+  > 
   >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/ios/voicechat_custom_dependency.png" width="800" />
   >
   > 下面以麦位背景色来介绍如何添加新属性，以及如何在代码里获取到主题属性值并调整ui:
