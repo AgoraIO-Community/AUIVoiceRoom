@@ -59,7 +59,7 @@ class VoiceRoomListActivity: AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        AUIVoiceRoomUikit.release()
+        AUIVoiceRoomUIKit.release()
     }
 
     private fun initView() {
@@ -154,7 +154,7 @@ class VoiceRoomListActivity: AppCompatActivity() {
             userName = RandomUtils.randomUserName()
             userAvatar = RandomUtils.randomAvatar()
         }
-        AUIVoiceRoomUikit.init(
+        AUIVoiceRoomUIKit.init(
             config,
             AUIAPIConfig()
         )
@@ -185,7 +185,7 @@ class VoiceRoomListActivity: AppCompatActivity() {
                 lastCreateTime = it.createTime
             }
         }
-        AUIVoiceRoomUikit.getRoomList(lastCreateTime,10,
+        AUIVoiceRoomUIKit.getRoomList(lastCreateTime,10,
                 success = { roomList ->
                     if (roomList.size < 10) {
                         listAdapter.loadingMoreState = LoadingMoreState.NoMoreData
