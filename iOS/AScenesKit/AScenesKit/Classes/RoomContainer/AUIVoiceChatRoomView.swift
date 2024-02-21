@@ -15,7 +15,6 @@ import SwiftTheme
         return service?.roomInfo
     }
     
-    
     lazy var background: UIImageView = {
         UIImageView(frame: self.frame).image(UIImage.aui_Image(named: "voicechat_bg"))
     }()
@@ -43,7 +42,7 @@ import SwiftTheme
     }()
     
     private lazy var micSeatView: AUIMicSeatView = {
-        let frame = CGRect(x: 16, y: AStatusBarHeight + 74, width: self.bounds.size.width - 16 * 2, height: 324)
+        let frame = micSeatFrame()
         let type = AUIMicSeatViewLayoutType(rawValue: self.roomInfo?.micSeatStyle ?? 0) ?? .eight
         let view = AUIMicSeatView(frame: frame, layout: self.layout(type: type))
         return view
@@ -255,7 +254,7 @@ import SwiftTheme
 
 extension AUIVoiceChatRoomView: AUIMicSeatCircleLayoutDataSource,AUIMicSeatHostAudienceLayoutDataSource {
     public var radius: CGFloat {
-        return min(self.micSeatView.frame.width, self.micSeatView.frame.height)/3.2
+        return min(micSeatFrame().width, micSeatFrame().height)/3.2
     }
     
     public func rowSpace() -> CGFloat {
@@ -268,6 +267,11 @@ extension AUIVoiceChatRoomView: AUIMicSeatCircleLayoutDataSource,AUIMicSeatHostA
     
     public func otherSize() -> CGSize {
         CGSize(width: 80, height: 92)
+    }
+    
+    public func micSeatFrame() -> CGRect {
+        let frame = CGRect(x: 16, y: AStatusBarHeight + 74, width: self.bounds.size.width - 16 * 2, height: 324)
+        return frame
     }
 }
 
