@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">AUIKitVoiceRoom</string>
+    <string name="voice_room_create_room">创建房间</string>
+    <string name="voice_room_seats_type">麦位样式</string>
+    <string name="voice_room_theme">主题</string>
+    <string name="voice_room_save">保存</string>
 </resources>

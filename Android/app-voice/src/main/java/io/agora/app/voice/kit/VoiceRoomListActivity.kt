@@ -48,7 +48,7 @@ class VoiceRoomListActivity: AppCompatActivity() {
         }
 
     companion object {
-        private var ThemeId = io.agora.asceneskit.R.style.Theme_VoiceRoom
+        private var ThemeId = io.agora.asceneskit.R.style.Theme_VoiceRoom_Light
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,7 +72,7 @@ class VoiceRoomListActivity: AppCompatActivity() {
         //if (theme.resolveAttribute(android.R.attr.windowBackground, out, true)) {
         //    window.setBackgroundDrawableResource(out.resourceId)
         //}
-        val isDarkTheme = ThemeId != io.agora.asceneskit.R.style.Theme_VoiceRoom
+        val isDarkTheme = ThemeId != io.agora.asceneskit.R.style.Theme_VoiceRoom_Light
         var systemUiVisibility: Int = window.decorView.systemUiVisibility
         if (isDarkTheme) {
             systemUiVisibility = systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
@@ -282,7 +282,7 @@ class VoiceRoomListActivity: AppCompatActivity() {
             data.let { intent->
                 val voiceThemeId = intent?.getIntExtra(
                     "voiceThemeId",
-                    io.agora.asceneskit.R.style.Theme_VoiceRoom
+                    io.agora.asceneskit.R.style.Theme_VoiceRoom_Light
                 )
                 voiceThemeId?.let {
                     ThemeId = it

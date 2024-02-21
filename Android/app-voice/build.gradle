@@ -11,7 +11,7 @@ android {
         minSdk 24
         targetSdk 32
         versionCode 3
-        versionName "0.3.2"
+        versionName "1.0.0"
 
         def properties = new Properties()
         properties.load(rootProject.file("local.properties").newDataInputStream())

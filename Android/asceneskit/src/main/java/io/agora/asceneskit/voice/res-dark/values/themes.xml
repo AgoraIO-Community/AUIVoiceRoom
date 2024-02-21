@@ -1,6 +1,6 @@
 <resources>
 
-    <style name="Theme.VoiceRoom.Voice" parent="Theme.AUIKit.Dark">
+    <style name="Theme.VoiceRoom.Dark" parent="Theme.AUIKit.Dark">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:windowBackground">@drawable/voice_bg_app_def_dark</item>

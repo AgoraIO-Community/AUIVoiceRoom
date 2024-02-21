@@ -56,7 +56,7 @@
             android:textColor="@color/white"
             android:textStyle="bold"
             android:textSize="18sp"
-            android:text="Create"
+            android:text="@string/voice_room_create_room"
             android:drawableLeft="@drawable/voice_icon_create"
             android:drawablePadding="8dp"
             />
@@ -68,7 +68,7 @@
         android:id="@+id/tvEmptyList"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="No Chat Room yet"
+        android:text="@string/aui_room_contribution_empty"
         android:textColor="#ACB4B9"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
