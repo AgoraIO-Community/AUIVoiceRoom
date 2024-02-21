@@ -1,10 +1,12 @@
 # AUIVoiceRoom iOS 示例工程快速跑通
 
 
-本文档主要介绍如何快速跑通 AUIVoiceRoom 示例工程，体验在线语聊房场景，包括麦位管理、用户管理、申请邀请管理、聊天管理、礼物管理等，更详细的介绍，请参考[AUIKit](https://github.com/AgoraIO-Community/AUIKit/blob/main/iOS/README.md)
+本文档主要介绍如何快速跑通 AUIVoiceRoom 示例工程，体验在线语聊房场景，包括麦位管理、用户管理、申请邀请管理、聊天管理、礼物管理等，更详细的介绍，请参考[AUIKit](https://github.com/AgoraIO-Community/AUIKit/blob/main/iOS)
 
 ## 架构图
 ![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/ios/voicechat_architecture_diagram_1.0.0.png)
+
+其中AUIKit是UI/逻辑的核心模块，通过CocoaPods进行依赖。
 
 ---
 
