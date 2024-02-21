@@ -157,10 +157,10 @@ VoiceRoomUIKit的UI是基于AUIKit的UI组件进行实现，而AIKit提供了一
 
 AUIKit组件的主题样式说明见[README](https://github.com/AgoraIO-Community/AUIKit/blob/main/Android/doc/AUIKit-UI.md)。
 
-另外，VoiceRoomUIKit提供了两套默认主题，[Theme.VoiceRoom](../asceneskit/src/main/java/io/agora/asceneskit/voice/res/values/theme.xml)和[Theme.VoiceRoom.Voice](../asceneskit/src/main/java/io/agora/asceneskit/voice/res-voice/values/themes.xml)，
-`Theme.VoiceRoom`使用的是AUIKit中UI组件的默认主题，`Theme.VoiceRoom.Voice`是对默认主题做修改后的主题。
+另外，VoiceRoomUIKit提供了两套默认主题，[Theme.VoiceRoom.Light](../asceneskit/src/main/java/io/agora/asceneskit/voice/res/values/theme.xml)和[Theme.VoiceRoom.Voice](../asceneskit/src/main/java/io/agora/asceneskit/voice/res-voice/values/themes.xml)，
+`Theme.VoiceRoom.Light`使用的是AUIKit中UI组件的默认亮主题，`Theme.VoiceRoom.Dark`是对默认主题做修改后的暗主题。
 
-下面介绍`Theme.VoiceRoom.Voice`是如何定制主题的，然后再进阶介绍如何自定义新的主题属性
+下面介绍`Theme.VoiceRoom.Dark`是如何定制主题的，然后再进阶介绍如何自定义新的主题属性
 
 #### 基础定制
 

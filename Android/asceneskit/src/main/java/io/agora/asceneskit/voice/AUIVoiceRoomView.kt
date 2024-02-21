@@ -255,7 +255,7 @@ class AUIVoiceRoomView : FrameLayout,
         val list = mutableListOf<VoiceMoreItemBean>()
         if (isRoomOwner()){ // 房主显示申请列表
             bean.ItemIcon = context.getDrawable(R.drawable.voice_icon_more_hands)
-            bean.ItemTitle = "Application list"
+            bean.ItemTitle = context.getString(io.agora.auikit.ui.R.string.aui_room_apply_list)
             list.add(bean)
         }
         moreDialog = VoiceRoomMoreDialog(context,list,object :

@@ -116,6 +116,9 @@ public class AUIMicSeatsBinder extends IRtcEngineEventHandler implements
 
     @Override
     public void onAnchorEnterSeat(int seatIndex, @NonNull AUIUserThumbnailInfo userInfo) {
+        if(seatIndex >=  micSeatsView.getMicSeatItemViewList().length){
+            return;
+        }
         AUIUserInfo auiUserInfo = userService.getUserInfo(userInfo.userId);
         mSeatMap.put(seatIndex,userInfo.userId);
         mVolumeMap.put(userInfo.userId,seatIndex);
@@ -128,6 +131,9 @@ public class AUIMicSeatsBinder extends IRtcEngineEventHandler implements
 
     @Override
     public void onAnchorLeaveSeat(int seatIndex, @NonNull AUIUserThumbnailInfo userInfo) {
+        if(seatIndex >=  micSeatsView.getMicSeatItemViewList().length){
+            return;
+        }
         String uid = mSeatMap.get(seatIndex - 1);
         if (uid != null && uid.equals(userInfo.userId)) {
             mSeatMap.remove(seatIndex);
@@ -148,6 +154,9 @@ public class AUIMicSeatsBinder extends IRtcEngineEventHandler implements
 
     @Override
     public void onSeatVideoMute(int seatIndex, boolean isMute) {
+        if(seatIndex >=  micSeatsView.getMicSeatItemViewList().length){
+            return;
+        }
         updateSeatView(seatIndex);
         micSeatsView.stopRippleAnimation(seatIndex);
     }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.VoiceRoom" parent="Theme.AUIKit">
+    <style name="Theme.VoiceRoom.Light" parent="Theme.AUIKit">
         <item name="android:windowBackground">@drawable/voice_bg_app_def</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>

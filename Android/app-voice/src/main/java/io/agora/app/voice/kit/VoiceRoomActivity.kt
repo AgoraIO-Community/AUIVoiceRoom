@@ -30,7 +30,7 @@ class VoiceRoomActivity : AppCompatActivity(), AUIVoiceRoomObserver {
             context: Context,
             isCreateRoom: Boolean,
             roomInfo: AUIRoomInfo,
-            themeId: Int = R.style.Theme_VoiceRoom
+            themeId: Int = R.style.Theme_VoiceRoom_Light
         ) {
             val intent = Intent(context, VoiceRoomActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
