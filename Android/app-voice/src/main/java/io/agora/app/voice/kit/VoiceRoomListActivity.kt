@@ -110,12 +110,24 @@ class VoiceRoomListActivity: AppCompatActivity() {
             launcher.launch(intent)
         }
 
-        mViewBinding.rvList.addItemDecoration(
-            AUISpaceItemDecoration(
-                resources.getDimensionPixelSize(R.dimen.voice_room_list_item_space_h),
-                resources.getDimensionPixelSize(R.dimen.voice_room_list_item_space_v)
+        var containSpaceDecoration = false
+        if (mViewBinding.rvList.itemDecorationCount > 0) {
+            for (i in 0 until mViewBinding.rvList.itemDecorationCount) {
+                val decoration = mViewBinding.rvList.getItemDecorationAt(i)
+                if (decoration is AUISpaceItemDecoration) {
+                    containSpaceDecoration = true
+                }
+            }
+        }
+        if (!containSpaceDecoration) {
+            mViewBinding.rvList.addItemDecoration(
+                AUISpaceItemDecoration(
+                    resources.getDimensionPixelSize(R.dimen.voice_room_list_item_space_h),
+                    resources.getDimensionPixelSize(R.dimen.voice_room_list_item_space_v)
+                )
             )
-        )
+        }
+
         mViewBinding.rvList.adapter = listAdapter
 
         mViewBinding.swipeRefresh.setOnRefreshListener {
@@ -156,6 +168,13 @@ class VoiceRoomListActivity: AppCompatActivity() {
         roomInfo.thumbnail = RandomUtils.randomAvatar()
         roomInfo.owner = AUIRoomContext.shared().currentUserInfo
         roomInfo.micSeatStyle = seatStyle
+        roomInfo.micSeatCount = when(MicSeatType.fromString(seatStyle)){
+            MicSeatType.OneTag -> 1
+            MicSeatType.SixTag -> 6
+            MicSeatType.EightTag -> 8
+            MicSeatType.NineTag -> 9
+            null -> 8
+        }
         VoiceRoomActivity.launch(this, true, roomInfo, ThemeId)
     }
 

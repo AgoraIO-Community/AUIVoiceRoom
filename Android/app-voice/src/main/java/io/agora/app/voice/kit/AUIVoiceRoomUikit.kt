@@ -21,12 +21,7 @@ import retrofit2.Response
 object AUIVoiceRoomUikit {
     private val mSceneId = "VoiceRoomUIKit"
     private var mAPIConfig: AUIAPIConfig? = null
-    private val mRoomManager by lazy {
-        AUIRoomManager(
-            AUIRoomContext.shared().mCommonConfig?.appId ?: "",
-            mSceneId
-        )
-    }
+    private val mRoomManager by lazy { AUIRoomManager(sceneId = mSceneId) }
     private val mServices = mutableMapOf<String, AUIVoiceRoomService>()
 
     /**
