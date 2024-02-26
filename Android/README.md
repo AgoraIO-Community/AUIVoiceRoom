@@ -131,7 +131,7 @@ AUIVoiceRoom 依赖于 ASceneKit，ASceneKit 依赖于底层的 AUIKit。详细�
 ---
 ## 常见问题
 
-- [常见问题](VoiceRoomFAQ.md)
+- [常见问题](./document/VoiceRoomFAQ.md)
 - 如有其他问题请反馈至 [开发者社区](https://www.rtcdeveloper.cn/cn/community/discussion/0)
 
 ---
