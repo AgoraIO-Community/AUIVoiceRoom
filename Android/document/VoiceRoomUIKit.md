@@ -148,14 +148,14 @@ VoiceRoomUIKit支持对UI及业务功能做定制化修改，并且由于是依�
 
 <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/uikit_structure_chart_voicechat_1.0.0_8.png" width="800" />
 
-### 基础定制
+### 1. 基础定制
 
 基础定制主要是修改AScenesKit库实现，下面分别从UI和逻辑介绍如何定制。
 另外，房间管理定制对于已有后台房间管理功能的用户来说也至关重要，为此也会介绍下如何修改。
 
-#### 定制UI
+#### 1.1 定制UI
 
-  > VoiceRoomUIKit的UI是基于AUIKit的UI组件进行实现，而AIKit提供了一套UI主题样式，因此VoiceRoomUIKit UI样式是通过扩展AUIKit组件主题来实现的。
+  > VoiceRoomUIKit的UI是基于AUIKit的UI组件进行实现，而AUIKit提供了一套UI主题样式，因此VoiceRoomUIKit UI样式是通过扩展AUIKit组件主题来实现的。
   > AUIKit组件的主题样式说明见[README](https://github.com/AgoraIO-Community/AUIKit/blob/main/Android/doc/AUIKit-UI.md)。
   >
   > 另外，VoiceRoomUIKit提供了两套默认主题，[Theme.VoiceRoom.Light](../asceneskit/src/main/java/io/agora/asceneskit/voice/res/values/theme.xml)和[Theme.VoiceRoom.Voice](../asceneskit/src/main/java/io/agora/asceneskit/voice/res-voice/values/themes.xml)，
@@ -195,7 +195,7 @@ VoiceRoomUIKit支持对UI及业务功能做定制化修改，并且由于是依�
   >
   > - 配置好运行项目即可看到效果
 
-#### 定制业务逻辑
+#### 1.2 定制业务逻辑
 
   > 在做自定义前，需要知道几点：
   >   1. 组件通过[Binder](../asceneskit/src/main/java/io/agora/asceneskit/voice/binder)将AUIKit提供的UI组件及Service组件绑定起来以实现业务交互
@@ -224,12 +224,12 @@ VoiceRoomUIKit支持对UI及业务功能做定制化修改，并且由于是依�
   >
   >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/voicechat_android_custom_11.png" width="800" />
 
-#### 修改房间管理
+#### 1.3 修改房间管理
 
   > 在后台服务里提供了一个房间管理，这个房间管理在移动端是由[RoomManager](https://github.com/AgoraIO-Community/AUIKit/blob/main/Android/auikit-service/src/main/java/io/agora/auikit/service/room/AUIRoomManager.kt)进行管理。
   > RoomManager提供了创建房间、销毁房间、获取房间列表这三个api，但是这仅能满足简单的房间管理需求，如果有更复杂的需求就需要自行开发房间管理服务。或者您已经有自己的房间管理服务，您也可以使用自己的房间管理服务。
   >
-  > 下面说明如何自定义房间管理：
+  > 下面说明如何修改房间管理（下面的修改方法只做参考，具体项目里修改方式可以根据您现有的房间接口做出最合适的选择）：
   >
   >- 确认后台有独立的三个后台接口：创建房间、销毁房间 以及 获取房间列表。
   >   并且房间信息里必须包含房主的用户信息：用户名、用户ID 和 用户头像。
@@ -256,12 +256,12 @@ VoiceRoomUIKit支持对UI及业务功能做定制化修改，并且由于是依�
   >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/voicechat_android_custom_12.png" width="800" />
 
 
-### 高级定制
+### 2. 高级定制
 
 高级定制主要是修改AUIKit源码。由于AUKit默认是以maven方式引入到AScenesKit库里，需要先引入源码。
 AUIKit主要提供了UI和Service组件，下面介绍如何做定制。
 
-#### 引入AUIKit源码
+#### 2.1 引入AUIKit源码
 
   > 本项目默认使用maven引入AUIKit库，但是可以在[setting.gradle](../gradle.properties)里配置AUIKit源码路径。
   > 当AUIKit源码路径存在时，使用Android Studio编译时会将源码导到项目里并能直接修改。
@@ -280,11 +280,11 @@ AUIKit主要提供了UI和Service组件，下面介绍如何做定制。
   >
   >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/voicechat_android_custom_02.png" width="800" />
 
-#### 定制UI
+#### 2.2 定制UI
 
   > 高级定制UI是指对AUIKit组件进行属性扩展，详见[AUIKit-UI文档 - 主题的修改](https://github.com/AgoraIO-Community/AUIKit/blob/main/Android/auikit-ui/README.md#%E4%B8%BB%E9%A2%98%E7%9A%84%E4%BF%AE%E6%94%B9)
 
-#### 定制业务功能
+#### 2.3 定制业务功能
 
   > 高级定制业务功能是基于AUIKit提供service进行修改，具体service的说明见[AUIKit-Service文档](https://github.com/AgoraIO-Community/AUIKit/blob/main/Android/auikit-service/README.md)
 
