@@ -4,9 +4,20 @@
 本文档主要介绍如何快速跑通 AUIVoiceRoom 示例工程，体验在线语聊房场景，包括麦位管理、用户管理、申请邀请管理、聊天管理、礼物管理等，更详细的介绍，请参考[AUIKit](https://github.com/AgoraIO-Community/AUIKit/blob/main/iOS)
 
 ## 架构图
-![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/ios/voicechat_architecture_diagram_1.0.0.png)
+<img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/ios/voiceroom_uikit_structure.png" width="800" />
 
-其中AUIKit是UI/逻辑的核心模块，通过CocoaPods进行依赖。
+AUIVoiceRoom 依赖于 ASceneKit，ASceneKit 依赖于底层的 AUIKit。详细说明如下：
+- AUIVoiceRoom：代表语聊房 App（开发者自行开发维护的部分）。
+  - ViewController：用于管理语聊 App 中房间列表页面和单个房间的详情页面。
+  - VoiceChatUIKit：负责统一调度 VoiceChatRoomView 和 VoiceChatRoomService，并管理房间。
+- AScenesKit：为语聊场景提供业务逻辑的组装模块（由声网提供并维护）。
+  - VoiceChatRoomView：语聊房的容器 View。用于管理 AUIKit 提供的 UI。
+  - VoiceChatRoomService：语聊房的 Service。用于管理 AUIKit 提供的 Service。
+  - ViewBinder：用于将 VoiceChatRoomView 和 VoiceChatRoomService 绑定。
+- AUIKit：基础库（由声网提供并维护） 。
+  - UI：基础 UI 组件。
+  - Service：上麦、聊天、送礼物等业务能力。
+  - Manager：RTM管理（AUIRtmManager）、房间管理（AUIRoomMananager）等
 
 ---
 
@@ -77,14 +88,20 @@
   > - 复制AppKey、Client ID和Client Secret
   > 
   >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/createaccount/uikit_easemob_02.png" width="800" />
+
+- 获取RESTful HTTP基本认证 BasicAuth
+
+  > 在用户列表的踢人功能里，用到了[RESTful服务](https://doc.shengwang.cn/doc/rtc/restful/best-practice/user-privilege#%E5%B0%86%E7%94%A8%E6%88%B7%E4%B8%80%E6%AC%A1%E6%80%A7%E8%B8%A2%E5%87%BA%E9%A2%91%E9%81%93)将用户踢出房间，因此这里需要获取RESTful基本认证BasicAuth。
+  > 
+  > HTTP基本认证获取方法见[官方文档](https://doc.shengwang.cn/doc/rtc/restful/get-started/http-authentication)。
   
 - 获取后台服务域名
 
   > 本项目依赖一个后台服务，该后台服务主要提供下面几个功能：
   > - 房间管理
-  > - Token生成
+  > - Rtc/Rtm Token生成
   > - 环信IM聊天房创建
-  > - Rtm踢人
+  > - 踢人
   >
   > 后台代码完全开源，部署教程见[后台部署](../backend)，部署完即可拿到后台服务域名。
   > 
@@ -92,7 +109,7 @@
   > 
   > **但是注意这个域名仅供测试，不能商用！**
 
-- 在项目的[KeyCenter.swift](AUIVoiceRoom/KeyCenter.swift) 中填入步骤1部署的HostUrl
+- 在项目的[KeyCenter.swift](AUIVoiceRoom/KeyCenter.swift) 里配置上面获取到的 App ID、App 证书等
   ```
   static var HostUrl: String = <#您的后台服务域名#>
   static var AppId: String = <#您的声网AppID#>
@@ -102,8 +119,7 @@
   static var IMClientId: String = <#您的环信IM Client ID#>
   static var IMClientSecret: String = <#您的环信IM Client Secret#>
   ```
-  如果暂无意部署后端服务，可以使用KeyCenter.swift里默认的测试域名和AppId，其他参数可不设置
-  >   注意：测试域名和测试AppID都仅供测试使用，不能商用！
+
 
 - 打开终端，进入到[Podfile](Podfile)目录下，执行`pod update`命令
 

@@ -111,8 +111,8 @@
 			isa = PBXGroup;
 			children = (
 				DDCB25C92B7398FC0068F62F /* VoiceChatUIKit.swift */,
-				058974462A2D6A66002E7D09 /* CreateRoomSetting */,
 				055E68482A27309C00842982 /* KeyCenter.swift */,
+				058974462A2D6A66002E7D09 /* CreateRoomSetting */,
 				055E68402A27309C00842982 /* List */,
 				055E68452A27309C00842982 /* Model */,
 				055E68442A27309C00842982 /* RoomViewController.swift */,
