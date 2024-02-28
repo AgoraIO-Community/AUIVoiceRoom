@@ -9,9 +9,9 @@ VoiceRoomUIKit是一个语聊房场景组件，提供房间管理和拉起语聊
 ### 1. 准备后台环境
 VoiceRoomUIKit依赖后台服务做以下功能：
 - 房间管理
-- Token生成
+- Rtc/Rtm Token生成
 - 环信IM聊天房创建
-- Rtm踢人
+- 踢人
 
 后台服务首先需要获取一个后台服务域名，其获取方式有以下两种：
 - 直接使用声网提供的测试域名：https://service.shengwang.cn/uikit
