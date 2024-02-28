@@ -22,9 +22,11 @@ VoiceRoomUIKit依赖后台服务做以下功能：
 
 **将以下源码复制到自己的项目中：**
 
-- [asceneskit](../asceneskit)
-- [AUIVoiceRoomUIKit](../app-voice/src/main/java/io/agora/app/voice/kit/AUIVoiceRoomUIKit.kt)
+- [asceneskit模块](../asceneskit)
+- [AUIVoiceRoomUIKit.kt文件](../app-voice/src/main/java/io/agora/app/voice/kit/AUIVoiceRoomUIKit.kt)
 
+> *AUIVoiceRoomUikit*是作为对AScenesKit库的封装类，这个类并不属于AScenesKit的一部分，需要开发者自己手动复制到项目app模块里。
+> 设计该类的目的是方便开发者调用AScenesKit的api，而不必直接接触RoomService、RoomManager这些AScenesKit里比较复杂的api。
 
 **在Setting.gradle文件中添加对AScenesKit**
 
@@ -156,7 +158,7 @@ VoiceRoomUIKit支持对UI及业务功能做定制化修改，并且由于是依�
 #### 1.1 定制UI
 
   > VoiceRoomUIKit的UI是基于AUIKit的UI组件进行实现，而AUIKit提供了一套UI主题样式，因此VoiceRoomUIKit UI样式是通过扩展AUIKit组件主题来实现的。
-  > AUIKit组件的主题样式说明见[README](https://github.com/AgoraIO-Community/AUIKit/blob/main/Android/doc/AUIKit-UI.md)。
+  > AUIKit组件的主题样式说明见[AUIKit-UI-README](https://github.com/AgoraIO-Community/AUIKit/blob/main/Android/auikit-ui/README.md)。
   >
   > 另外，VoiceRoomUIKit提供了两套默认主题，[Theme.VoiceRoom.Light](../asceneskit/src/main/java/io/agora/asceneskit/voice/res/values/theme.xml)和[Theme.VoiceRoom.Voice](../asceneskit/src/main/java/io/agora/asceneskit/voice/res-voice/values/themes.xml)，
   > `Theme.VoiceRoom.Light`使用的是AUIKit中UI组件的默认亮主题，`Theme.VoiceRoom.Dark`是对默认主题做修改后的暗主题。

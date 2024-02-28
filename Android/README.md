@@ -5,11 +5,11 @@
 ---
 ## 架构图
 
-<img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/voiceroom_uikit_structure.png" width="800" />
+<img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/voiceroom_uikit_structure_01.png" width="800" />
 
 AUIVoiceRoom 依赖于 ASceneKit，ASceneKit 依赖于底层的 AUIKit。详细说明如下：
 - AUIVoiceRoom：代表语聊房 App（开发者自行开发维护的部分）。
-  - Activity/Controller：用于管理语聊 App 中房间列表页面和单个房间的详情页面。
+  - Activity：用于管理语聊 App 中房间列表页面和单个房间的详情页面。
   - VoiceChatUIKit：负责统一调度 VoiceChatRoomView 和 VoiceChatRoomService，并管理房间。
 - AScenesKit：为语聊场景提供业务逻辑的组装模块（由声网提供并维护）。
   - VoiceChatRoomView：语聊房的容器 View。用于管理 AUIKit 提供的 UI。
@@ -18,7 +18,7 @@ AUIVoiceRoom 依赖于 ASceneKit，ASceneKit 依赖于底层的 AUIKit。详细�
 - AUIKit：基础库（由声网提供并维护） 。
   - UI：基础 UI 组件。
   - Service：上麦、聊天、送礼物等业务能力。
-  - Manager：环信IM管理（AUIChatManager）、RTM管理（AUIRtmManager）、房间（AUIRoomMananager）管理等
+  - Manager：环信IM管理（AUIChatManager）、RTM管理（AUIRtmManager）、房间（AUIRoomMananager）管理等包装类
 
 ---
 ## 目录结构
@@ -94,9 +94,9 @@ AUIVoiceRoom 依赖于 ASceneKit，ASceneKit 依赖于底层的 AUIKit。详细�
 
   > 本项目依赖一个后台服务，该后台服务主要提供下面几个功能：
   > - 房间管理
-  > - Token生成
+  > - Rtc/Rtm Token生成
   > - 环信IM聊天房创建
-  > - Rtm踢人
+  > - 踢人
   >
   > 后台代码完全开源，部署教程见[后台部署](../backend)，部署完即可拿到后台服务域名。
   > 
