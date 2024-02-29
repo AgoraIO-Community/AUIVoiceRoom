@@ -314,7 +314,7 @@ func leaveRoom(roomId: String)
 ```AUIVoiceChatRoomServiceRespDelegate``` 协议用于处理与房间操作相关的各种响应事件。它提供了以下方法，可以由遵循此协议的类来实现，以响应特定的事件。
 
 #### 方法
-  - `onTokenPrivilegeWillExpire(roomId: String?)`
+  - `func onTokenPrivilegeWillExpire(roomId: String?)`
     房间token即将过期的回调方法
     - 参数：
       - ```roomId```: 房间ID。
@@ -337,6 +337,7 @@ func leaveRoom(roomId: String)
       - ```roomId```: 房间ID。
       - ```userId```: 用户ID。
 
+---
 ## 功能定制化
 
 VoiceRoomUIKit支持对UI及业务功能做定制化修改，并且由于是依赖AUIKit这个开源组件，不仅能对AScenesKit做基础定制，而且能对AUIKit做深入定制。
