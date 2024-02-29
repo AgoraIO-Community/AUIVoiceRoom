@@ -398,7 +398,7 @@ VoiceRoomUIKit支持对UI及业务功能做定制化修改，并且由于是依�
   >
   >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/ios/voicechat_custom_03.png" width="800" />
   >
-  > - 在AUIVoiceRoomView里找到[对应的Binder实现](../AScenesKit/AScenesKit/Classes/ViewBinder/AUIMicSeatViewBinder.swift)。
+  > - 在 AUIVoiceChatRoomView 里找到[对应的Binder实现](../AScenesKit/AScenesKit/Classes/ViewBinder/AUIMicSeatViewBinder.swift)。
   >
   >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/ios/voicechat_custom_04.png" width="800" />
   >
