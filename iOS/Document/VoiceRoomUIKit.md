@@ -37,12 +37,12 @@ VoiceRoomUIKit依赖后台服务做以下功能：
 
 ![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/ios/add_keycenter_to_voiceroom_1.0.1.jpg)
 
-**配置iOS系统麦克风权限**
+**在Info.plist里配置麦克风和摄像头权限**
 
 ![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/WeChatWorkScreenshot_c9c309c0-731c-4964-8ef3-1e60ab6b9241.png)
 
 
-### 2. 初始化VoiceRoomUIKit
+### 3. 初始化VoiceRoomUIKit
 ```swift
 //为VoiceRoomUIKit设置基本信息
 let commonConfig = AUICommonConfig()
@@ -62,7 +62,7 @@ VoiceChatUIKit.shared.setup(commonConfig: commonConfig,
                             apiConfig: nil)
 ```
 
-### 3.获取房间列表
+### 4.获取房间列表
 ```swift
 VoiceRoomUIKit.shared.getRoomInfoList(lastCreateTime: 0,
                                       pageSize: 20,
@@ -72,7 +72,7 @@ VoiceRoomUIKit.shared.getRoomInfoList(lastCreateTime: 0,
 })
 ```
 
-### 4.房主创建并进入房间
+### 5.房主创建并进入房间
 ```swift
 
     //生成token
@@ -106,7 +106,7 @@ VoiceRoomUIKit.shared.getRoomInfoList(lastCreateTime: 0,
     VoiceChatUIKit.shared.bindRespDelegate(delegate: self)
 ```
 
-### 5. 观众进入房间
+### 6. 观众进入房间
 ```swift
 //生成token
 let roomConfig = AUIRoomConfig()
@@ -129,8 +129,8 @@ VoiceChatUIKit.shared.enterRoom(roomId: roomId,
 VoiceChatUIKit.shared.bindRespDelegate(delegate: self)
 ```
 
-### 6. 退出房间
-#### 6.1 主动退出
+### 7. 退出房间
+#### 7.1 主动退出
 ```swift
 //AUIVoiceChatRoomView 提供一个关闭的闭包
 voiceRoomView.onClickOffButton = { [weak self] in
@@ -140,12 +140,12 @@ voiceRoomView.onClickOffButton = { [weak self] in
 }
 ```
 
-#### 6.2 房间销毁与自动退出
-详见[房间销毁](#71-房间销毁)
+#### 7.2 房间销毁与自动退出
+详见[房间销毁](#81-房间销毁)
 
-### 7. 异常处理
+### 8. 异常处理
 
-#### 7.1 房间销毁
+#### 8.1 房间销毁
 ```swift
 //订阅 VoiceRoomUIKit 后 AUIVoiceChatRoomServiceRespDelegate 的回调
 VoiceRoomUIKit.shared.bindRespDelegate(delegate: self)
@@ -164,7 +164,7 @@ func onRoomUserBeKicked(roomId: String, userId: String) {
 }
 ```
 
-### 8.更换皮肤
+### 9.更换皮肤
 - AUIKit支持一键换肤，可以通过以下方法设置皮肤
   ```swift
   //重新设置默认皮肤
