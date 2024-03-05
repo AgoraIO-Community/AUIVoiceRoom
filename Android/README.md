@@ -1,11 +1,24 @@
 # AUIVoiceRoom Android
 
-本文档主要介绍如何快速跑通 AUIVoiceRoom 示例工程 及 自定义功能。体验在线语聊房场景，包括麦位管理、用户管理、申请邀请管理、聊天管理、礼物管理等，更详细的介绍，请参考[AUIKit](https://github.com/AgoraIO-Community/AUIKit/blob/main/Android/README.zh.md)
+本文档主要介绍如何快速跑通 AUIVoiceRoom 示例工程。体验在线语聊房场景，包括麦位管理、用户管理、申请邀请管理、聊天管理、礼物管理等，更详细的介绍，请参考[AUIKit](https://github.com/AgoraIO-Community/AUIKit/blob/main/Android/README.zh.md)
 
 ---
 ## 架构图
 
-<img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/uikit_structure_chart_voicechat_1.0.0_7.png" width="800" />
+<img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/voiceroom_uikit_structure_01.png" width="800" />
+
+AUIVoiceRoom 依赖于 ASceneKit，ASceneKit 依赖于底层的 AUIKit。详细说明如下：
+- AUIVoiceRoom：代表语聊房 App（开发者自行开发维护的部分）。
+  - Activity：用于管理语聊 App 中房间列表页面和单个房间的详情页面。
+  - VoiceChatUIKit：负责统一调度 VoiceChatRoomView 和 VoiceChatRoomService，并管理房间。
+- AScenesKit：为语聊场景提供业务逻辑的组装模块（由声网提供并维护）。
+  - VoiceChatRoomView：语聊房的容器 View。用于管理 AUIKit 提供的 UI。
+  - VoiceChatRoomService：语聊房的 Service。用于管理 AUIKit 提供的 Service。
+  - ViewBinder：用于将 VoiceChatRoomView 和 VoiceChatRoomService 绑定。
+- AUIKit：基础库（由声网提供并维护） 。
+  - UI：基础 UI 组件。
+  - Service：上麦、聊天、送礼物等业务能力。
+  - Manager：环信IM管理（AUIChatManager）、RTM管理（AUIRtmManager）、房间（AUIRoomMananager）管理等包装类
 
 ---
 ## 目录结构
@@ -81,9 +94,9 @@
 
   > 本项目依赖一个后台服务，该后台服务主要提供下面几个功能：
   > - 房间管理
-  > - Token生成
+  > - Rtc/Rtm Token生成
   > - 环信IM聊天房创建
-  > - Rtm踢人
+  > - 踢人
   >
   > 后台代码完全开源，部署教程见[后台部署](../backend)，部署完即可拿到后台服务域名。
   > 
@@ -111,14 +124,14 @@
 - 用 Android Studio 运行项目即可开始您的体验
 
 ---
-## 快速集成及自定义功能
+## 快速集成及定制化
 
-  > 如果需要在自己的项目里集成VoiceRoomUIKit或者自定义功能，请查看[VoiceRoomUIKit](document/VoiceRoomUIKit.md)
+  > 如果需要在自己的项目里集成VoiceRoomUIKit或者定制化，请查看[VoiceRoomUIKit](document/VoiceRoomUIKit.md)
 
 ---
 ## 常见问题
 
-- [常见问题](VoiceRoomFAQ.md)
+- [常见问题](./document/VoiceRoomFAQ.md)
 - 如有其他问题请反馈至 [开发者社区](https://www.rtcdeveloper.cn/cn/community/discussion/0)
 
 ---

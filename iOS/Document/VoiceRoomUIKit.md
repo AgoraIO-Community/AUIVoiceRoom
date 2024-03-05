@@ -7,12 +7,25 @@ VoiceChatUIKit 是一个语聊房场景组件，提供房间管理和拉起语�
 
  > 在集成之前，请确保您已根据此[教程](../AUIVoiceRoom/) 成功运行项目。
 
-### 1. 添加源码
+### 1. 准备后台环境
+VoiceRoomUIKit依赖后台服务做以下功能：
+- 房间管理
+- Rtc/Rtm Token生成
+- 环信IM聊天房创建
+- 踢人
+
+后台服务首先需要获取一个后台服务域名，其获取方式有以下两种：
+- 直接使用声网提供的测试域名：https://service.shengwang.cn/uikit
+> 测试域名仅供测试使用，不能商用！
+- 自己部署后台代码，详见[部署教程](https://github.com/AgoraIO-Community/AUIKit/tree/main/backend)
+
+### 2. 添加源码
 
 **将以下源码复制到自己的项目中：**
 
 - [AScenesKit](../AScenesKit)
 - [KeyCenter.swift](../AUIVoiceRoom/AUIVoiceRoom/KeyCenter.swift)
+- [VoiceChatUIKit.swift](../AUIVoiceRoom/AUIVoiceRoom/VoiceChatUIKit.swift)
 
 **在Podfile文件中添加对AScenesKit的依赖（例如AScenesKit与Podfile放在同级目录下时）**
 
@@ -20,16 +33,16 @@ VoiceChatUIKit 是一个语聊房场景组件，提供房间管理和拉起语�
   pod 'AScenesKit', :path => './AScenesKit'
 ```
 
-**将 KeyCenter.swift 拖到项目中**
+**将 KeyCenter.swift 和 VoiceChatUIKit.swift 拖到项目中**
 
-![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/add_keycenter_to_voiceroom.jpg)
+![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/ios/add_keycenter_to_voiceroom_1.0.1.jpg)
 
-**配置iOS系统麦克风权限**
+**在Info.plist里配置麦克风和摄像头权限**
 
 ![](https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/WeChatWorkScreenshot_c9c309c0-731c-4964-8ef3-1e60ab6b9241.png)
 
 
-### 2. 初始化VoiceRoomUIKit
+### 3. 初始化VoiceRoomUIKit
 ```swift
 //为VoiceRoomUIKit设置基本信息
 let commonConfig = AUICommonConfig()
@@ -49,7 +62,7 @@ VoiceChatUIKit.shared.setup(commonConfig: commonConfig,
                             apiConfig: nil)
 ```
 
-### 3.获取房间列表
+### 4.获取房间列表
 ```swift
 VoiceRoomUIKit.shared.getRoomInfoList(lastCreateTime: 0,
                                       pageSize: 20,
@@ -59,7 +72,7 @@ VoiceRoomUIKit.shared.getRoomInfoList(lastCreateTime: 0,
 })
 ```
 
-### 4.房主创建并进入房间
+### 5.房主创建并进入房间
 ```swift
 
     //生成token
@@ -93,7 +106,7 @@ VoiceRoomUIKit.shared.getRoomInfoList(lastCreateTime: 0,
     VoiceChatUIKit.shared.bindRespDelegate(delegate: self)
 ```
 
-### 5. 观众进入房间
+### 6. 观众进入房间
 ```swift
 //生成token
 let roomConfig = AUIRoomConfig()
@@ -116,8 +129,8 @@ VoiceChatUIKit.shared.enterRoom(roomId: roomId,
 VoiceChatUIKit.shared.bindRespDelegate(delegate: self)
 ```
 
-### 6. 退出房间
-#### 6.1 主动退出
+### 7. 退出房间
+#### 7.1 主动退出
 ```swift
 //AUIVoiceChatRoomView 提供一个关闭的闭包
 voiceRoomView.onClickOffButton = { [weak self] in
@@ -127,12 +140,12 @@ voiceRoomView.onClickOffButton = { [weak self] in
 }
 ```
 
-#### 6.2 房间销毁与自动退出
-详见[房间销毁](#71-房间销毁)
+#### 7.2 房间销毁与自动退出
+详见[房间销毁](#81-房间销毁)
 
-### 7. 异常处理
+### 8. 异常处理
 
-#### 7.1 房间销毁
+#### 8.1 房间销毁
 ```swift
 //订阅 VoiceRoomUIKit 后 AUIVoiceChatRoomServiceRespDelegate 的回调
 VoiceRoomUIKit.shared.bindRespDelegate(delegate: self)
@@ -151,7 +164,7 @@ func onRoomUserBeKicked(roomId: String, userId: String) {
 }
 ```
 
-### 8.更换皮肤
+### 9.更换皮肤
 - AUIKit支持一键换肤，可以通过以下方法设置皮肤
   ```swift
   //重新设置默认皮肤
@@ -285,10 +298,9 @@ func leaveRoom(roomId: String)
 | roomId      | String               | 房间id       |
 | roomName      | String               | 房间名称       |
 | owner   | AUIUserThumbnailInfo | 房主信息     |
-| memberCount | Int                  | 房间人数     |
 | micSeatCount | UInt                  | 麦位个数，默认为8     |
 | micSeatStyle | UInt                  | 麦位类型     |
-| createTime  | Int64                 | 房间创建时间，与1970-01-01:00:00:00的差值，单位：毫秒，例如:1681879844085 |
+| customPayload  | [String: Any]       | 扩展信息 |
 
 ### AUIUserThumbnailInfo
 
@@ -302,7 +314,7 @@ func leaveRoom(roomId: String)
 ```AUIVoiceChatRoomServiceRespDelegate``` 协议用于处理与房间操作相关的各种响应事件。它提供了以下方法，可以由遵循此协议的类来实现，以响应特定的事件。
 
 #### 方法
-  - `onTokenPrivilegeWillExpire(roomId: String?)`
+  - `func onTokenPrivilegeWillExpire(roomId: String?)`
     房间token即将过期的回调方法
     - 参数：
       - ```roomId```: 房间ID。
@@ -325,92 +337,54 @@ func leaveRoom(roomId: String)
       - ```roomId```: 房间ID。
       - ```userId```: 用户ID。
 
-## 自定义功能
-VoiceRoomUIKit支持对UI及业务功能做定制化修改，其实现放在AScenesKit库里，该库通过CocoaPods引入已有的[AUKit](https://github.com/AgoraIO-Community/AUIKit)组件做定制，因此自定义需要先了解AUIKit的接口。
+---
+## 功能定制化
 
-AUIKit的接口可以通过AUIKit的[README](https://github.com/AgoraIO-Community/AUIKit/tree/main/iOS)文档进行查看。
+VoiceRoomUIKit支持对UI及业务功能做定制化修改，并且由于是依赖AUIKit这个开源组件，不仅能对AScenesKit做基础定制，而且能对AUIKit做深入定制。
 
-为了更方便地介绍如何做基础及高阶定制，下面先介绍如何引入AUIKit源码，然后再从UI和业务逻辑分别说明如何做定制。
+代码结构如下图所示，其中可以修改AScenesKit和AUIKit源码来定制功能：
 
-### 引入AUIKit源码
-配置方法如下：
-  > 本项目默认使用CocoaPods引入AUIKit库，但是可以在[Podfile](../AUIVoiceRoom/Podfile)里配置AUIKit源码路径。
-  > 当AUIKit源码路径存在时，使用Xcode编译时会将源码导到项目里并能直接修改。
-  > 配置方法如下：
-  >
-  > - 克隆或者直接下载AUIKit源码
-  >
-  > - 在Podfile里配置AUIKit源码路径，该路径可以是相对于Podfile所在目录的相对路径
-  >
-  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/ios/voicechat_custom_01.png" width="800" />
-  >
-  > - 执行`pod install`后，即可看到AUIKit源码
-  >
-  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/ios/voicechat_custom_02.png" width="800" />
-
-### UI定制
-VoiceRoomUIKit的UI是基于AUIKit的UI组件进行实现，而AIKit提供了一套UI主题样式，因此VoiceRoomUIKit UI样式是通过扩展AUIKit组件主题来实现的。
-
-AUIKit组件的主题样式属性说明见[AUIKit属性](https://github.com/AgoraIO-Community/AUIKit/blob/main/iOS/README.md#widget)。
-
-如何为一组新UI扩展主题请参考[VoiceRoom Theme](./VoiceRoomTheme.md)。
+<img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/ios/voicechat_architecture_diagram_1.0.0.png" width="800" />
 
 
-另外，VoiceRoomUIKit提供了两套默认主题，[Dark](https://github.com/AgoraIO-Community/AUIKit/tree/main/iOS/AUIKitCore/Resource/auiTheme.bundle/Dark) 和 [Light](https://github.com/AgoraIO-Community/AUIKit/tree/main/iOS/AUIKitCore/Resource/auiTheme.bundle/Light)，
+### 1. 基础定制
 
+基础定制主要是修改AScenesKit库实现，下面分别从UI和逻辑介绍如何定制。
+另外，房间管理定制对于已有后台房间管理功能的用户来说也至关重要，为此也会介绍下如何修改。
 
-下面介绍 `Light` 是如何定制主题的，然后再进阶介绍如何自定义新的主题属性
+#### 1.1 定制UI
+> VoiceRoomUIKit的UI是基于AUIKit的UI组件进行实现，而AIKit提供了一套UI主题样式，因此VoiceRoomUIKit UI样式是通过扩展AUIKit组件主题来实现的。
+> AUIKit组件的主题样式说明见[AUIKit属性](https://github.com/AgoraIO-Community/AUIKit/blob/main/iOS/README.md#widget)。
+>
+>
+> 另外，VoiceRoomUIKit提供了两套默认主题，[暗色(Dark)](https://github.com/AgoraIO-Community/AUIKit/tree/main/iOS/AUIKitCore/Resource/auiTheme.bundle/Dark) 和 [亮色(Light)](https://github.com/AgoraIO-Community/AUIKit/tree/main/iOS/AUIKitCore/Resource/auiTheme.bundle/Light)，
+>
+>
+> 下面介绍 `Light` 是如何定制主题的，然后再进阶介绍如何自定义新的主题属性
+>
+> 下面以麦位背景图为例来介绍如何做定制：
+>
+> - 定位打开对应的[micSeat.json](https://github.com/AgoraIO-Community/AUIKit/blob/main/iOS/AUIKitCore/Resource/auiTheme.bundle/Dark/theme/micSeat.json)文件
+>
+>    <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/ios/voicechat_custom_theme_01.png" width="800" />
+>
+> - 拷贝该麦位主题json文件到项目里，例如拷贝到scenekit的对应主题bundle里
+>
+>    <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/ios/voicechat_custom_theme_02.png" width="800" />
+>
+> - 修改麦位属性，例如
+>
+> ~~~json
+> "SeatItem": {
+>   ...
+>   "backgroundColor": "#ff0000",
+>   ...
+> }
+> ~~~
+>
+> - 配置好运行项目即可看到效果
 
-#### 基础定制
-> 基础定制主要是介绍如何在主题里对特定ui组件的属性进行修改以达到所要的效果，其中ui组件的可修改主题属性见[AUIKit属性](https://github.com/AgoraIO-Community/AUIKit/blob/main/iOS/README.md#widget)。
-  >
-  > 下面以麦位为例来介绍如何做定制：
-  >
-  > - 定位打开对应的[micSeat.json](https://github.com/AgoraIO-Community/AUIKit/blob/main/iOS/AUIKitCore/Resource/auiTheme.bundle/Dark/theme/micSeat.json)文件
-  >
-  >    <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/ios/voicechat_custom_theme_01.png" width="800" />
-  >
-  > - 拷贝该麦位主题json文件到项目里，例如拷贝到scenekit的对应主题bundle里
-  >
-  >    <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/ios/voicechat_custom_theme_02.png" width="800" />
-  >
-  > - 修改麦位属性，例如
-  >
-  > ~~~json
-  > "SeatItem": {
-  >   ...
-  >   "backgroundColor": "#ff0000",
-  >   ...
-  > }
-  > ~~~
-  >
-  > - 配置好运行项目即可看到效果
-
-#### 高级定制
- > 高级定制主要适用于主题属性无法满足UI定制化需求，此时需要自己对AUIKit组件进行属性扩展。
-  >
-  > 要对AUIKit ui组件添加属性，需要先下载AUIKit源码，然后通过本地依赖进工程里，例如AUIKit项目与AUIVoiceRoom项目同级时，依赖如下设置：
-  > 
-  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/ios/voicechat_custom_dependency.png" width="800" />
-  >
-  > 下面以麦位背景色来介绍如何添加新属性，以及如何在代码里获取到主题属性值并调整ui:
-  >
-  > - 找到麦位的json文件，在里面添加背景色属性
-  >
-  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/ios/voicechat_custom_theme_03.png" width="800" />
-  >
-  > - 找到麦位自定义View，在麦位view里使用上面定义的背景色属性
-  >
-  >    <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/ios/voicechat_custom_theme_04.png" width="800" />
-  >
-  > - 主题属性自定义完成后即可按基础定制的步骤来使用这个新增属性
-
-
-### 业务功能定制
-VoiceRoomUIKit的业务服务是基于AUIKit的Service组件进行实现。AUIKit提供了一系列Service组件供上层使用，具体可以参考[AUIKit Service文档](https://github.com/AgoraIO-Community/AUIKit/blob/main/iOS/README_zh.md#service)。下面介绍VoiceRoomUIKit如何做基础定制，以及如何实现自己的房间管理。
-
-#### binder 和 service 使用
-
+#### 1.2 定制业务逻辑
   > 在做自定义前，需要知道几点：
   >   1. 组件通过[Binder](../AScenesKit/AScenesKit/Classes/ViewBinder/)将AUIKit提供的UI组件及Service组件绑定起来以实现业务交互
   >   2. [AUIVoiceChatRoomService](../AScenesKit/AScenesKit/Classes/RoomContainer/AUIVoiceChatRoomService.swift)管理着所有业务service
@@ -424,7 +398,7 @@ VoiceRoomUIKit的业务服务是基于AUIKit的Service组件进行实现。AUIKi
   >
   >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/ios/voicechat_custom_03.png" width="800" />
   >
-  > - 在AUIVoiceRoomView里找到对应的Binder实现[micSeatBinder](../AScenesKit/AScenesKit/Classes/ViewBinder/AUIMicSeatViewBinder.swift)。
+  > - 在 AUIVoiceChatRoomView 里找到[对应的Binder实现](../AScenesKit/AScenesKit/Classes/ViewBinder/AUIMicSeatViewBinder.swift)。
   >
   >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/ios/voicechat_custom_04.png" width="800" />
   >
@@ -434,14 +408,15 @@ VoiceRoomUIKit的业务服务是基于AUIKit的Service组件进行实现。AUIKi
   >
   > - 在麦位Binder的bind方法里设置service事件监听、获取service数据及初始化ui等初始化操作
   >
-  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/ios/voicechat_custom_06.png" width="800" />
+  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/ios/voicechat_custom_06_1.png" width="800" />
 
-#### 自定义房间管理
 
-  > 在后台服务里提供了一个房间管理，这个房间管理是由[RoomManager](https://github.com/AgoraIO-Community/AUIKit/blob/main/iOS/AUIKitCore/Sources/Service/Impl/AUIRoomManagerImpl.swift)进行实现。
+#### 1.3 修改房间管理
+
+  > 在后台服务里提供了一个房间管理，这个房间管理在移动端是由[RoomManager](https://github.com/AgoraIO-Community/AUIKit/blob/main/iOS/AUIKitCore/Sources/Service/Impl/AUIRoomManagerImpl.swift)进行管理。
   > RoomManager提供了创建房间、销毁房间、获取房间列表这三个api，但是这仅能满足简单的房间管理需求，如果有更复杂的需求就需要自行开发房间管理服务。或者您已经有自己的房间管理服务，您也可以使用自己的房间管理服务。
   >
-  > 下面说明如何自定义房间管理：
+   > 下面说明如何修改房间管理（下面的修改方法只做参考，具体项目里修改方式可以根据您现有的房间接口做出最合适的选择）：
   >
   >- 确认后台有独立的三个后台接口：创建房间、销毁房间 以及 获取房间列表。
      >   并且房间信息里必须包含房主的用户信息：用户名、用户ID 和 用户头像。
@@ -466,6 +441,50 @@ VoiceRoomUIKit的业务服务是基于AUIKit的Service组件进行实现。AUIKi
   > - 将[VoiceChatUIKit](../AUIVoiceRoom/AUIVoiceRoom/VoiceChatUIKit.swift)中的RoomManager替换成自己的RoomManager
   >
   >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/ios/voicechat_custom_07.png" width="800" />
+
+
+### 2. 高级定制
+高级定制主要是修改AUIKit源码。由于AUKit默认是以CocoaPods方式引入到AScenesKit库里，需要先引入源码。
+AUIKit主要提供了UI和Service组件，下面介绍如何做定制。
+
+#### 2.1 引入AUIKit源码
+  > 本项目默认使用CocoaPods引入AUIKit库，但是可以在[Podfile](../AUIVoiceRoom/Podfile)里配置AUIKit源码路径。
+  > 当AUIKit源码路径存在时，使用Xcode编译时会将源码导到项目里并能直接修改。
+  > 配置方法如下：
+  >
+  > - 克隆或者直接下载AUIKit源码
+  > ```
+  > git clone https://github.com/AgoraIO-Community/AUIKit.git
+  > ```
+  > - 在Podfile里配置AUIKit源码路径，该路径可以是相对于Podfile所在目录的相对路径
+  >
+  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/ios/voicechat_custom_dependency.png" width="800" />
+  >
+  > - 执行`pod install`后，即可看到AUIKit源码
+  >
+  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/ios/voicechat_custom_02.png" width="800" />
+  >
+  > 
+#### 2.2 定制UI
+  > 
+  > 如何为一组新UI扩展主题请参考[VoiceRoom Theme](./VoiceRoomTheme.md)。
+  >
+  > 下面以麦位背景色来介绍如何添加新属性，以及如何在代码里获取到主题属性值并调整ui:
+  >
+  > - 找到麦位的json文件，在里面添加背景色属性
+  >
+  >   <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/ios/voicechat_custom_theme_03.png" width="800" />
+  >
+  > - 找到麦位自定义View，在麦位view里使用上面定义的背景色属性
+  >
+  >    <img src="https://fullapp.oss-cn-beijing.aliyuncs.com/uikit/readme/voicechat/ios/voicechat_custom_theme_04.png" width="800" />
+  >
+  > - 主题属性自定义完成后即可按基础定制的步骤来使用这个新增属性
+  > 
+
+#### 2.3 定制业务功能
+
+  > 高级定制业务功能是基于AUIKit提供service进行修改，具体service的说明见[AUIKit-Service文档](https://github.com/AgoraIO-Community/AUIKit/tree/main/iOS#service)
 
 ## License
 版权所有 © Agora Corporation。 版权所有。

@@ -3,13 +3,13 @@ PODS:
   - AgoraLyricsScore (1.1.1-beta-3)
   - AgoraRtcEngine_Special_iOS (4.1.1.20)
   - AgoraRtm_iOS (2.1.8)
-  - Alamofire (5.8.1)
+  - Alamofire (5.9.0)
   - AScenesKit (1.1.0):
-    - AUIKitCore (= 1.1.0)
+    - AUIKitCore (= 1.1.1)
     - libpag
-  - AUIKitCore (1.1.0):
-    - AUIKitCore/All (= 1.1.0)
-  - AUIKitCore/All (1.1.0):
+  - AUIKitCore (1.1.1):
+    - AUIKitCore/All (= 1.1.1)
+  - AUIKitCore/All (1.1.1):
     - Agora_Chat_iOS
     - AgoraLyricsScore
     - AgoraRtcEngine_Special_iOS (< 4.1.1.100, > 4.1.1.19)
@@ -64,9 +64,9 @@ SPEC CHECKSUMS:
   AgoraLyricsScore: 7e25860ccecd3c6ed73f2b503f1d73d8849079e1
   AgoraRtcEngine_Special_iOS: b4c357c188d6af620f272f0d7b664d99e760a86e
   AgoraRtm_iOS: 9fb76b5f71900d012aaed6c033e235d6fd201ed9
-  Alamofire: 3ca42e259043ee0dc5c0cdd76c4bc568b8e42af7
-  AScenesKit: 95754ded9ef970fac57dde7f18ce323aa17d9ad2
-  AUIKitCore: 5bb2acb631c2432e83537c430f683fd1b6fb6eea
+  Alamofire: 02b772c9910e8eba1a079227c32fbd9e46c90a24
+  AScenesKit: 043c4362a2f90c3779be1a5ecda103f971d942e8
+  AUIKitCore: 3d08c145befed42dd5b28e543f7c073d09fded32
   libpag: ad632e7da859943441195536dcdb8d3bb708ba11
   MJRefresh: 2fe7fb43a5167ceda20bb7e63f130c04fd1814a5
   ScoreEffectUI: bf1195b4d41a73d43c236450b5d7f958989844aa
