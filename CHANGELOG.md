@@ -2,6 +2,7 @@
 
 ## [1.0.1](https://github.com/AgoraIO-Community/AUIVoiceRoom/releases/tag/1.0.1)
 - 更新Readme，增加易读性。
+- 适配AUIKit 1.1.1版本。
 
 ## [1.0.0](https://github.com/AgoraIO-Community/AUIVoiceRoom/releases/tag/1.0.0)
 - 适配AUIKit 1.0.1版本。
