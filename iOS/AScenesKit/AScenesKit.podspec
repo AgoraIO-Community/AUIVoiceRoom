@@ -55,6 +55,6 @@ TODO: Add long description of the pod here.
 
   # s.public_header_files = 'Pod/Classes/**/*.h'
   # s.frameworks = 'UIKit', 'MapKit'
-   s.dependency 'AUIKitCore', '1.1.1'
+   s.dependency 'AUIKitCore', '1.2.0'
    s.dependency 'libpag'
 end
