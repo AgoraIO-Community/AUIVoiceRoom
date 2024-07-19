@@ -150,7 +150,7 @@ final class AUIRoomListViewController: UIViewController {
     }
     
     func onLoadMoreAction() {
-        let lastCreateTime: Int64? = 0//roomList.last?.createTime
+        let lastCreateTime: Int64? = roomList.last?.createTime
         VoiceChatUIKit.shared.getRoomInfoList(lastCreateTime: lastCreateTime ?? 0,
                                               pageSize: kListCountPerPage,
                                               callback: {[weak self] error, list in
