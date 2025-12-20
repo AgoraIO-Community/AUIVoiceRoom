@@ -38,13 +38,6 @@ AUIVoiceRoom 提供以下核心功能：
 | [VoiceRoom(iOS)](iOS/AUIVoiceRoom)  | [VoiceRoom(Android)](Android) | [VoiceRoom(Backend)](backend) |
 
 
-## 交流&反馈
-
-欢迎加入微信群交流
-
-<img src="https://download.agora.io/null/karaoke-uikit-wechat-pic.jpg" alt="image-20210622142449407" title="image-20210622142449407" width="600" />
-
-
 ---
 
 ## FAQ
